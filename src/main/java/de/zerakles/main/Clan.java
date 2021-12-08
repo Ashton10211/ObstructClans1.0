@@ -5,6 +5,8 @@ import de.zerakles.clanapi.legendaries.alligatorstooth.AlligatorsToothListener;
 import de.zerakles.clanapi.legendaries.giantbroadsword.GiantBroadSwordListener;
 import de.zerakles.clanapi.legendaries.hyperaxe.HyperAxeListener;
 import de.zerakles.clanapi.legendaries.magneticblade.MagneticMaulListener;
+import de.zerakles.clanapi.legendaries.meridianscepter.MerdianScepter;
+import de.zerakles.clanapi.legendaries.meridianscepter.MerdianScepterListener;
 import de.zerakles.clanapi.legendaries.runedpickaxe.RunedPickaxeListener;
 import de.zerakles.clanapi.legendaries.sxytheofthefallenlord.ScytheOfTheFallenLordListener;
 import de.zerakles.clanapi.legendaries.windblade.WindBladeListener;
@@ -49,6 +51,7 @@ public class Clan extends JavaPlugin {
     public RunedPickaxeListener runedPickaxe;
     public WindBladeListener windBladeListener;
     public ScytheOfTheFallenLordListener scytheOfTheFallenLordListener;
+    public MerdianScepterListener meridianscepter;
 
     public ScoreboardMaster scoreboardMaster = new ScoreboardMaster();
     @Override
@@ -70,6 +73,7 @@ public class Clan extends JavaPlugin {
         runedPickaxe = new RunedPickaxeListener();
         windBladeListener = new WindBladeListener();
         scytheOfTheFallenLordListener = new ScytheOfTheFallenLordListener();
+        meridianscepter = new MerdianScepterListener();
         loadCommands();
         loadListeners();
         super.onEnable();
@@ -132,5 +136,6 @@ public class Clan extends JavaPlugin {
         pm.registerEvents(runedPickaxe, getClan());
         pm.registerEvents(windBladeListener, getClan());
         pm.registerEvents(scytheOfTheFallenLordListener, getClan());
+        pm.registerEvents(meridianscepter, getClan());
     }
 }

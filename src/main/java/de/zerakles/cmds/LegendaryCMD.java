@@ -4,6 +4,7 @@ import de.zerakles.clanapi.legendaries.alligatorstooth.Alligatorstooth;
 import de.zerakles.clanapi.legendaries.giantbroadsword.GiantBroadSword;
 import de.zerakles.clanapi.legendaries.hyperaxe.HyperAxe;
 import de.zerakles.clanapi.legendaries.magneticblade.MagneticMaul;
+import de.zerakles.clanapi.legendaries.meridianscepter.MerdianScepter;
 import de.zerakles.clanapi.legendaries.runedpickaxe.RunedPickaxe;
 import de.zerakles.clanapi.legendaries.sxytheofthefallenlord.ScytheOfTheFallenLord;
 import de.zerakles.clanapi.legendaries.windblade.WindBlade;
@@ -25,6 +26,7 @@ public class LegendaryCMD implements CommandExecutor {
                 sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary RunedPickaxe");
                 sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary Windblade");
                 sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary ScytheOfTheFallenLord");
+                sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary MeridianScepter");
             }
             if(args.length == 1){
                 if(sender instanceof Player){
@@ -63,6 +65,11 @@ public class LegendaryCMD implements CommandExecutor {
                         ((Player) sender).getInventory().addItem(scytheOfTheFallenLord.legend.getItemStack());
                         return true;
                     }
+                    if (args[0].equalsIgnoreCase("MeridianScepter")){
+                        MerdianScepter merdianScepter = new MerdianScepter(((Player) sender).getPlayer());
+                        ((Player) sender).getInventory().addItem(merdianScepter.legend.getItemStack());
+                        return true;
+                    }
                     sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary AlligatorsTooth");
                     sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary GiantBroadSword");
                     sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary HyperAxe");
@@ -70,6 +77,7 @@ public class LegendaryCMD implements CommandExecutor {
                     sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary RunedPickaxe");
                     sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary Windblade");
                     sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary ScytheOfTheFallenLord");
+                    sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary MeridianScepter");
                 }
             }
         }
