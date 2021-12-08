@@ -7,6 +7,7 @@ import de.zerakles.main.Clan;
 import de.zerakles.utils.Data;
 import de.zerakles.utils.Display;
 import de.zerakles.utils.Utils;
+import net.minecraft.server.v1_8_R3.MovingObjectPosition;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
@@ -146,10 +147,9 @@ public class MerdianScepterListener implements Listener {
                         block = shot.getArrow().getLocation().getBlock();
                         Material type = null;
                         type = block.getType();
-                        hitBlock = null;
-                        Class<?> movingObjectPosition = Utils.getNmsClass("MovingObjectPosition");
+                        Class<?> movingObjectPosition = MovingObjectPosition.class;
                         Class<?> blockPositionn = Utils.getNmsClass("BlockPosition");
-                        Constructor<?> construct = Utils.getConstructor(movingObjectPosition, Entity.class);
+                        Constructor construct = Utils.getConstructor(MovingObjectPosition.class, Entity.class);
                         Object position = Utils.callConstructor(construct, arrow);
                         Object posType = Utils.getFieldAndValue(movingObjectPosition, "type", position);
                         if (posType == Utils.getEnumConstant(movingObjectPosition, "BLOCK")) {
