@@ -126,7 +126,7 @@ public class HyperAxeListener implements Listener {
                     entLiv.setVelocity(new Vector(0.0D, 0.12D, 0.0D));
                     toRemove.put(entLiv, 7);
                 }
-                e.setDamage(e.getDamage());
+                e.setDamage(HyperAxes.get(p).getDamage());
             } else if (e.getEntity() instanceof LivingEntity) {
                 LivingEntity entLiv = (LivingEntity)e.getEntity();
                 if (toRemove.containsKey((LivingEntity) e.getEntity())) {
