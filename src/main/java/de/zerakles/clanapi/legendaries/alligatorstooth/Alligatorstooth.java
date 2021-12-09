@@ -25,6 +25,8 @@ public class Alligatorstooth {
         lore.add("§fis granted the underwater agility");
         lore.add("§fof an Alligator.");
         lore.add("§f");
+        lore.add("§fOriginal Name: §e" + player.getName());
+        lore.add("§f");
         lore.add("§eRight-Click §f to use §aswim.");
         ItemStack itemStack = new ItemStack(Material.RECORD_4);
         ItemMeta itemMeta = itemStack.getItemMeta();

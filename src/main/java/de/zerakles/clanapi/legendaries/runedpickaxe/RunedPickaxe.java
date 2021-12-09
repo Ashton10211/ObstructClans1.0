@@ -19,7 +19,9 @@ public class RunedPickaxe {
         lore.add(" ");
         lore.add("§fWhat an interesting design this");
         lore.add("§fpickaxe seems to have!");
-        lore.add(" ");
+        lore.add("§f");
+        lore.add("§fOriginal Name: §e" + player.getName());
+        lore.add("§f");
         lore.add("§eRight-Click §f to use §aInstant Mine.");
         ItemStack itemStack = new ItemStack(Material.RECORD_7);
         ItemMeta itemMeta = itemStack.getItemMeta();

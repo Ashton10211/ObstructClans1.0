@@ -25,7 +25,9 @@ public class HyperAxe {
         lore.add("§fspeed and pigman's ferocity, this");
         lore.add("§fblade can rip through any opponent.");
         lore.add("§Hit delay is reduced by§e 50%");
-        lore.add(" ");
+        lore.add("§f");
+        lore.add("§fOriginal Name: §e" + player.getName());
+        lore.add("§f");
         lore.add("§eRight-Click §f to use §aDash.");
         ItemStack itemStack = new ItemStack(Material.RECORD_3);
         ItemMeta itemMeta = itemStack.getItemMeta();

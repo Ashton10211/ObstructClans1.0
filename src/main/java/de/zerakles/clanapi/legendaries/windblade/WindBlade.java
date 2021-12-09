@@ -23,7 +23,9 @@ public class WindBlade {
         lore.add("§ftheir tyranny, this airy blade is");
         lore.add("§fthe last surviving memorium from");
         lore.add("§ftheir final battle againts the Titans.");
-        lore.add(" ");
+        lore.add("§f");
+        lore.add("§fOriginal Name: §e" + player.getName());
+        lore.add("§f");
         lore.add("§eRight-Click §f to use §aFly.");
         ItemStack itemStack = new ItemStack(Material.GREEN_RECORD);
         ItemMeta itemMeta = itemStack.getItemMeta();

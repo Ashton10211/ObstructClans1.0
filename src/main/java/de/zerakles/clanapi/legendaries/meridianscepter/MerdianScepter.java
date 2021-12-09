@@ -25,7 +25,9 @@ public class MerdianScepter {
         lore.add("§fMinecraftia. It is said that he");
         lore.add("§fwields this scepter holds");
         lore.add("§fthe power of Poseidon himself.");
-        lore.add(" ");
+        lore.add("§f");
+        lore.add("§fOriginal Name: §e" + player.getName());
+        lore.add("§f");
         lore.add("§eRight-Click §f to use §aScepter.");
         ItemStack itemStack = new ItemStack(Material.RECORD_6);
         ItemMeta itemMeta = itemStack.getItemMeta();

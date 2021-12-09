@@ -23,6 +23,8 @@ public class GiantBroadSword {
         lore.add("§fwars. It is sure to grant certain");
         lore.add("§fvictory in battle..");
         lore.add("§f");
+        lore.add("§fOriginal Name: §e" + player.getName());
+        lore.add("§f");
         lore.add("§eRight-Click §f to use §ashield.");
         ItemStack itemStack = new ItemStack(Material.GOLD_RECORD);
         ItemMeta itemMeta = itemStack.getItemMeta();

@@ -22,7 +22,9 @@ public class MagneticMaul {
         lore.add("§fMagnetic Maul. Infused with a high level");
         lore.add("§f of electricity even the strongest");
         lore.add("§fguy can be pulled...");
-        lore.add(" ");
+        lore.add("§f");
+        lore.add("§fOriginal Name: §e" + player.getName());
+        lore.add("§f");
         lore.add("§eRight-Click §f to use §aPull.");
         ItemStack itemStack = new ItemStack(Material.RECORD_5);
         ItemMeta itemMeta = itemStack.getItemMeta();

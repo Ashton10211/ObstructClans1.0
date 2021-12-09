@@ -22,7 +22,9 @@ public class ScytheOfTheFallenLord {
         lore.add("§fpurpose. Brave adventurers however have");
         lore.add("§fimbued it with the remnant powers of a");
         lore.add("§fdark and powerful foe.");
-        lore.add(" ");
+        lore.add("§f");
+        lore.add("§fOriginal Name: §e" + player.getName());
+        lore.add("§f");
         lore.add("§eAttack §f to use §aFly.");
         ItemStack itemStack = new ItemStack(Material.RECORD_8);
         ItemMeta itemMeta = itemStack.getItemMeta();
