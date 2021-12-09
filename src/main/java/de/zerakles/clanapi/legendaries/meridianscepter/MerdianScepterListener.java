@@ -7,6 +7,8 @@ import de.zerakles.main.Clan;
 import de.zerakles.utils.Data;
 import de.zerakles.utils.Display;
 import de.zerakles.utils.Utils;
+import net.minecraft.server.v1_8_R3.BaseBlockPosition;
+import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.MovingObjectPosition;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -71,6 +73,8 @@ public class MerdianScepterListener implements Listener {
         }
         return false;
     }
+
+
     public void loop(){
         Bukkit.getScheduler().scheduleSyncRepeatingTask(getClan(), new Runnable() {
             @Override
@@ -82,14 +86,19 @@ public class MerdianScepterListener implements Listener {
                             shot.update();
                     }
                 }
+                for (MerdianScepterShot shot : shots){
+                    if(shot.getArrow().isOnGround()){
+                        shot.delete();
+                    }
+                }
                 for (String s : cooldown.keySet()) {
                     Player p = Bukkit.getServer().getPlayer(s);
                     if ((System.currentTimeMillis() - cooldown.get(s) / 1000L > 1L)) {
                         cooldown.remove(s);
-                        p.sendMessage(getData().prefix + ChatColor.GRAY +
-                                "You can use " + ChatColor.GREEN + Scepter.get(p));
+                       /* p.sendMessage(getData().prefix + ChatColor.GRAY +
+                                "You can use " + ChatColor.GREEN + Scepter.get(p).getName());*/
                         if (isCorrectItem(Utils.getItemInHand(p),p))
-                            Display.display(ChatColor.GREEN + Scepter.get(p).getName() + " Recharged", p);
+                           // Display.display(ChatColor.GREEN + Scepter.get(p).getName() + " Recharged", p);
                         continue;
                     }
                     if (isCorrectItem(Utils.getItemInHand(p),p)) {
@@ -138,49 +147,15 @@ public class MerdianScepterListener implements Listener {
     @EventHandler
     public void onArrowHit(ProjectileHitEvent e) {
         if (e.getEntity() instanceof Arrow) {
-            Arrow arrow = (Arrow)e.getEntity();
+            Arrow arrow = (Arrow) e.getEntity();
             for (MerdianScepterShot shot : shots) {
                 if (shot.getArrow() == arrow) {
-                    if (Utils.is1_8()) {
-                        Block block = null;
-                        Block hitBlock = null;
-                        block = shot.getArrow().getLocation().getBlock();
-                        Material type = null;
-                        type = block.getType();
-                        Class<?> movingObjectPosition = MovingObjectPosition.class;
-                        Class<?> blockPositionn = Utils.getNmsClass("BlockPosition");
-                        Constructor construct = Utils.getConstructor(MovingObjectPosition.class, Entity.class);
-                        Object position = Utils.callConstructor(construct, arrow);
-                        Object posType = Utils.getFieldAndValue(movingObjectPosition, "type", position);
-                        if (posType == Utils.getEnumConstant(movingObjectPosition, "BLOCK")) {
-                            Object blockposition = Utils.getAndInvokeMethod(movingObjectPosition, "a",
-                                    new Class[0], position);
-                            hitBlock = e.getEntity().getWorld().getBlockAt(new Location(e.getEntity().getWorld(), (Double) Utils.getAndInvokeMethod(blockPositionn, "getX",
-                                    new Class[0], blockposition, new Object[0]), (Double) Utils.getAndInvokeMethod(blockPositionn, "getY",
-                                    new Class[0], blockposition, new Object[0]), (Double) Utils.getAndInvokeMethod(blockPositionn, "getZ",
-                                    new Class[0], blockposition, new Object[0])));
-                        }
-                        if (hitBlock != null &&
-                                hitBlock.getType() != Material.AIR) {
-                            if (type == Material.STATIONARY_LAVA ||
-                                    type == Material.STATIONARY_WATER ||
-                                    type == Material.WATER ||
-                                    type == Material.LAVA)
-                                return;
-                            arrow.teleport(new Location(arrow.getWorld(), 0.0D, -10.0D, 0.0D));
-                            if (shot.isToRemove())
-                                continue;
-                            shot.delete();
-                        }
-                        continue;
-                    }
-                    Block output = (Block)Utils.getAndInvokeMethod(ProjectileHitEvent.class, "getHitBlock",
-                            new Class[0], e, new Object[0]);
-                    if (output != null && output.getType() != Material.AIR) {
-                        if (output.getType() == Material.STATIONARY_LAVA ||
-                                output.getType() == Material.STATIONARY_WATER ||
-                                output.getType() == Material.WATER ||
-                                output.getType() == Material.LAVA)
+                    Block hitBlock = e.getEntity().getLocation().getBlock();
+                    if (hitBlock != null && hitBlock.getType() != Material.AIR) {
+                        if (hitBlock.getType() == Material.STATIONARY_LAVA ||
+                                hitBlock.getType() == Material.STATIONARY_WATER ||
+                                hitBlock.getType() == Material.WATER ||
+                                hitBlock.getType() == Material.LAVA)
                             return;
                         arrow.teleport(new Location(arrow.getWorld(), 0.0D, -10.0D, 0.0D));
                         if (shot.isToRemove())
@@ -247,18 +222,18 @@ public class MerdianScepterListener implements Listener {
                         String string = struckEnt.getType().toString().toLowerCase().replace("_", " ");
                         shot.getShooter().sendMessage(ChatColor.BLUE + "Clans> " +
                                 ChatColor.GRAY + "You struck " + ChatColor.YELLOW + string +
-                                ChatColor.GRAY + " with your " + ChatColor.YELLOW + Scepter.get((Player) struckEnt).getName() + ChatColor.GRAY +
+                                ChatColor.GRAY + " with your " + ChatColor.YELLOW + Scepter.get((Player) shot.getShooter()).getName() + ChatColor.GRAY +
                                 ".");
                     }
                     e.setCancelled(true);
                     Player p = shot.getShooter();
                     shot.delete();
                     Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(getClan(), () -> {
-                        if (p.isDead())
+                        if (struckEnt.isDead())
                             return;
-                        p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 0));
-                        p.getWorld().strikeLightningEffect(p.getLocation());
-                        p.damage(this.damage, (Entity)p);
+                        struckEnt.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 0));
+                        struckEnt.getWorld().strikeLightningEffect(struckEnt.getLocation());
+                        struckEnt.damage(this.damage, (Entity)struckEnt);
                     },60L);
                 }
             }
