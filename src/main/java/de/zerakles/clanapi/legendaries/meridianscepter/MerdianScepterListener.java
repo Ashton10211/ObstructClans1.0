@@ -232,7 +232,7 @@ public class MerdianScepterListener implements Listener {
                         if (struckEnt.isDead())
                             return;
                         struckEnt.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 0));
-                        LightningStrike lightningStrike = struckEnt.getWorld().strikeLightningEffect(location);
+                        LightningStrike lightningStrike = struckEnt.getWorld().strikeLightningEffect(struckEnt.getLocation());
                         struckEnt.damage(this.damage, (Entity) struckEnt);
                     },60L);
                 }
