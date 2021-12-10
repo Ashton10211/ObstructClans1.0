@@ -18,8 +18,8 @@ public class Maze implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         Location lever = event.getClickedBlock().getLocation();
-        final Location lever1 = new Location(Bukkit.getWorld("world"), 22, 78, -178);
-        final Location lever2 = new Location(Bukkit.getWorld("world"), 22, 78, -178);
+        final Location lever1 = new Location(Bukkit.getWorld("world"), 35, 79, -180);
+        final Location lever2 = new Location(Bukkit.getWorld("world"), 35, 79, -184);
 
 
         boolean level1 = false;
