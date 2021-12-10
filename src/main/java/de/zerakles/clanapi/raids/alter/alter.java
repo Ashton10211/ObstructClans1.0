@@ -31,9 +31,7 @@ public class alter implements Listener {
 
 
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            player.sendMessage("HI1");
             if(raidteleporter.equals(raidteleporter1))
-                player.sendMessage("HI2");
             if (player.getItemInHand().getType() == Material.IRON_INGOT) {
                 if(event.getClickedBlock().getType() == Material.PRISMARINE) {
 
@@ -45,7 +43,6 @@ public class alter implements Listener {
 
             if (!raidteleporter.equals(raidteleporter1));
             {
-                player.sendMessage("f");
             }
             if (event.getClickedBlock().getType() != Material.PRISMARINE) {
                 return;

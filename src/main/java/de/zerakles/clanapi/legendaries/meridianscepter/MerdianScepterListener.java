@@ -90,7 +90,7 @@ public class MerdianScepterListener implements Listener {
                 }
                 for (String s : cooldown.keySet()) {
                     Player p = Bukkit.getServer().getPlayer(s);
-                    if (((System.currentTimeMillis() - cooldown.get(s)) / 1000L > 0.9)) {
+                    if (((System.currentTimeMillis() - cooldown.get(s)) / 1000L > 2.9)) {
                         cooldown.remove(s);
                         p.sendMessage(getData().prefix + ChatColor.GRAY +
                                 "You can use " + ChatColor.GREEN + Scepter.get(p).getName());

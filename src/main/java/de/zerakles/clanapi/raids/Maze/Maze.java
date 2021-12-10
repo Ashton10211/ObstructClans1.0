@@ -29,23 +29,12 @@ public class Maze implements Listener {
             if (event.getClickedBlock().getType() == Material.LEVER) {
                 if (lever.equals(lever1))
                     player.sendMessage("test1");
-                level1 = true;
-                player.sendMessage("player.sendMessage(ChatColor.BLUE + \"Guardian Of The Sea Messenger> \" + ChatColor.YELLOW + \"You have found a lever, you are now one step closer to completing the Mariana Trench.");
-                if (lever.equals(lever2)) {
-                    player.sendMessage("player.sendMessage(ChatColor.BLUE + \"Guardian Of The Sea Messenger> \" + ChatColor.YELLOW + \"You have found a lever, you are now one step closer to completing the Mariana Trench.");
-                    level2 = true;
-                    if (level1 && level2) ;
-                    player.sendMessage(ChatColor.BLUE + "Guardian Of The Sea Messenger> " + ChatColor.YELLOW + "Congratulations you have finished the Mariana Trench. Teleporting you to the next level.");
-                    level1 = false;
-                    level2 = false;
+                else if (!lever.equals(lever1)) {
+                    return;
                 }
-            } else if (event.getClickedBlock().getType() != Material.LEVER) {
-                return;
-
             }
         }
     }
 }
-
 
 
