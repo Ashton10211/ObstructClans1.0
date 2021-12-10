@@ -3,6 +3,7 @@ package de.zerakles.cmds;
 import de.zerakles.clanapi.legendaries.alligatorstooth.Alligatorstooth;
 import de.zerakles.clanapi.legendaries.giantbroadsword.GiantBroadSword;
 import de.zerakles.clanapi.legendaries.hyperaxe.HyperAxe;
+import de.zerakles.clanapi.legendaries.lance.Lance;
 import de.zerakles.clanapi.legendaries.magneticblade.MagneticMaul;
 import de.zerakles.clanapi.legendaries.meridianscepter.MerdianScepter;
 import de.zerakles.clanapi.legendaries.runedpickaxe.RunedPickaxe;
@@ -27,6 +28,7 @@ public class LegendaryCMD implements CommandExecutor {
                 sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary Windblade");
                 sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary ScytheOfTheFallenLord");
                 sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary MeridianScepter");
+                sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary Lance");
             }
             if(args.length == 1){
                 if(sender instanceof Player){
@@ -70,6 +72,11 @@ public class LegendaryCMD implements CommandExecutor {
                         ((Player) sender).getInventory().addItem(merdianScepter.legend.getItemStack());
                         return true;
                     }
+                    if (args[0].equalsIgnoreCase("Lance")){
+                        Lance lance = new Lance(((Player) sender).getPlayer());
+                        ((Player) sender).getInventory().addItem(lance.legend.getItemStack());
+                        return true;
+                    }
                     sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary AlligatorsTooth");
                     sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary GiantBroadSword");
                     sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary HyperAxe");
@@ -78,6 +85,7 @@ public class LegendaryCMD implements CommandExecutor {
                     sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary Windblade");
                     sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary ScytheOfTheFallenLord");
                     sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary MeridianScepter");
+                    sender.sendMessage(Clan.getClan().data.prefix + "§e/legendary Lance");
                 }
             }
         }
