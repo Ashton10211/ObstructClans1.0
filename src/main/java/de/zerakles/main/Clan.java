@@ -4,6 +4,7 @@ import de.zerakles.clanapi.ClanAPI;
 import de.zerakles.clanapi.legendaries.alligatorstooth.AlligatorsToothListener;
 import de.zerakles.clanapi.legendaries.giantbroadsword.GiantBroadSwordListener;
 import de.zerakles.clanapi.legendaries.hyperaxe.HyperAxeListener;
+import de.zerakles.clanapi.legendaries.lance.LanceListener;
 import de.zerakles.clanapi.legendaries.magneticblade.MagneticMaulListener;
 import de.zerakles.clanapi.legendaries.meridianscepter.MerdianScepter;
 import de.zerakles.clanapi.legendaries.meridianscepter.MerdianScepterListener;
@@ -52,6 +53,7 @@ public class Clan extends JavaPlugin {
     public WindBladeListener windBladeListener;
     public ScytheOfTheFallenLordListener scytheOfTheFallenLordListener;
     public MerdianScepterListener meridianscepter;
+    public LanceListener lanceListener;
 
     public ScoreboardMaster scoreboardMaster = new ScoreboardMaster();
     @Override
@@ -74,6 +76,7 @@ public class Clan extends JavaPlugin {
         windBladeListener = new WindBladeListener();
         scytheOfTheFallenLordListener = new ScytheOfTheFallenLordListener();
         meridianscepter = new MerdianScepterListener();
+        lanceListener = new LanceListener();
         loadCommands();
         loadListeners();
         super.onEnable();
@@ -137,5 +140,6 @@ public class Clan extends JavaPlugin {
         pm.registerEvents(windBladeListener, getClan());
         pm.registerEvents(scytheOfTheFallenLordListener, getClan());
         pm.registerEvents(meridianscepter, getClan());
+        pm.registerEvents(lanceListener, getClan());
     }
 }
