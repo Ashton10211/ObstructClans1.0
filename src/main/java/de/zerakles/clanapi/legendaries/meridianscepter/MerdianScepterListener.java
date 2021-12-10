@@ -90,7 +90,7 @@ public class MerdianScepterListener implements Listener {
                 }
                 for (String s : cooldown.keySet()) {
                     Player p = Bukkit.getServer().getPlayer(s);
-                    if ((System.currentTimeMillis() - cooldown.get(s) / 1000L > 1L)) {
+                    if (((System.currentTimeMillis() - cooldown.get(s)) / 1000L > 0.9)) {
                         cooldown.remove(s);
                         p.sendMessage(getData().prefix + ChatColor.GRAY +
                                 "You can use " + ChatColor.GREEN + Scepter.get(p).getName());
@@ -127,7 +127,7 @@ public class MerdianScepterListener implements Listener {
                         " in water.");
                 return;
             }
-            if (this.cooldown.containsKey(p.getName()))
+            if (cooldown.containsKey(p.getName()))
                 return;
             if (Utils.is1_8()) {
                 p.playSound(p.getLocation(), Sound.valueOf("BLAZE_BREATH"), 1.0F, 0.0F);
@@ -135,7 +135,7 @@ public class MerdianScepterListener implements Listener {
                 p.playSound(p.getLocation(), Sound.valueOf("ENTITY_BLAZE_AMBIENT"), 1.0F, 0.0F);
             }
             MerdianScepterShot shot = new MerdianScepterShot(getClan(), p);
-            this.cooldown.put(p.getName(), System.currentTimeMillis());
+            cooldown.put(p.getName(), System.currentTimeMillis());
             shots.add(shot);
             shot.launch();
         }
@@ -233,9 +233,7 @@ public class MerdianScepterListener implements Listener {
                             return;
                         struckEnt.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 0));
                         LightningStrike lightningStrike = struckEnt.getWorld().strikeLightningEffect(location);
-                        if(lightningStrike.getLocation().equals(struckEnt.getLocation())) {
-                            struckEnt.damage(this.damage, (Entity) struckEnt);
-                        }
+                        struckEnt.damage(this.damage, (Entity) struckEnt);
                     },60L);
                 }
             }
