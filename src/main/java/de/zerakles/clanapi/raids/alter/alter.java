@@ -38,7 +38,7 @@ public class alter implements Listener {
                 if(event.getClickedBlock().getType() == Material.PRISMARINE) {
 
                     player.sendMessage(ChatColor.BLUE + "Guardian Of The Sea Messenger> " + ChatColor.YELLOW + "You have summoned the Guardian Of The Sea \n" + ChatColor.GRAY + "Be wise on the decisions you make further on.");
-                    final org.bukkit.Location location = new Location(Bukkit.getWorld("world"), 10, 10, 10);
+                    final org.bukkit.Location location = new Location(Bukkit.getWorld("world"), 32, 76, -182);
                     player.teleport(location);
                 }
             }
