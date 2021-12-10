@@ -12,10 +12,7 @@ import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.MovingObjectPosition;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -95,17 +92,17 @@ public class MerdianScepterListener implements Listener {
                     Player p = Bukkit.getServer().getPlayer(s);
                     if ((System.currentTimeMillis() - cooldown.get(s) / 1000L > 1L)) {
                         cooldown.remove(s);
-                       /* p.sendMessage(getData().prefix + ChatColor.GRAY +
-                                "You can use " + ChatColor.GREEN + Scepter.get(p).getName());*/
+                        p.sendMessage(getData().prefix + ChatColor.GRAY +
+                                "You can use " + ChatColor.GREEN + Scepter.get(p).getName());
                         if (isCorrectItem(Utils.getItemInHand(p),p))
-                           // Display.display(ChatColor.GREEN + Scepter.get(p).getName() + " Recharged", p);
+                           Display.display(ChatColor.GREEN + Scepter.get(p).getName() + " Recharged", p);
                         continue;
                     }
                     if (isCorrectItem(Utils.getItemInHand(p),p)) {
                         Double x = 2.0D - Math.pow(10.0D, -1.0D) * ((System.currentTimeMillis() - cooldown.get(p.getName())) / 100L);
                         double divide = (System.currentTimeMillis() - cooldown.get(s)) / 2000.0D;
                         String[] zz = x.toString().replace('.', '-').split("-");
-                        String concat = String.valueOf(zz[0]) + "." + zz[1].charAt(0);
+                        String concat = zz[0] + "." + zz[1].charAt(0);
                         Display.displayProgress(Scepter.get(p).getName(), divide,
                                 ChatColor.WHITE + " " + concat + " Seconds", false, p);
                     }
@@ -189,6 +186,7 @@ public class MerdianScepterListener implements Listener {
                 for (MerdianScepterShot shot : shots) {
                     if (shot.getArrow() == arrow) {
                         arrow.teleport(new Location(arrow.getWorld(), 0.0D, -10.0D, 0.0D));
+                        arrow.setKnockbackStrength(0);
                         shot.delete();
                     }
                 }
@@ -207,6 +205,7 @@ public class MerdianScepterListener implements Listener {
                         e.setCancelled(true);
                         continue;
                     }
+                    arrow.setKnockbackStrength(0);
                     arrow.teleport(new Location(arrow.getWorld(), 0.0D, -10.0D, 0.0D));
                     if (struckEnt instanceof Player) {
                         Player struck = (Player)struckEnt;
@@ -228,12 +227,15 @@ public class MerdianScepterListener implements Listener {
                     e.setCancelled(true);
                     Player p = shot.getShooter();
                     shot.delete();
+                    Location location = struckEnt.getLocation();
                     Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(getClan(), () -> {
                         if (struckEnt.isDead())
                             return;
                         struckEnt.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 0));
-                        struckEnt.getWorld().strikeLightningEffect(struckEnt.getLocation());
-                        struckEnt.damage(this.damage, (Entity)struckEnt);
+                        LightningStrike lightningStrike = struckEnt.getWorld().strikeLightningEffect(location);
+                        if(lightningStrike.getLocation().equals(struckEnt.getLocation())) {
+                            struckEnt.damage(this.damage, (Entity) struckEnt);
+                        }
                     },60L);
                 }
             }
