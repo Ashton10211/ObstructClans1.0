@@ -11,6 +11,7 @@ import de.zerakles.clanapi.legendaries.meridianscepter.MerdianScepterListener;
 import de.zerakles.clanapi.legendaries.runedpickaxe.RunedPickaxeListener;
 import de.zerakles.clanapi.legendaries.sxytheofthefallenlord.ScytheOfTheFallenLordListener;
 import de.zerakles.clanapi.legendaries.windblade.WindBladeListener;
+import de.zerakles.clanapi.raids.Maze.Maze;
 import de.zerakles.clanapi.raids.alter.alter;
 import de.zerakles.cmds.*;
 import de.zerakles.config.Config;
@@ -134,6 +135,8 @@ public class Clan extends JavaPlugin {
         pm.registerEvents(new TravelLIstener(), getClan());
         pm.registerEvents(new SoupListener(), getClan());
         pm.registerEvents(new alter(), getClan());
+        pm.registerEvents(new Maze(), getClan());
+
 
         pm.registerEvents(alligatorsToothListener, getClan());
         pm.registerEvents(giantbroadswordListener, getClan());
