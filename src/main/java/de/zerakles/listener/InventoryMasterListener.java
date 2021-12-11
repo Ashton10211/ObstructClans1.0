@@ -243,7 +243,7 @@ public class InventoryMasterListener implements Listener {
                 return;
             }
             if(!getClanApi().getTitle(player.getUniqueId().toString()).equalsIgnoreCase(Titles.LEADER.toString()) ||
-                    getClanApi().getTitle(player.getUniqueId().toString()).equalsIgnoreCase(Titles.COLEADER.toString())){
+                    getClanApi().getTitle(player.getUniqueId().toString()).equalsIgnoreCase(Titles.ADMIN.toString())){
                 player.sendMessage(getData().prefix + getData().noPerms);
                 return;
             }
@@ -252,21 +252,21 @@ public class InventoryMasterListener implements Listener {
                 return;
             }
             String currentTitle = getClanApi().getTitle(target.getUniqueId().toString());
-            if(currentTitle.equalsIgnoreCase(Titles.VIP.toString())){
-                getClanApi().updateTitle(target.getUniqueId().toString(), Titles.MEMBER.toString());
+            if(currentTitle.equalsIgnoreCase(Titles.MEMBER.toString())){
+                getClanApi().updateTitle(target.getUniqueId().toString(), Titles.RECRUIT.toString());
                 player.sendMessage(getData().prefix + getData().demoted.replaceAll("%player%",
-                        target.getName()).replaceAll("%title%", Titles.MEMBER.toString()));
+                        target.getName()).replaceAll("%title%", Titles.RECRUIT.toString()));
                 target.sendMessage(getData().prefix + getData().gotDemoted.replaceAll("%title%",
-                        Titles.MEMBER.toString()));
+                        Titles.RECRUIT.toString()));
                 return;
             }
-            if(currentTitle.equalsIgnoreCase(Titles.COLEADER.toString())
+            if(currentTitle.equalsIgnoreCase(Titles.ADMIN.toString())
                     && getClanApi().getTitle(player.getUniqueId().toString())
                     .equalsIgnoreCase(Titles.LEADER.toString())){
-                getClanApi().updateTitle(target.getUniqueId().toString(), Titles.VIP.toString());
+                getClanApi().updateTitle(target.getUniqueId().toString(), Titles.MEMBER.toString());
                 getClanApi().updateClanOwner(getClanApi().getClan(player.getUniqueId().toString()), target.getUniqueId().toString());
-                player.sendMessage(getData().demoted.replaceAll("%player%", target.getName()).replaceAll("%title%", Titles.VIP.toString()));
-                target.sendMessage(getData().gotDemoted.replaceAll("%title%", Titles.VIP.toString()));
+                player.sendMessage(getData().demoted.replaceAll("%player%", target.getName()).replaceAll("%title%", Titles.MEMBER.toString()));
+                target.sendMessage(getData().gotDemoted.replaceAll("%title%", Titles.MEMBER.toString()));
                 return;
             }
             player.sendMessage(getData().prefix + getData().noPerms);
@@ -289,7 +289,7 @@ public class InventoryMasterListener implements Listener {
                 return;
             }
             if(!getClanApi().getTitle(player.getUniqueId().toString()).equalsIgnoreCase(Titles.LEADER.toString()) ||
-                    getClanApi().getTitle(player.getUniqueId().toString()).equalsIgnoreCase(Titles.COLEADER.toString())){
+                    getClanApi().getTitle(player.getUniqueId().toString()).equalsIgnoreCase(Titles.ADMIN.toString())){
                 player.sendMessage(getData().prefix + getData().noPerms);
                 return;
             }
@@ -298,29 +298,29 @@ public class InventoryMasterListener implements Listener {
                 return;
             }
             String currentTitle = getClanApi().getTitle(target.getUniqueId().toString());
+            if(currentTitle.equalsIgnoreCase(Titles.RECRUIT.toString())){
+                getClanApi().updateTitle(target.getUniqueId().toString(), Titles.MEMBER.toString());
+                player.sendMessage(getData().prefix + getData().promoted.replaceAll("%player%",
+                        target.getName()).replaceAll("%title%", Titles.MEMBER.toString()));
+                target.sendMessage(getData().prefix + getData().gotPromoted.replaceAll("%title%",
+                        Titles.MEMBER.toString()));
+                return;
+            }
             if(currentTitle.equalsIgnoreCase(Titles.MEMBER.toString())){
-                getClanApi().updateTitle(target.getUniqueId().toString(), Titles.VIP.toString());
+                getClanApi().updateTitle(target.getUniqueId().toString(), Titles.ADMIN.toString());
                 player.sendMessage(getData().prefix + getData().promoted.replaceAll("%player%",
-                        target.getName()).replaceAll("%title%", Titles.VIP.toString()));
+                        target.getName()).replaceAll("%title%", Titles.ADMIN.toString()));
                 target.sendMessage(getData().prefix + getData().gotPromoted.replaceAll("%title%",
-                        Titles.VIP.toString()));
+                        Titles.ADMIN.toString()));
                 return;
             }
-            if(currentTitle.equalsIgnoreCase(Titles.VIP.toString())){
-                getClanApi().updateTitle(target.getUniqueId().toString(), Titles.COLEADER.toString());
-                player.sendMessage(getData().prefix + getData().promoted.replaceAll("%player%",
-                        target.getName()).replaceAll("%title%", Titles.COLEADER.toString()));
-                target.sendMessage(getData().prefix + getData().gotPromoted.replaceAll("%title%",
-                        Titles.COLEADER.toString()));
-                return;
-            }
-            if(currentTitle.equalsIgnoreCase(Titles.COLEADER.toString())
+            if(currentTitle.equalsIgnoreCase(Titles.ADMIN.toString())
                     && getClanApi().getTitle(player.getUniqueId().toString())
                     .equalsIgnoreCase(Titles.LEADER.toString())){
-                getClanApi().updateTitle(player.getUniqueId().toString(), Titles.COLEADER.toString());
+                getClanApi().updateTitle(player.getUniqueId().toString(), Titles.ADMIN.toString());
                 getClanApi().updateTitle(target.getUniqueId().toString(), Titles.LEADER.toString());
                 getClanApi().updateClanOwner(getClanApi().getClan(player.getUniqueId().toString()), target.getUniqueId().toString());
-                player.sendMessage(getData().gotDemoted.replaceAll("%title%", Titles.COLEADER.toString()));
+                player.sendMessage(getData().gotDemoted.replaceAll("%title%", Titles.ADMIN.toString()));
                 target.sendMessage(getData().gotPromoted.replaceAll("%title%", Titles.LEADER.toString()));
                 return;
             }
@@ -355,7 +355,7 @@ public class InventoryMasterListener implements Listener {
             player.sendMessage(getData().prefix + getData().didntSendYouAnInvitation);
             return;
         }
-        getClanApi().createPlayer(player.getUniqueId().toString(), clanName, Titles.MEMBER.toString());
+        getClanApi().createPlayer(player.getUniqueId().toString(), clanName, Titles.RECRUIT.toString());
         player.sendMessage(getData().prefix + getData().youJoinedAClan.replaceAll("%clan%", clanName));
         for (Player player1:Bukkit.getOnlinePlayers()
         ) {
