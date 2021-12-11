@@ -23,7 +23,7 @@ public class ScoreboardMaster {
     public void sendScoreboard(Player player){
         Scoreboard board = new Scoreboard();
         ScoreboardObjective obj = board.registerObjective("clans", IScoreboardCriteria.b);
-        obj.setDisplayName("§6§lClans §e§lRe§6§lmake");
+        obj.setDisplayName("§6§lClans §e§lAlpha");
         PacketPlayOutScoreboardObjective removePacket = new PacketPlayOutScoreboardObjective(obj, 1);
         PacketPlayOutScoreboardObjective createPacket = new PacketPlayOutScoreboardObjective(obj, 0);
         PacketPlayOutScoreboardDisplayObjective displayObjective = new PacketPlayOutScoreboardDisplayObjective(1, obj);
@@ -31,7 +31,7 @@ public class ScoreboardMaster {
         ScoreboardScore s1 = new ScoreboardScore(board, obj, " ");
 
         ScoreboardScore s2 = new ScoreboardScore(board, obj, "§e§lClan");
-        String clan = "§7-";
+        String clan = "§7No Clan";
         if(getClanAPI().playerExists(player.getUniqueId().toString())){
             clan = "§b"+getClanAPI().getClan(player.getUniqueId().toString());
         }
