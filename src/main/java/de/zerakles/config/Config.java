@@ -149,7 +149,7 @@ public class Config {
         getData().addGold = "§aYou got §e%gold%g";
         getData().itemClaimed = "§aItem claimed!";
         getData().dontHaveEnoughGold = "§cYou dont have enought Gold!";
-        getData().chatFormat = "§6[§5%Clan§6]§e%player%§8:§7%message%";
+        getData().chatFormat = "§6[§5%Clan%§6]§e%player%§8:§7%message%";
         getData().playerDeath = "§e%player% §7died.";
         getData().playerKilledByPlayer = "§e%player% §7was slain by §e%killer%.";
         getData().chunkAlreadyClaimed = "§cThis Chunk is already claimed!";
