@@ -9,6 +9,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -745,6 +747,8 @@ public class ClanAPI {
         player.openInventory(inventory);
         return;
     }
+
+
 
     public void openQuestManager(Player player){
         Inventory inventory = Bukkit.createInventory(player, 9, "§8Quest Manager");
