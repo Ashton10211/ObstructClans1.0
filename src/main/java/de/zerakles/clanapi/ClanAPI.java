@@ -404,6 +404,27 @@ public class ClanAPI {
                 playerHead.setItemMeta(playerHeadItemMeta);
                 inventory.setItem(heads, playerHead);
                 heads++;
+                members.remove(all.getUniqueId().toString());
+                continue;
+            }
+        }
+
+        for (OfflinePlayer all:Bukkit.getOfflinePlayers()
+             ) {
+            if (members.containsKey(all.getUniqueId().toString())) {
+                ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (byte) 0);
+                ItemMeta skullMeta = skull.getItemMeta();
+                lore.clear();
+                lore.add(" ");
+                lore.add("§eTitle: " + members.get(all.getUniqueId().toString()));
+                lore.add("");
+                lore.add("§cOffline");
+                skullMeta.setDisplayName("§c" + all.getName());
+                skullMeta.setLore(lore);
+                skull.setItemMeta(skullMeta);
+                inventory.setItem(heads, skull);
+                heads++;
+                members.remove(all.getUniqueId().toString());
                 continue;
             }
         }
