@@ -15,12 +15,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class Maze implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerInteract(PlayerInteractEvent event) {
+    public void onPlayerInteract(PlayerInteractEvent event)throws NullPointerException {
         Player player = event.getPlayer();
         Location lever = event.getClickedBlock().getLocation();
         final Location lever1 = new Location(Bukkit.getWorld("world"), 35, 79, -180);
         final Location lever2 = new Location(Bukkit.getWorld("world"), 35, 79, -184);
-
 
         boolean level1 = false;
         boolean level2 = false;
