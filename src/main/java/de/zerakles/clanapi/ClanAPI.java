@@ -4,14 +4,13 @@ import de.zerakles.main.Clan;
 import de.zerakles.mysql.MySQL;
 import de.zerakles.utils.Data;
 import de.zerakles.utils.ZoneTypes;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -40,6 +39,8 @@ public class ClanAPI {
                 + " X VARCHAR(40), Z VARCHAR(40), world_name VARCHAR(40));");
         getMySQL().update("CREATE TABLE IF NOT EXISTS gold(uuid VARCHAR(40),"
                 + " gold VARCHAR(40));");
+        getMySQL().update("CREATE TABLE IF NOT EXISTS dailyquest(uuid VARCHAR(40),"
+                + " dailyquest VARCHAR(40));");
         getMySQL().update("CREATE TABLE IF NOT EXISTS home(uuid VARCHAR(40),worldName VARCHAR(40), X VARCHAR(40), Y VARCHAR(40)"
                 + ", Z VARCHAR(40), Yaw VARCHAR(40), Pitch VARCHAR(40));");
     }
@@ -170,6 +171,11 @@ public class ClanAPI {
         return;
     }
 
+
+
+
+
+
     public int getGold(Player player) {
         ResultSet resultSet = getMySQL().getResult("SELECT * FROM gold WHERE uuid='"
                 + player.getUniqueId().toString() + "';");
@@ -211,6 +217,52 @@ public class ClanAPI {
         return;
     }
 
+    //////
+
+    public int getDailyQuest(Player player) {
+        ResultSet resultSet = getMySQL().getResult("SELECT * FROM dailyquest WHERE uuid='"
+                + player.getUniqueId().toString() + "';");
+
+        try {
+            if (resultSet.next()) {
+                return resultSet.getInt("dailyquest");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public void insertDailyQuest(Player player, int dailyquest) {
+        getMySQL().update("INSERT INTO dailyquest(uuid, dailyquest) VALUES ('"
+                + player.getUniqueId().toString() + "','" + dailyquest + "');");
+        return;
+    }
+
+    public boolean hasDailyQuest(Player player) {
+        ResultSet resultSet = getMySQL().getResult("SELECT * FROM dailyquest WHERE uuid='"
+                + player.getUniqueId().toString() + "';");
+
+        try {
+            if (resultSet.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public void updateDailyQuest(Player player, int dailyquest) {
+        getMySQL().update("UPDATE dailyconquest SET dailyquest='" + dailyquest
+                + "' WHERE uuid='" + player.getUniqueId().toString() + "';");
+        return;
+    }
+
+
+
+
     HashMap<Player, Integer>hasP = new HashMap<>();
     public void startVillagerChecker(){
         Bukkit.getScheduler().scheduleAsyncRepeatingTask(Clan.getClan(), new Runnable() {
@@ -246,6 +298,9 @@ public class ClanAPI {
                 }
                 if(getData().organicBoy != null){
                     getData().organicBoy.teleport(getData().OrganicProduce);
+                }
+                if(getData().questBoy != null){
+                    getData().questBoy.teleport(getData().QuestManager);
                 }
                 if(getData().miningBoy != null){
                     getData().miningBoy.teleport(getData().MiningShop);
@@ -668,7 +723,7 @@ public class ClanAPI {
         lore.add(" ");
         lore.add("§fYour gold: §e" + getGold(player) + "g");
         String displayName;
-        if(getGold(player)<5000){
+        if(getGold(player)<50000){
             lore.add("§fYou don't have enough gold");
             lore.add("§fYou need §e50000§f gold to purchase a token");
             displayName = "§c§lMissing Gold!";
@@ -692,6 +747,36 @@ public class ClanAPI {
         player.openInventory(inventory);
         return;
     }
+
+
+
+    public void openQuestManager(Player player){
+        Inventory inventory = Bukkit.createInventory(player, 9, "§8Quest Manager");
+        ArrayList<String> lore = new ArrayList<>();
+        String DisplayQuestName;
+        if(getDailyQuest(player)<5){
+            lore.add(" ");
+            lore.add("§CBackstabber Quest");
+            lore.add("§fKill 5 players with backstab §e " + getDailyQuest(player) + " kills");
+            lore.add("§fReward: §e1000 gems ");
+            DisplayQuestName = "§6§lDaily Quests";
+            inventory.setItem(4, getItemStack(Material.EMERALD, lore, DisplayQuestName));
+
+        } else {
+            lore.add(" ");
+            lore.add("§CBackstabber Quest");
+            lore.add("§fYou have completed this daily quest. Come back tomorrow for another quest to complete");
+            player.sendMessage(ChatColor.BLUE + "Queue Manager> " + ChatColor.YELLOW + "You have completed the Backstabber conquest. You've been rewarded with 1000 gems.");
+            DisplayQuestName = "§6§lDaily Quests";
+            inventory.setItem(4, getItemStack(Material.REDSTONE_BLOCK, lore, DisplayQuestName));
+
+        }
+
+        player.openInventory(inventory);
+        return;
+    }
+
+
 
     public  void openBuildingMaterials(Player player){
         Inventory inventory = Bukkit.createInventory(player, 54, "§8Building Supplies");
@@ -892,6 +977,8 @@ public class ClanAPI {
         player.openInventory(inventory);
         return;
     }
+
+
 
     public void openOrganicProduce(Player player){
         Inventory inventory = Bukkit.createInventory(player, 18, "§8Organic Produce");

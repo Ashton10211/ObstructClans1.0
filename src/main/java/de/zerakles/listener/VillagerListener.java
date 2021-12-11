@@ -87,6 +87,18 @@ public class VillagerListener implements Listener {
                     },1);
                     return;
                 }
+                if(villager.getCustomName().equalsIgnoreCase("§4§lQuest Manager")){
+                    entityInteractEvent.setCancelled(true);
+
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(getClan(), new Runnable() {
+                        @Override
+                        public void run() {
+                            player.closeInventory();
+                            getClanAPI().openQuestManager(player);
+                        }
+                    },1);
+                    return;
+                }
                 if(villager.getCustomName().equalsIgnoreCase("§b§lTravel")){
                     entityInteractEvent.setCancelled(true);
                     Bukkit.getScheduler().scheduleSyncDelayedTask(getClan(), new Runnable() {
