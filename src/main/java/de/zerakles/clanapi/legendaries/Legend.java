@@ -19,14 +19,25 @@ public class Legend {
 
     private UUID uuid;
 
+    private String original;
+
     public Legend(String name, ArrayList<String>lore,
-                  ItemStack itemStack, short durability, int damage, UUID uuid){
-        durability = durability;
+                  ItemStack itemStack, short durability, int damage, UUID uuid, String original){
+        this.durability = durability;
         this.name = name;
         this.lore = lore;
         this.itemStack = itemStack;
         this.damage = damage;
         this.uuid = uuid;
+        this.original = original;
+    }
+
+    public void setOriginal(String original) {
+        this.original = original;
+    }
+
+    public String getOriginal() {
+        return original;
     }
 
     public void setUuid(UUID uuid) {

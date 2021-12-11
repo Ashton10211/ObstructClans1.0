@@ -101,6 +101,7 @@ public class Clan extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        legiLoader.saveLegendary();
         if(data.suppliesBoy == null){
             return;
         }

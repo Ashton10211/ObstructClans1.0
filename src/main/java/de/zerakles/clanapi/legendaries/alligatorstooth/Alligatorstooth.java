@@ -37,7 +37,7 @@ public class Alligatorstooth {
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
         int dmg = 7;
-        legend = new Legend(displayName, lore, itemStack, (short) 0, dmg, uuid);
+        legend = new Legend(displayName, lore, itemStack, (short) 0, dmg, uuid, player.getName());
         Clan.getClan().alligatorsToothListener.AlligatorThooths.put(player, legend);
     }
 }

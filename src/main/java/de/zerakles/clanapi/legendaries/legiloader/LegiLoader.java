@@ -12,9 +12,13 @@ import de.zerakles.clanapi.legendaries.sxytheofthefallenlord.ScytheOfTheFallenLo
 import de.zerakles.clanapi.legendaries.windblade.WindBladeListener;
 import de.zerakles.main.Clan;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -71,6 +75,50 @@ public class LegiLoader implements Listener {
         saveRu();
         saveSc();
         saveWi();
+
+        legiToFile(AlligatorsTooths, AlligatorsToothsS, "Alligator");
+        legiToFile(GiantBroadSwords, GiantBroadSwordsS, "Giant");
+        legiToFile(HyperAxes, HyperAxesS, "Hyper");
+        legiToFile(Lances, LancesS, "Lance");
+        legiToFile(MagneticMauls, MagneticMaulsS, "Magnetic");
+        legiToFile(MeridianScepters, MeridianSceptersS, "Meridian");
+        legiToFile(RunedPickAxes, RunedPickAxesS, "Runed");
+        legiToFile(Scyth, ScythS, "Scyth");
+        legiToFile(WindBlade, WindBladeS, "Windblade");
+
+        sendSuccess("All saved!");
+        return;
+    }
+
+    private void legiToFile(HashMap<Legend,Player>legiHashMap,HashMap<Legend, String> legiStringHashmap, String string) {
+        File file = new File(Clan.getClan().getDataFolder() + "/legis/" + string + ".yml" );
+        FileConfiguration fileConfiguration = YamlConfiguration.loadConfiguration(file);
+
+        int i = 0;
+        for (Legend legend: legiHashMap.keySet()
+             ) {
+            fileConfiguration.set("legend." + i + ".original", legend.getOriginal());
+            fileConfiguration.set("legend." + i +".owner.name", legiHashMap.get(legend).getName());
+            fileConfiguration.set("legend." + i +".owner.uuid", legiHashMap.get(legend).getUniqueId().toString());
+            i++;
+            continue;
+        }
+
+        i = 0;
+        for (Legend legend: legiStringHashmap.keySet()
+        ) {
+            fileConfiguration.set("slegend." + i + ".original", legend.getOriginal());
+            fileConfiguration.set("slegend." + i +".owner.uuid", legiHashMap.get(legend).getUniqueId().toString());
+            i++;
+            continue;
+        }
+        try {
+            fileConfiguration.save(file);
+            sendSuccess(file.getAbsolutePath() + " saved!");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return;
     }
 
     private void saveA() {

@@ -38,7 +38,7 @@ public class MerdianScepter {
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
         int dmg = 3;
-        legend = new Legend(displayName, lore, itemStack, (short) 0, dmg, uuid);
+        legend = new Legend(displayName, lore, itemStack, (short) 0, dmg, uuid, player.getName());
         Clan.getClan().meridianscepter.Scepter.put(player, legend);
     }
 }
