@@ -4,10 +4,7 @@ import de.zerakles.main.Clan;
 import de.zerakles.mysql.MySQL;
 import de.zerakles.utils.Data;
 import de.zerakles.utils.ZoneTypes;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -752,10 +749,24 @@ public class ClanAPI {
     public void openQuestManager(Player player){
         Inventory inventory = Bukkit.createInventory(player, 9, "§8Quest Manager");
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(" ");
-        lore.add("§fKill 5 players with backstab §e " + getDailyQuest(player) + " kills");
-        lore.add("§fReward: §e1000 gems ");
-        inventory.setItem(4, getItemStack(Material.EMERALD, lore, "§6§lDaily Quests"));
+        String DisplayQuestName;
+        if(getDailyQuest(player)<5){
+            lore.add(" ");
+            lore.add("§CBackstabber Quest");
+            lore.add("§fKill 5 players with backstab §e " + getDailyQuest(player) + " kills");
+            lore.add("§fReward: §e1000 gems ");
+            DisplayQuestName = "§6§lDaily Quests";
+            inventory.setItem(4, getItemStack(Material.EMERALD, lore, DisplayQuestName));
+
+        } else {
+            lore.add(" ");
+            lore.add("§CBackstabber Quest");
+            lore.add("§fYou have completed this daily quest. Come back tomorrow for another quest to complete");
+            player.sendMessage(ChatColor.BLUE + "Queue Manager> " + ChatColor.YELLOW + "You have completed the Backstabber conquest. You've been rewarded with 1000 gems.");
+            DisplayQuestName = "§6§lDaily Quests";
+            inventory.setItem(4, getItemStack(Material.REDSTONE_BLOCK, lore, DisplayQuestName));
+
+        }
 
         player.openInventory(inventory);
         return;

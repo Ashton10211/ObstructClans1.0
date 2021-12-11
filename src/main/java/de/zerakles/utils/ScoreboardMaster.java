@@ -45,6 +45,7 @@ public class ScoreboardMaster {
         } else {
             gold = 0;
             getClanAPI().insertGold(player, 0);
+            getClanAPI().insertDailyQuest(player, 0);
         }
         ScoreboardScore s6 = new ScoreboardScore(board, obj, "§e"+gold);
         ScoreboardScore s7 = new ScoreboardScore(board, obj, "   ");

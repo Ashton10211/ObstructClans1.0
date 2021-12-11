@@ -217,6 +217,7 @@ public class MerdianScepterListener implements Listener {
                                 ChatColor.YELLOW + shot.getShooter().getName() + ChatColor.GRAY +
                                 " hit you with a " + ChatColor.YELLOW + Scepter.get(struck).getName() + ChatColor.GRAY +
                                 ".");
+                        struck.setHealth(struck.getHealth() - 3);
                     } else {
                         String string = struckEnt.getType().toString().toLowerCase().replace("_", " ");
                         shot.getShooter().sendMessage(ChatColor.BLUE + "Clans> " +
@@ -233,7 +234,6 @@ public class MerdianScepterListener implements Listener {
                             return;
                         struckEnt.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 0));
                         LightningStrike lightningStrike = struckEnt.getWorld().strikeLightningEffect(struckEnt.getLocation());
-                        struckEnt.damage(this.damage, (Entity) struckEnt);
                     },60L);
                 }
             }
