@@ -33,6 +33,6 @@ public class RunedPickaxe {
         itemStack.setItemMeta(itemMeta);
         int dmg = 3;
         legend = new Legend(displayName, lore, itemStack, (short) 0, dmg, uuid, player.getName());
-        Clan.getClan().runedPickaxe.RunedPickaxes.put(player, legend);
+        Clan.getClan().runedPickaxe.RunedPickaxes.put(legend, player);
     }
 }

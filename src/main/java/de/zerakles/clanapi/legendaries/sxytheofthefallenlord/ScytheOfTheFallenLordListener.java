@@ -26,7 +26,40 @@ public class ScytheOfTheFallenLordListener implements Listener {
         return getClan().data;
     }
 
-    public HashMap<Player, Legend> ScytheOfs = new HashMap<>();
+    public HashMap<Legend, Player> ScytheOfs = new HashMap<>();
+
+    public int getDamage(){
+        if(ScytheOfs.size() > 0){
+            for (Legend legend:ScytheOfs.keySet()
+            ) {
+                return legend.getDamage();
+            }
+        }
+        return 0;
+    }
+
+    public boolean checkItemInHand(ItemStack itemStack, Player player){
+        for (Legend legend: ScytheOfs.keySet()
+        ) {
+            if(itemStack.getItemMeta().getLore().contains("§8" + legend.getUuid())){
+                return true;
+            }
+            continue;
+        }
+        return false;
+    }
+
+    public  boolean haveLegendary(Player player){
+        for (Legend legend: ScytheOfs.keySet()
+        ) {
+            if(ScytheOfs.get(legend).getUniqueId().toString()
+                    .equals(player.getUniqueId().toString())){
+                return true;
+            }
+            continue;
+        }
+        return false;
+    }
 
     public ScytheOfTheFallenLordListener(){
         loop();
@@ -35,11 +68,11 @@ public class ScytheOfTheFallenLordListener implements Listener {
     public void loop(){}
 
     private boolean isCorrectItem(ItemStack item, Player p) {
-        if(ScytheOfs.containsKey(p)){
+        if(haveLegendary(p)){
             if(!item.hasItemMeta()){
                 return false;
             }
-            if(item.getItemMeta().equals(ScytheOfs.get(p).getItemStack().getItemMeta())){
+            if(checkItemInHand(item, p)){
                 return true;
             }
             return false;
@@ -53,7 +86,7 @@ public class ScytheOfTheFallenLordListener implements Listener {
             Player p = (Player)e.getDamager();
             ItemStack item = Utils.getItemInHand(p);
             if (isCorrectItem(item,p)) {
-                e.setDamage(ScytheOfs.get(p).getDamage());
+                e.setDamage(getDamage());
                 p.setHealth(Math.min(20.0D, p.getHealth() + 2.0D));
             }
         }

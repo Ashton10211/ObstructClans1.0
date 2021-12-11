@@ -36,6 +36,6 @@ public class MagneticMaul {
         itemStack.setItemMeta(itemMeta);
         int dmg = 8;
         legend = new Legend(displayName, lore, itemStack, (short) 0, dmg, uuid,player.getName());
-        Clan.getClan().magneticMaul.MagneticMauls.put(player, legend);
+        Clan.getClan().magneticMaul.MagneticMauls.put(legend, player);
     }
 }

@@ -48,7 +48,40 @@ public class MerdianScepterListener implements Listener {
         return getClan().data;
     }
 
-    public HashMap<Player, Legend> Scepter = new HashMap<>();
+    public HashMap<Legend, Player> Scepter = new HashMap<>();
+
+    public int getDamage(){
+        if(Scepter.size() > 0){
+            for (Legend legend:Scepter.keySet()
+            ) {
+                return legend.getDamage();
+            }
+        }
+        return 0;
+    }
+
+    public boolean checkItemInHand(ItemStack itemStack, Player player){
+        for (Legend legend: Scepter.keySet()
+        ) {
+            if(itemStack.getItemMeta().getLore().contains("§8" + legend.getUuid())){
+                return true;
+            }
+            continue;
+        }
+        return false;
+    }
+
+    public  boolean haveLegendary(Player player){
+        for (Legend legend: Scepter.keySet()
+        ) {
+            if(Scepter.get(legend).getUniqueId().toString()
+                    .equals(player.getUniqueId().toString())){
+                return true;
+            }
+            continue;
+        }
+        return false;
+    }
 
     public MerdianScepterListener(){
         loop();
@@ -59,11 +92,11 @@ public class MerdianScepterListener implements Listener {
     }
 
     private boolean isCorrectItem(ItemStack item, Player p) {
-        if(Scepter.containsKey(p)){
+        if(haveLegendary(p)){
             if(!item.hasItemMeta()){
                 return false;
             }
-            if(item.getItemMeta().equals(Scepter.get(p).getItemStack().getItemMeta())){
+            if(checkItemInHand(item, p)){
                 return true;
             }
             return false;

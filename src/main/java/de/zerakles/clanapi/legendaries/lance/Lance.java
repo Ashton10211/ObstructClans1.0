@@ -36,6 +36,6 @@ public class Lance {
         itemStack.setItemMeta(itemMeta);
         int dmg = 7;
         legend = new Legend(displayName, lore, itemStack, (short) 0, dmg, uuid, player.getName());
-        Clan.getClan().lanceListener.Lances.put(player, legend);
+        Clan.getClan().lanceListener.Lances.put(legend, player);
     }
 }

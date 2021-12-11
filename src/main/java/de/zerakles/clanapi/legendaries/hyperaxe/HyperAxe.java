@@ -39,6 +39,6 @@ public class HyperAxe {
         itemStack.setItemMeta(itemMeta);
         int dmg = 6;
         legend = new Legend(displayName, lore, itemStack, (short) 0, dmg, uuid, player.getName());
-        Clan.getClan().hyperAxeListener.HyperAxes.put(player, legend);
+        Clan.getClan().hyperAxeListener.HyperAxes.put(legend, player);
     }
 }

@@ -38,7 +38,39 @@ public class WindBladeListener implements Listener {
         return getClan().data;
     }
 
-    public HashMap<Player, Legend> WindBlades = new HashMap<>();
+    public HashMap<Legend, Player> WindBlades = new HashMap<>();
+    public int getDamage(){
+        if(WindBlades.size() > 0){
+            for (Legend legend:WindBlades.keySet()
+            ) {
+                return legend.getDamage();
+            }
+        }
+        return 0;
+    }
+
+    public boolean checkItemInHand(ItemStack itemStack, Player player){
+        for (Legend legend: WindBlades.keySet()
+        ) {
+            if(itemStack.getItemMeta().getLore().contains("§8" + legend.getUuid())){
+                return true;
+            }
+            continue;
+        }
+        return false;
+    }
+
+    public  boolean haveLegendary(Player player){
+        for (Legend legend: WindBlades.keySet()
+        ) {
+            if(WindBlades.get(legend).getUniqueId().toString()
+                    .equals(player.getUniqueId().toString())){
+                return true;
+            }
+            continue;
+        }
+        return false;
+    }
 
     public WindBladeListener(){
         loop();
@@ -62,11 +94,11 @@ public class WindBladeListener implements Listener {
     }
 
     private boolean isCorrectItem(ItemStack item, Player p) {
-        if(WindBlades.containsKey(p)){
+        if(haveLegendary(p)){
             if(!item.hasItemMeta()){
                 return false;
             }
-            if(item.getItemMeta().equals(WindBlades.get(p).getItemStack().getItemMeta())){
+            if(checkItemInHand(item, p)){
                 return true;
             }
             return false;
@@ -100,7 +132,7 @@ public class WindBladeListener implements Listener {
             Player p = (Player)e.getDamager();
             ItemStack item = Utils.getItemInHand(p);
             if (isCorrectItem(item,p))
-                e.setDamage(WindBlades.get(p).getDamage());
+                e.setDamage(getDamage());
         }
     }
 
@@ -319,7 +351,7 @@ public class WindBladeListener implements Listener {
                     groundCounts.remove(p.getName());
                 return;
             }
-            if (!p.getInventory().contains(WindBlades.get(p).getItemStack()) &&
+            if (!haveLegendary(p) &&
                     groundCounts.containsKey(p.getName()))
                 groundCounts.remove(p.getName());
         }

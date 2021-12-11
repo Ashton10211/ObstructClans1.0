@@ -37,7 +37,40 @@ public class HyperAxeListener implements Listener {
         return getClan().data;
     }
 
-    public HashMap<Player, Legend> HyperAxes = new HashMap<>();
+    public HashMap<Legend, Player> HyperAxes = new HashMap<>();
+
+    public int getDamage(){
+        if(HyperAxes.size() > 0){
+            for (Legend legend:HyperAxes.keySet()
+            ) {
+                return legend.getDamage();
+            }
+        }
+        return 0;
+    }
+
+    public boolean checkItemInHand(ItemStack itemStack, Player player){
+        for (Legend legend: HyperAxes.keySet()
+        ) {
+            if(itemStack.getItemMeta().getLore().contains("§8" + legend.getUuid())){
+                return true;
+            }
+            continue;
+        }
+        return false;
+    }
+
+    public  boolean haveLegendary(Player player){
+        for (Legend legend: HyperAxes.keySet()
+        ) {
+            if(HyperAxes.get(legend).getUniqueId().toString()
+                    .equals(player.getUniqueId().toString())){
+                return true;
+            }
+            continue;
+        }
+        return false;
+    }
 
     public HyperAxeListener(){
         loop();
@@ -126,7 +159,7 @@ public class HyperAxeListener implements Listener {
                     entLiv.setVelocity(new Vector(0.0D, 0.12D, 0.0D));
                     toRemove.put(entLiv, 7);
                 }
-                e.setDamage(HyperAxes.get(p).getDamage());
+                e.setDamage(getDamage());
             } else if (e.getEntity() instanceof LivingEntity) {
                 LivingEntity entLiv = (LivingEntity)e.getEntity();
                 if (toRemove.containsKey((LivingEntity) e.getEntity())) {
@@ -186,18 +219,17 @@ public class HyperAxeListener implements Listener {
     public void onDeath(EntityDeathEvent e) {
         LivingEntity livingEntity = e.getEntity();
         if (toRemove.containsKey(livingEntity)) {
-            if (livingEntity instanceof LivingEntity)
-                livingEntity.setMaximumNoDamageTicks(20);
+            livingEntity.setMaximumNoDamageTicks(20);
             toRemove.remove(livingEntity);
         }
     }
 
     private boolean isCorrectItem(ItemStack item, Player p) {
-        if(HyperAxes.containsKey(p)){
+        if(haveLegendary(p)){
             if(!item.hasItemMeta()){
                 return false;
             }
-            if(item.getItemMeta().equals(HyperAxes.get(p).getItemStack().getItemMeta())){
+            if(checkItemInHand(item, p)){
                 return true;
             }
             return false;

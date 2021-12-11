@@ -19,6 +19,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -38,7 +39,39 @@ public class RunedPickaxeListener implements Listener {
         return getClan().data;
     }
 
-    public HashMap<Player, Legend> RunedPickaxes = new HashMap<>();
+    public HashMap<Legend, Player> RunedPickaxes = new HashMap<>();
+    public int getDamage(){
+        if(RunedPickaxes.size() > 0){
+            for (Legend legend:RunedPickaxes.keySet()
+            ) {
+                return legend.getDamage();
+            }
+        }
+        return 0;
+    }
+
+    public boolean checkItemInHand(ItemStack itemStack, Player player){
+        for (Legend legend: RunedPickaxes.keySet()
+        ) {
+            if(itemStack.getItemMeta().getLore().contains("§8" + legend.getUuid())){
+                return true;
+            }
+            continue;
+        }
+        return false;
+    }
+
+    public  boolean haveLegendary(Player player){
+        for (Legend legend: RunedPickaxes.keySet()
+        ) {
+            if(RunedPickaxes.get(legend).getUniqueId().toString()
+                    .equals(player.getUniqueId().toString())){
+                return true;
+            }
+            continue;
+        }
+        return false;
+    }
 
     public RunedPickaxeListener(){
         loop();
@@ -260,14 +293,26 @@ public class RunedPickaxeListener implements Listener {
        },0,1);
     }
 
+    @EventHandler
+    public void onDamage(EntityDamageByEntityEvent entityDamageByEntityEvent){
+        if(!(entityDamageByEntityEvent.getDamager() instanceof  Player)){
+            return;
+        }
+        if(haveLegendary((Player) entityDamageByEntityEvent.getDamager())){
+            if(checkItemInHand(((Player) entityDamageByEntityEvent.getDamager()).getItemInHand(), (Player) entityDamageByEntityEvent.getDamager())){
+                entityDamageByEntityEvent.setDamage(getDamage());
+            }
+        }
+    }
+
 
 
     private boolean isCorrectItem(ItemStack item, Player p) {
-        if(RunedPickaxes.containsKey(p)){
+        if(haveLegendary(p)){
             if(!item.hasItemMeta()){
                 return false;
             }
-            if(item.getItemMeta().equals(RunedPickaxes.get(p).getItemStack().getItemMeta())){
+            if(checkItemInHand(item, p)){
                 return true;
             }
             return false;

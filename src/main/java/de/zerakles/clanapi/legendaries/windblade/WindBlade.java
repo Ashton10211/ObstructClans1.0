@@ -37,6 +37,6 @@ public class WindBlade {
         itemStack.setItemMeta(itemMeta);
         int dmg = 7;
         legend = new Legend(displayName, lore, itemStack, (short) 0, dmg, uuid, player.getName());
-        Clan.getClan().windBladeListener.WindBlades.put(player, legend);
+        Clan.getClan().windBladeListener.WindBlades.put(legend, player);
     }
 }

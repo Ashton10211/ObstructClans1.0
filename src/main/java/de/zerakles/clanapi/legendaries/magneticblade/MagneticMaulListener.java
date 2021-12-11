@@ -41,7 +41,40 @@ public class MagneticMaulListener implements Listener {
 
     private HashMap<String, Float> smoother = new HashMap<>();
 
-    public HashMap<Player, Legend> MagneticMauls = new HashMap<>();
+    public HashMap<Legend, Player> MagneticMauls = new HashMap<>();
+
+    public int getDamage(){
+        if(MagneticMauls.size() > 0){
+            for (Legend legend:MagneticMauls.keySet()
+            ) {
+                return legend.getDamage();
+            }
+        }
+        return 0;
+    }
+
+    public boolean checkItemInHand(ItemStack itemStack, Player player){
+        for (Legend legend: MagneticMauls.keySet()
+        ) {
+            if(itemStack.getItemMeta().getLore().contains("§8" + legend.getUuid())){
+                return true;
+            }
+            continue;
+        }
+        return false;
+    }
+
+    public  boolean haveLegendary(Player player){
+        for (Legend legend: MagneticMauls.keySet()
+        ) {
+            if(MagneticMauls.get(legend).getUniqueId().toString()
+                    .equals(player.getUniqueId().toString())){
+                return true;
+            }
+            continue;
+        }
+        return false;
+    }
 
     public MagneticMaulListener(){
         loop();
@@ -53,10 +86,10 @@ public class MagneticMaulListener implements Listener {
             public void run() {
                 for (Player p : Bukkit.getServer().getOnlinePlayers()) {
                     ItemStack item = Utils.getItemInHand(p);
-                    if(!MagneticMauls.containsKey(p)){
+                    if(!haveLegendary(p)){
                         return;
                     }
-                    if (!p.getInventory().contains(MagneticMauls.get(p).getItemStack()))
+                    if (!isCorrectItem(item, p))
                         charges.remove(p.getName());
                     try {
                         if (smoother.get(p.getName()) > 0.6F)
@@ -111,8 +144,8 @@ public class MagneticMaulListener implements Listener {
                         return;
                     e.setCancelled(true);
                     LivingEntity l = (LivingEntity)e.getEntity();
-                    l.setLastDamageCause(new EntityDamageEvent((Entity)p, EntityDamageEvent.DamageCause.SUICIDE, MagneticMauls.get(p).getDamage()));
-                    l.damage(MagneticMauls.get(p).getDamage(), (Entity)p);
+                    l.setLastDamageCause(new EntityDamageEvent((Entity)p, EntityDamageEvent.DamageCause.SUICIDE, getDamage()));
+                    l.damage(getDamage(), (Entity)p);
                     Vector vec = p.getLocation().toVector()
                             .subtract(e.getEntity().getLocation().toVector()).normalize().add(new Vector(0.0D, 0.4D, 0.0D)).multiply(0.4D);
                     e.getEntity().setVelocity(vec);
@@ -206,11 +239,11 @@ public class MagneticMaulListener implements Listener {
     }
 
     private boolean isCorrectItem(ItemStack item, Player p) {
-        if(MagneticMauls.containsKey(p)){
+        if(haveLegendary(p)){
             if(!item.hasItemMeta()){
                 return false;
             }
-            if(item.getItemMeta().equals(MagneticMauls.get(p).getItemStack().getItemMeta())){
+            if(checkItemInHand(item, p)){
                 return true;
             }
             return false;

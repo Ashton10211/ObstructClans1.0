@@ -41,14 +41,9 @@ public class GiantBroadSwordListener implements Listener {
 
     @EventHandler
     public void onHitWithSword(PlayerItemDamageEvent playerItemDamageEvent){
-        if(GiantBroadSwords.containsKey(playerItemDamageEvent.getPlayer())){
-            if (playerItemDamageEvent.getItem().getItemMeta().getDisplayName()
-                    .equalsIgnoreCase(GiantBroadSwords.get(playerItemDamageEvent.getPlayer()).getName())){
-                if(playerItemDamageEvent.getItem().getItemMeta().getLore()
-                        .contains("§8" + GiantBroadSwords.get(playerItemDamageEvent.getPlayer()).getUuid())){
-                    playerItemDamageEvent.setDamage(10);
-                    return;
-                }
+        if(haveLegendary(playerItemDamageEvent.getPlayer())){
+            if(checkItemInHand(playerItemDamageEvent.getItem(), playerItemDamageEvent.getPlayer())){
+                playerItemDamageEvent.setDamage(10);
             }
         }
     }
@@ -58,12 +53,12 @@ public class GiantBroadSwordListener implements Listener {
         if (e.getDamager() instanceof Player) {
             Player p = (Player)e.getDamager();
             ItemStack item = p.getItemInHand();
-            if (noHits.contains(p.getName()))
+            if (noHits.contains(p))
                 e.setCancelled(true);
-            if(!GiantBroadSwords.containsKey(p))
+            if(!haveLegendary(p))
                 return;
-            if (item.getItemMeta().equals(GiantBroadSwords.get(p).getItemStack().getItemMeta()))
-                e.setDamage(GiantBroadSwords.get(p).getDamage());
+            if (checkItemInHand(item, p))
+                e.setDamage(getDamage());
         }
     }
 
@@ -71,11 +66,11 @@ public class GiantBroadSwordListener implements Listener {
     public void onClick(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         ItemStack item = p.getItemInHand();
-        if(!GiantBroadSwords.containsKey(p)){
+        if(!haveLegendary(p)){
             return;
         }
         if ((e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) &&
-                GiantBroadSwords.get(p).getItemStack().getItemMeta().equals(item.getItemMeta())) {
+                checkItemInHand(item, p)) {
             noHits.add(p);
             p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 35, 3));
             p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 35, 255));
@@ -102,7 +97,40 @@ public class GiantBroadSwordListener implements Listener {
         }
     }
 
-    public HashMap<Player, Legend> GiantBroadSwords= new HashMap<>();
+    public HashMap<Legend, Player> GiantBroadSwords= new HashMap<>();
+
+    public int getDamage(){
+        if(GiantBroadSwords.size() > 0){
+            for (Legend legend:GiantBroadSwords.keySet()
+            ) {
+                return legend.getDamage();
+            }
+        }
+        return 0;
+    }
+
+    public boolean checkItemInHand(ItemStack itemStack, Player player){
+        for (Legend legend: GiantBroadSwords.keySet()
+        ) {
+            if(itemStack.getItemMeta().getLore().contains("§8" + legend.getUuid())){
+                return true;
+            }
+            continue;
+        }
+        return false;
+    }
+
+    public  boolean haveLegendary(Player player){
+        for (Legend legend: GiantBroadSwords.keySet()
+        ) {
+            if(GiantBroadSwords.get(legend).getUniqueId().toString()
+                    .equals(player.getUniqueId().toString())){
+                return true;
+            }
+            continue;
+        }
+        return false;
+    }
 
 
     public void loop(){
@@ -113,8 +141,8 @@ public class GiantBroadSwordListener implements Listener {
                     ItemStack item = all.getItemInHand();
                     if (all.isDead())
                         return;
-                    if(GiantBroadSwords.containsKey(all)){
-                        if(GiantBroadSwords.get(all).getItemStack().equals(item)){
+                    if(haveLegendary(all)){
+                        if(checkItemInHand(item, all)){
                             all.playEffect(all.getLocation(),Effect.MAGIC_CRIT,2);
                         }
                     }

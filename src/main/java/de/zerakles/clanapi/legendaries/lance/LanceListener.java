@@ -36,7 +36,40 @@ public class LanceListener implements Listener {
         return getClan().data;
     }
 
-    public HashMap<Player, Legend> Lances = new HashMap<>();
+    public HashMap<Legend, Player> Lances = new HashMap<>();
+
+    public int getDamage(){
+        if(Lances.size() > 0){
+            for (Legend legend:Lances.keySet()
+            ) {
+                return legend.getDamage();
+            }
+        }
+        return 0;
+    }
+
+    public boolean checkItemInHand(ItemStack itemStack, Player player){
+        for (Legend legend: Lances.keySet()
+        ) {
+            if(itemStack.getItemMeta().getLore().contains("§8" + legend.getUuid())){
+                return true;
+            }
+            continue;
+        }
+        return false;
+    }
+
+    public  boolean haveLegendary(Player player){
+        for (Legend legend: Lances.keySet()
+        ) {
+            if(Lances.get(legend).getUniqueId().toString()
+                    .equals(player.getUniqueId().toString())){
+                return true;
+            }
+            continue;
+        }
+        return false;
+    }
 
     public LanceListener() {
         loop();
@@ -75,11 +108,11 @@ public class LanceListener implements Listener {
     }
 
     private boolean isCorrectItem(ItemStack item, Player p) {
-        if (Lances.containsKey(p)) {
+        if (haveLegendary(p)) {
             if (!item.hasItemMeta()) {
                 return false;
             }
-            if (item.getItemMeta().equals(Lances.get(p).getItemStack().getItemMeta())) {
+            if (checkItemInHand(item, p)) {
                 return true;
             }
             return false;
@@ -126,9 +159,9 @@ public class LanceListener implements Listener {
             ItemStack item = Utils.getItemInHand(p);
             if (isCorrectItem(item, p)) {
                 if(Cooldown.containsKey(p)){
-                    e.setDamage(Lances.get(p).getDamage()+2);
+                    e.setDamage(getDamage()+2);
                 } else {
-                    e.setDamage(Lances.get(p).getDamage());
+                    e.setDamage(getDamage());
                 }
                 if (!(e.getEntity() instanceof Player)) {
                     return;

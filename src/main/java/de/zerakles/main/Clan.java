@@ -86,6 +86,7 @@ public class Clan extends JavaPlugin {
         meridianscepter = new MerdianScepterListener();
         lanceListener = new LanceListener();
         legiLoader = new LegiLoader(UUID.randomUUID(), false);
+        legiLoader.loadLegis();
         loadCommands();
         loadListeners();
         super.onEnable();
