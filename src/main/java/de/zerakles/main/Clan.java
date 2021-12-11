@@ -97,7 +97,7 @@ public class Clan extends JavaPlugin {
                     scoreboardMaster.sendScoreboard(all);
                 }
             }
-        },0,20*60*3);
+        },0,20*60);
     }
 
     @Override
