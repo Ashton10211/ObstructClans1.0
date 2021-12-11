@@ -40,6 +40,8 @@ public class ClanAPI {
                 + " X VARCHAR(40), Z VARCHAR(40), world_name VARCHAR(40));");
         getMySQL().update("CREATE TABLE IF NOT EXISTS gold(uuid VARCHAR(40),"
                 + " gold VARCHAR(40));");
+        getMySQL().update("CREATE TABLE IF NOT EXISTS dailyquest(uuid VARCHAR(40),"
+                + " dailyquest VARCHAR(40));");
         getMySQL().update("CREATE TABLE IF NOT EXISTS home(uuid VARCHAR(40),worldName VARCHAR(40), X VARCHAR(40), Y VARCHAR(40)"
                 + ", Z VARCHAR(40), Yaw VARCHAR(40), Pitch VARCHAR(40));");
     }
@@ -170,6 +172,11 @@ public class ClanAPI {
         return;
     }
 
+
+
+
+
+
     public int getGold(Player player) {
         ResultSet resultSet = getMySQL().getResult("SELECT * FROM gold WHERE uuid='"
                 + player.getUniqueId().toString() + "';");
@@ -210,6 +217,52 @@ public class ClanAPI {
                 + "' WHERE uuid='" + player.getUniqueId().toString() + "';");
         return;
     }
+
+    //////
+
+    public int getDailyQuest(Player player) {
+        ResultSet resultSet = getMySQL().getResult("SELECT * FROM dailyquest WHERE uuid='"
+                + player.getUniqueId().toString() + "';");
+
+        try {
+            if (resultSet.next()) {
+                return resultSet.getInt("dailyquest");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public void insertDailyQuest(Player player, int dailyquest) {
+        getMySQL().update("INSERT INTO dailyquest(uuid, dailyquest) VALUES ('"
+                + player.getUniqueId().toString() + "','" + dailyquest + "');");
+        return;
+    }
+
+    public boolean hasDailyQuest(Player player) {
+        ResultSet resultSet = getMySQL().getResult("SELECT * FROM dailyquest WHERE uuid='"
+                + player.getUniqueId().toString() + "';");
+
+        try {
+            if (resultSet.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public void updateDailyQuest(Player player, int dailyquest) {
+        getMySQL().update("UPDATE dailyconquest SET dailyquest='" + dailyquest
+                + "' WHERE uuid='" + player.getUniqueId().toString() + "';");
+        return;
+    }
+
+
+
 
     HashMap<Player, Integer>hasP = new HashMap<>();
     public void startVillagerChecker(){
@@ -700,7 +753,7 @@ public class ClanAPI {
         Inventory inventory = Bukkit.createInventory(player, 9, "§8Quest Manager");
         ArrayList<String> lore = new ArrayList<>();
         lore.add(" ");
-        lore.add("§fKill 5 players with backstab §e0 kills");
+        lore.add("§fKill 5 players with backstab §e " + getDailyQuest(player) + " kills");
         lore.add("§fReward: §e1000 gems ");
         inventory.setItem(4, getItemStack(Material.EMERALD, lore, "§6§lDaily Quests"));
 
