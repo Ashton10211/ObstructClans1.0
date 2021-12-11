@@ -719,7 +719,7 @@ public class ClanAPI {
         if(getData().Shop == null){
             return false;
         }
-        if(loc.distance(getData().Shop) < 100){
+        if(loc.distance(getData().Shop) < 50){
             return true;
         }
         return false;
@@ -727,7 +727,7 @@ public class ClanAPI {
 
     public boolean isSpawn(Location location) {
         Location spawn = Bukkit.getWorld(location.getWorld().getName()).getSpawnLocation();
-        if(location.distance(spawn) < 100){
+        if(location.distance(spawn) < 50){
             return true;
         }
         return false;

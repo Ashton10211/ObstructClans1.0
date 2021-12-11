@@ -23,12 +23,17 @@ import de.zerakles.listener.*;
 import de.zerakles.mysql.MySQL;
 import de.zerakles.utils.Data;
 import de.zerakles.utils.ScoreboardMaster;
+import net.minecraft.server.v1_8_R3.EntityPlayer;
+import net.minecraft.server.v1_8_R3.PacketPlayOutWorldBorder;
+import net.minecraft.server.v1_8_R3.WorldBorder;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.Field;
 import java.util.UUID;
 
 public class Clan extends JavaPlugin {
@@ -90,6 +95,12 @@ public class Clan extends JavaPlugin {
         loadCommands();
         loadListeners();
         super.onEnable();
+        org.bukkit.WorldBorder worldBorder = Bukkit.getWorld("world").getWorldBorder();
+        Bukkit.getWorld("world").getWorldBorder().setCenter(0,0);
+        Bukkit.getWorld("world").getWorldBorder().setDamageAmount(2);
+        Bukkit.getWorld("world").getWorldBorder().setWarningTime(3);
+        Bukkit.getWorld("world").getWorldBorder().setWarningDistance(5);
+        Bukkit.getWorld("world").getWorldBorder().setSize(2500);
         Bukkit.getScheduler().scheduleAsyncRepeatingTask(getClan(), new Runnable() {
             @Override
             public void run() {
@@ -99,6 +110,7 @@ public class Clan extends JavaPlugin {
             }
         },0,20*60);
     }
+
 
     @Override
     public void onDisable() {
