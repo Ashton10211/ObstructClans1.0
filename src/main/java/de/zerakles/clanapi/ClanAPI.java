@@ -247,6 +247,9 @@ public class ClanAPI {
                 if(getData().organicBoy != null){
                     getData().organicBoy.teleport(getData().OrganicProduce);
                 }
+                if(getData().questBoy != null){
+                    getData().questBoy.teleport(getData().QuestManager);
+                }
                 if(getData().miningBoy != null){
                     getData().miningBoy.teleport(getData().MiningShop);
                 }
@@ -668,7 +671,7 @@ public class ClanAPI {
         lore.add(" ");
         lore.add("§fYour gold: §e" + getGold(player) + "g");
         String displayName;
-        if(getGold(player)<5000){
+        if(getGold(player)<50000){
             lore.add("§fYou don't have enough gold");
             lore.add("§fYou need §e50000§f gold to purchase a token");
             displayName = "§c§lMissing Gold!";
@@ -692,6 +695,20 @@ public class ClanAPI {
         player.openInventory(inventory);
         return;
     }
+
+    public void openQuestManager(Player player){
+        Inventory inventory = Bukkit.createInventory(player, 9, "§8Quest Manager");
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(" ");
+        lore.add("§fKill 5 players with backstab §e0 kills");
+        lore.add("§fReward: §e1000 gems ");
+        inventory.setItem(4, getItemStack(Material.EMERALD, lore, "§6§lDaily Quests"));
+
+        player.openInventory(inventory);
+        return;
+    }
+
+
 
     public  void openBuildingMaterials(Player player){
         Inventory inventory = Bukkit.createInventory(player, 54, "§8Building Supplies");
@@ -892,6 +909,8 @@ public class ClanAPI {
         player.openInventory(inventory);
         return;
     }
+
+
 
     public void openOrganicProduce(Player player){
         Inventory inventory = Bukkit.createInventory(player, 18, "§8Organic Produce");

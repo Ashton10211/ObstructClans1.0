@@ -11,6 +11,7 @@ import de.zerakles.clanapi.legendaries.meridianscepter.MerdianScepterListener;
 import de.zerakles.clanapi.legendaries.runedpickaxe.RunedPickaxeListener;
 import de.zerakles.clanapi.legendaries.sxytheofthefallenlord.ScytheOfTheFallenLordListener;
 import de.zerakles.clanapi.legendaries.windblade.WindBladeListener;
+import de.zerakles.clanapi.quests.QuestListener;
 import de.zerakles.clanapi.raids.Maze.Maze;
 import de.zerakles.clanapi.raids.alter.alter;
 import de.zerakles.cmds.*;
@@ -105,6 +106,8 @@ public class Clan extends JavaPlugin {
         data.organicBoy.damage(40);
         data.miningBoy.damage(40);
         data.bankBoy.damage(40);
+        data.questBoy.damage(40);
+
         super.onDisable();
     }
 
@@ -128,6 +131,8 @@ public class Clan extends JavaPlugin {
         pm.registerEvents(new MovementListener(), getClan());
         pm.registerEvents(new VillagerListener(), getClan());
         pm.registerEvents(new BankShopListener(), getClan());
+        pm.registerEvents(new QuestListener(), getClan());
+
         pm.registerEvents(new SupplieShopListener(), getClan());
         pm.registerEvents(new OrganicShopListener(), getClan());
         pm.registerEvents(new MiningShopListener(), getClan());

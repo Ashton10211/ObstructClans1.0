@@ -28,7 +28,7 @@ public class VillagerLoader {
         Location pvpShop;
         Location organicShop;
         Location miningShop;
-
+        Location questManager;
         String worldName;
         double x;
         double y;
@@ -57,12 +57,29 @@ public class VillagerLoader {
         yaw=fileConfiguration.getDouble("Villager.SuppliesShop.Yaw");
         pitch=fileConfiguration.getDouble("Villager.SuppliesShop.Pitch");
 
+
         suppliesShop = Bukkit.getWorld(worldName).getSpawnLocation();
         suppliesShop.setX(x);
         suppliesShop.setY(y);
         suppliesShop.setZ(z);
         suppliesShop.setPitch((float) pitch);
         suppliesShop.setYaw((float) yaw);
+
+        questManager = Bukkit.getWorld(worldName).getSpawnLocation();
+        questManager.setX(x);
+        questManager.setY(y);
+        questManager.setZ(z);
+        questManager.setPitch((float) pitch);
+        questManager.setYaw((float) yaw);
+
+        worldName =fileConfiguration.getString("Villager.QuestManager.WorldName");
+        x=fileConfiguration.getDouble("Villager.QuestManager.X");
+        y=fileConfiguration.getDouble("Villager.QuestManager.Y");
+        z=fileConfiguration.getDouble("Villager.QuestManager.Z");
+        yaw=fileConfiguration.getDouble("Villager.QuestManager.Yaw");
+        pitch=fileConfiguration.getDouble("Villager.QuestManager.Pitch");
+
+
 
         worldName =fileConfiguration.getString("Villager.PvpGear.WorldName");
         x=fileConfiguration.getDouble("Villager.PvpGear.X");
@@ -132,9 +149,11 @@ public class VillagerLoader {
         getData().MiningShop = miningShop;
         getData().BuildingSupplies = suppliesShop;
         getData().OrganicProduce = organicShop;
-
+        getData().QuestManager = questManager;
         Villager miningBoy =  miningShop.getWorld().spawn(miningShop, Villager.class);
         Villager bankBoy =  bankShop.getWorld().spawn(bankShop, Villager.class);
+        Villager questBoy =  questManager.getWorld().spawn(questManager, Villager.class);
+
         Villager pvpBoy =  pvpShop.getWorld().spawn(pvpShop, Villager.class);
         Villager buildBoy =  suppliesShop.getWorld().spawn(suppliesShop, Villager.class);
         Villager organicBoy =  organicShop.getWorld().spawn(organicShop, Villager.class);
@@ -142,6 +161,10 @@ public class VillagerLoader {
         getData().bankBoy.setAdult();
         getData().bankBoy.setCustomName("§c§lBank Shop");
         getData().bankBoy.setCustomNameVisible(true);
+        getData().questBoy = questBoy;
+        getData().questBoy.setAdult();
+        getData().questBoy.setCustomName("§c§lQuest Manager");
+        getData().questBoy.setCustomNameVisible(true);
         getData().miningBoy = miningBoy;
         getData().miningBoy.setAdult();
         getData().miningBoy.setCustomName("§e§lMining Shop");
@@ -177,11 +200,13 @@ public class VillagerLoader {
         FileConfiguration fileConfiguration = YamlConfiguration.loadConfiguration(file);
 
         Villager villagerBank = getData().bankBoy;
+        Villager villagerQuest = getData().questBoy;
         Villager villagerSupplies = getData().suppliesBoy;
         Villager villagerPvp = getData().pvpBoy;
         Villager villagerOrganic = getData().organicBoy;
         Villager villagerMining = getData().miningBoy;
         Location bankShop = getData().BankShop;
+        Location questManager = getData().QuestManager;
         Location suppliesShop = getData().BuildingSupplies;
         Location pvpGear = getData().PvpGear;
         Location organicShop = getData().OrganicProduce;
@@ -191,6 +216,7 @@ public class VillagerLoader {
         villagerPvp.damage(40);
         villagerOrganic.damage(40);
         villagerMining.damage(40);
+        villagerQuest.damage(40);
 
         String worldName = bankShop.getWorld().getName();
         double x = bankShop.getX();;
@@ -205,6 +231,21 @@ public class VillagerLoader {
         fileConfiguration.set("Villager.BankShop.Z", z);
         fileConfiguration.set("Villager.BankShop.Yaw", yaw);
         fileConfiguration.set("Villager.BankShop.Pitch", pitch);
+
+        worldName = questManager.getWorld().getName();
+         x = questManager.getX();;
+         y = questManager.getY();;
+         z = questManager.getZ();
+         pitch = questManager.getPitch();
+         yaw = questManager.getYaw();
+
+        fileConfiguration.set("Villager.QuestManager.WorldName", worldName);
+        fileConfiguration.set("Villager.QuestManager.X", x);
+        fileConfiguration.set("Villager.QuestManager.Y", y);
+        fileConfiguration.set("Villager.QuestManager.Z", z);
+        fileConfiguration.set("Villager.QuestManager.Yaw", yaw);
+        fileConfiguration.set("Villager.QuestManager.Pitch", pitch);
+
 
         worldName = suppliesShop.getWorld().getName();
         x = suppliesShop.getX();;

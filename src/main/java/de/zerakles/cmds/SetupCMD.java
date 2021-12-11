@@ -56,6 +56,10 @@ public class SetupCMD implements CommandExecutor {
                         createTravel(player);
                         return true;
                     }
+                    if(args[0].equalsIgnoreCase("quest")){
+                        createQuest(player);
+                        return true;
+                    }
 
                     if(args[0].equalsIgnoreCase("save")){
                         saveVillagers(player);
@@ -176,6 +180,28 @@ public class SetupCMD implements CommandExecutor {
         villager.setCustomNameVisible(true);
         getData().pvpBoy = villager;
     }
+
+    private void createQuest(Player player) {
+        if(getData().questBoy != null){
+            getData().questBoy.damage(40);
+            Location location = player.getLocation();
+            getData().QuestManager = location;
+            getData().questBoy = Bukkit.getWorld(player.getLocation().getWorld().getName()).spawn(player.getLocation(), Villager.class);
+            getData().questBoy.setAdult();
+            getData().questBoy.setCustomName("§4§lQuest Manager");
+            getData().questBoy.setCustomNameVisible(true);
+            return;
+        }
+        Location location = player.getLocation();
+        getData().QuestManager = location;
+        Villager villager = Bukkit.getWorld(player.getLocation().getWorld().getName()).spawn(player.getLocation(), Villager.class);
+        villager.setAdult();
+        villager.setCustomName("§4§lQuest Manager");
+        villager.setCustomNameVisible(true);
+        getData().questBoy = villager;
+    }
+
+
     private void createTravel(Player player) {
        Villager villager = Bukkit.getWorld(player.getLocation().getWorld().getName()).spawn(player.getLocation(), Villager.class);
        villager.setCustomName("§b§lTravel");

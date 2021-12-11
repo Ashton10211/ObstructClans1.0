@@ -87,6 +87,8 @@ public class Data {
     public Villager suppliesBoy= null;
     public Location PvpGear= null;
     public Villager pvpBoy = null;
+    public Villager questBoy = null;
+    public Location QuestManager = null;
 
     //spawn Travel
     public ArrayList<Location> Travel = new ArrayList<>();
