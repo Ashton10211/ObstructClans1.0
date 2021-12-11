@@ -5,6 +5,7 @@ import de.zerakles.clanapi.legendaries.alligatorstooth.AlligatorsToothListener;
 import de.zerakles.clanapi.legendaries.giantbroadsword.GiantBroadSwordListener;
 import de.zerakles.clanapi.legendaries.hyperaxe.HyperAxeListener;
 import de.zerakles.clanapi.legendaries.lance.LanceListener;
+import de.zerakles.clanapi.legendaries.legiloader.LegiLoader;
 import de.zerakles.clanapi.legendaries.magneticblade.MagneticMaulListener;
 import de.zerakles.clanapi.legendaries.meridianscepter.MerdianScepter;
 import de.zerakles.clanapi.legendaries.meridianscepter.MerdianScepterListener;
@@ -28,6 +29,8 @@ import org.bukkit.entity.Villager;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.UUID;
+
 public class Clan extends JavaPlugin {
 
     private static Clan clan;
@@ -46,6 +49,8 @@ public class Clan extends JavaPlugin {
     public ClanAPI getClanAPI(){
         return clanAPI;
     }
+
+    public LegiLoader legiLoader;
 
     public MySQL mySQL;
     public AlligatorsToothListener alligatorsToothListener;
@@ -80,6 +85,7 @@ public class Clan extends JavaPlugin {
         scytheOfTheFallenLordListener = new ScytheOfTheFallenLordListener();
         meridianscepter = new MerdianScepterListener();
         lanceListener = new LanceListener();
+        legiLoader = new LegiLoader(UUID.randomUUID(), false);
         loadCommands();
         loadListeners();
         super.onEnable();
@@ -152,5 +158,7 @@ public class Clan extends JavaPlugin {
         pm.registerEvents(scytheOfTheFallenLordListener, getClan());
         pm.registerEvents(meridianscepter, getClan());
         pm.registerEvents(lanceListener, getClan());
+
+        pm.registerEvents(legiLoader, getClan());
     }
 }
