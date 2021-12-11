@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerChatEvent;
+
 
 public class ChatListener implements Listener {
     private Data getData(){
@@ -18,7 +18,7 @@ public class ChatListener implements Listener {
         return Clan.getClan().getClanAPI();
     }
     @EventHandler
-    public void onChat(PlayerChatEvent event){
+    public void onChat(AsyncPlayerChatEvent event){
         if(getData().inClanChat.contains(event.getPlayer())){
             String clan = getClanAPI().getClan(event.getPlayer().getUniqueId().toString());
             for(Player all: Bukkit.getOnlinePlayers()){
@@ -53,14 +53,17 @@ public class ChatListener implements Listener {
         }
         if(getClanAPI().playerExists(event.getPlayer().getUniqueId().toString())){
             String clan = getClanAPI().getClan(event.getPlayer().getUniqueId().toString());
-            event.setFormat(getData().chatFormat.replaceAll("%clan%", clan)
-                    .replaceAll("%player%", event.getPlayer().getName())
-                    .replaceAll("%message%", event.getMessage()));
+            String message = getData().chatFormat;
+            message = message.replaceAll("%player%", event.getPlayer().getName());
+            message = message.replaceAll("%clan%", clan);
+            message = message.replaceAll("%message%", event.getMessage());
+            for(Player all : Bukkit.getOnlinePlayers()){
+                all.sendMessage(message);
+            }
+            event.setCancelled(true);
             return;
         }
-        event.setFormat(getData().chatFormat
-                .replaceAll("%player%", event.getPlayer().getName())
-                .replaceAll("%message%", event.getMessage()));
+        event.setFormat("§e" + event.getPlayer().getName() + "§8: §f" + event.getMessage());
         return;
     }
 }
