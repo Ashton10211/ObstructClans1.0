@@ -7,11 +7,11 @@ import de.zerakles.main.Clan;
 import de.zerakles.utils.Data;
 import de.zerakles.utils.Display;
 import de.zerakles.utils.Utils;
-import net.minecraft.server.v1_8_R3.BaseBlockPosition;
-import net.minecraft.server.v1_8_R3.BlockPosition;
-import net.minecraft.server.v1_8_R3.MovingObjectPosition;
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.*;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,7 +34,7 @@ public class MerdianScepterListener implements Listener {
 
     private static ArrayList<MerdianScepterShot> shots = new ArrayList<>();
 
-    private HashMap<String, Long> cooldown = new HashMap<>();
+    private HashMap<Legend, Integer> cooldown = new HashMap<>();
 
     private int damage = 11;
 
@@ -104,11 +104,42 @@ public class MerdianScepterListener implements Listener {
         return false;
     }
 
+    private void showActionbar(Player player, String text) {
+        PacketPlayOutChat packet = new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + text + "\"}"), (byte) 2);
+        ((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
+    }
+
+    private String barCooldown(int cd){
+        String green = "§a§l";
+        String red = "§c§l";
+        for(int s = 0; s<cd; s++){
+            red = red + "▌ ";
+        }
+        int c = 3-cd;
+        for(int s = 0; s<c; s++){
+            green = green + "▌ ";
+        }
+        return green + red;
+    }
+
+    public  Legend legend(ItemStack itemStack){
+        for (Legend legend:Scepter.keySet()
+        ) {
+            if(legend.getItemStack().equals(itemStack)){
+                return legend;
+            }
+        }
+        return null;
+    }
+
+    int tick = 0;
 
     public void loop(){
+
         Bukkit.getScheduler().scheduleSyncRepeatingTask(getClan(), new Runnable() {
             @Override
             public void run() {
+                tick = tick+1;
                 if (!shots.isEmpty()) {
                     ArrayList<MerdianScepterShot> copy = (ArrayList<MerdianScepterShot>)shots.clone();
                     for (MerdianScepterShot shot : copy) {
@@ -120,25 +151,33 @@ public class MerdianScepterListener implements Listener {
                     if(shot.getArrow().isOnGround()){
                         shot.delete();
                     }
+                    if(tick == 20) {
+                        for (Player all : Bukkit.getOnlinePlayers()) {
+                            all.playSound(shot.getArrow().getLocation(), Sound.SHOOT_ARROW, 1F, 1F);
+                        }
+                    }
                 }
-                for (String s : cooldown.keySet()) {
-                    Player p = Bukkit.getServer().getPlayer(s);
-                    if (((System.currentTimeMillis() - cooldown.get(s)) / 1000L > 2.9)) {
+                for (Legend s : cooldown.keySet()) {
+                    Player p = Scepter.get(s);
+                    if (cooldown.get(s) == 0) {
                         cooldown.remove(s);
                         p.sendMessage(getData().prefix + ChatColor.GRAY +
-                                "You can use " + ChatColor.GREEN + Scepter.get(p).getName());
+                                "You can use " + ChatColor.GREEN + "MeridianScepter");
                         if (isCorrectItem(Utils.getItemInHand(p),p))
-                           Display.display(ChatColor.GREEN + Scepter.get(p).getName() + " Recharged", p);
+                           showActionbar(p, "§e§lLegendary Recharged");
                         continue;
                     }
                     if (isCorrectItem(Utils.getItemInHand(p),p)) {
-                        Double x = 2.0D - Math.pow(10.0D, -1.0D) * ((System.currentTimeMillis() - cooldown.get(p.getName())) / 100L);
-                        double divide = (System.currentTimeMillis() - cooldown.get(s)) / 2000.0D;
-                        String[] zz = x.toString().replace('.', '-').split("-");
-                        String concat = zz[0] + "." + zz[1].charAt(0);
-                        Display.displayProgress(Scepter.get(p).getName(), divide,
-                                ChatColor.WHITE + " " + concat + " Seconds", false, p);
+                        int cd = cooldown.get(s);
+                        String cdS = barCooldown(cd);
+                        showActionbar(p, cdS);
+                        if(tick == 20) {
+                            cooldown.replace(s, cooldown.get(s) - 1);
+                        }
                     }
+                }
+                if(tick == 20){
+                    tick = 0;
                 }
             }
         },0,1);
@@ -160,15 +199,16 @@ public class MerdianScepterListener implements Listener {
                         " in water.");
                 return;
             }
-            if (cooldown.containsKey(p.getName()))
+            if (cooldown.containsKey(legend(e.getPlayer().getItemInHand())))
                 return;
             if (Utils.is1_8()) {
                 p.playSound(p.getLocation(), Sound.valueOf("BLAZE_BREATH"), 1.0F, 0.0F);
             } else {
                 p.playSound(p.getLocation(), Sound.valueOf("ENTITY_BLAZE_AMBIENT"), 1.0F, 0.0F);
             }
+            Legend legend = legend(e.getPlayer().getItemInHand());
             MerdianScepterShot shot = new MerdianScepterShot(getClan(), p);
-            cooldown.put(p.getName(), System.currentTimeMillis());
+            cooldown.put(legend, 3);
             shots.add(shot);
             shot.launch();
         }
@@ -240,38 +280,25 @@ public class MerdianScepterListener implements Listener {
                     }
                     arrow.setKnockbackStrength(0);
                     arrow.teleport(new Location(arrow.getWorld(), 0.0D, -10.0D, 0.0D));
-                    if (struckEnt instanceof Player) {
-                        Player struck = (Player)struckEnt;
-                        shot.getShooter().sendMessage(ChatColor.BLUE + "Clans> " +
-                                ChatColor.GRAY + "You struck " + ChatColor.YELLOW + struck.getName() +
-                                ChatColor.GRAY + " with your " + ChatColor.YELLOW + Scepter.get(struck).getName() + ChatColor.GRAY +
-                                ".");
-                        struck.sendMessage(ChatColor.BLUE + "Clans> " +
-                                ChatColor.YELLOW + shot.getShooter().getName() + ChatColor.GRAY +
-                                " hit you with a " + ChatColor.YELLOW + Scepter.get(struck).getName() + ChatColor.GRAY +
-                                ".");
-                        struck.setHealth(struck.getHealth() - 3);
-                    } else {
-                        String string = struckEnt.getType().toString().toLowerCase().replace("_", " ");
-                        shot.getShooter().sendMessage(ChatColor.BLUE + "Clans> " +
-                                ChatColor.GRAY + "You struck " + ChatColor.YELLOW + string +
-                                ChatColor.GRAY + " with your " + ChatColor.YELLOW + Scepter.get((Player) shot.getShooter()).getName() + ChatColor.GRAY +
-                                ".");
+                    String string = struckEnt.getType().toString().toLowerCase().replace("_", " ");
+                    shot.getShooter().sendMessage(ChatColor.BLUE + "Clans> " +
+                            ChatColor.GRAY + "You struck " + ChatColor.YELLOW + string +
+                            ChatColor.GRAY + " with your " + ChatColor.YELLOW + "MeridianScepter" + ChatColor.GRAY +
+                            ".");
                     }
                     e.setCancelled(true);
-                    Player p = shot.getShooter();
                     shot.delete();
-                    Location location = struckEnt.getLocation();
                     Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(getClan(), () -> {
                         if (struckEnt.isDead())
                             return;
+                        struckEnt.damage(6);
                         struckEnt.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 0));
-                        LightningStrike lightningStrike = struckEnt.getWorld().strikeLightningEffect(struckEnt.getLocation());
+                        struckEnt.getWorld().strikeLightningEffect(struckEnt.getLocation());
                     },60L);
                 }
             }
         }
-    }
+
 
     public void quit(Player player) {}
 
