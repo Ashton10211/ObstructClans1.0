@@ -92,7 +92,7 @@ public class GiantBroadSwordListener implements Listener {
             for (Player pla : Bukkit.getServer().getOnlinePlayers()) {
                 if (pla.getLocation().distance(new Location(pla.getWorld(), x, y, z)) > 64.0D)
                     return;
-                pla.playEffect(pla.getLocation(), Effect.HEART, 2);
+                pla.playEffect(p.getLocation(), Effect.HEART, 2);
             }
         }
     }
