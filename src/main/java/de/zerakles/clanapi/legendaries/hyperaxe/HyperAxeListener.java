@@ -6,7 +6,13 @@ import de.zerakles.main.Clan;
 import de.zerakles.utils.Data;
 import de.zerakles.utils.Display;
 import de.zerakles.utils.Utils;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.minecraft.server.v1_8_R3.IChatBaseComponent;
+import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 import org.bukkit.*;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -95,34 +101,63 @@ public class HyperAxeListener implements Listener {
                 }
                 for (LivingEntity entt : remoeee)
                     toRemove.remove(entt);
-                for (String s : cooldown.keySet()) {
-                    Player p = Bukkit.getServer().getPlayer(s);
+                for (Legend s : cooldown.keySet()) {
+                    Player p = HyperAxes.get(s);
                     if (p == null || !p.isOnline()) {
                         cooldown.remove(s);
                         continue;
                     }
-                    if ((System.currentTimeMillis() - cooldown.get(s)) / 1000L > 12L) {
+                    if (cooldown.get(s) == 0) {
                         cooldown.remove(s);
                         p.sendMessage(getData().prefix + ChatColor.GRAY +
                                 "You can use " + ChatColor.GREEN + "Hyper Rush");
                         if (isCorrectItem(p.getItemInHand(), p))
-                            Display.display(ChatColor.GREEN + " Hyper Rush" + " Recharged", p);
+                            showActionbar(p, "§6§lHyper Rush Recharged");
                             p.playSound(p.getLocation(), Sound.valueOf("NOTE_PLING"), 5.0F, 1.0F);
                             continue;
                     }
                     if (isCorrectItem(p.getItemInHand(),p)) {
-                        Double x = 16.0D - Math.pow(10.0D, -1.0D) * ((System.currentTimeMillis() - (Long) cooldown.get(p.getName())) / 100L);
-                        double divide = (System.currentTimeMillis() - (Long) cooldown.get(s)-4.5D) / 16000.0D;
-                        String[] zz = x.toString().replace('.', '-').split("-");
-                        String concat = zz[0] + "." + zz[1].charAt(0);
-                        Display.displayProgress("§eRush", divide,
-                                ChatColor.WHITE + " " + concat + " §eSeconds", false, p);
+                        int cd = cooldown.get(s);
+                        String cdS  = barCooldown(cd);
+                        showActionbar(p, cdS);
+                        continue;
                     }
                 }
+                for (Legend legend: cooldown.keySet()
+                     ) {
+                    cooldown.replace(legend,cooldown.get(legend) -1);
+                }
             }
-        },0,1);
+        },0,20);
     }
 
+    private void showActionbar(Player player, String text) {
+        PacketPlayOutChat packet = new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + text + "\"}"), (byte) 2);
+        ((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
+    }
+
+    private String barCooldown(int cd){
+        String green = "§a§l";
+        String red = "§c§l";
+        for(int s = 0; s<cd; s++){
+            red = red + "▌ ";
+        }
+        int c = 12-cd;
+        for(int s = 0; s<c; s++){
+            green = green + "▌ ";
+        }
+        return green + red;
+    }
+
+    public  Legend legend(ItemStack itemStack){
+        for (Legend legend:HyperAxes.keySet()
+             ) {
+            if(legend.getItemStack().equals(itemStack)){
+                return legend;
+            }
+        }
+        return null;
+    }
 
     private HashMap<LivingEntity, Integer> toRemove = new HashMap<>();
 
@@ -170,7 +205,7 @@ public class HyperAxeListener implements Listener {
         }
     }
 
-    private HashMap<String, Long> cooldown = new HashMap<>();
+    private HashMap<Legend, Integer> cooldown = new HashMap<>();
 
     @EventHandler
     public void onClick(PlayerInteractEvent e) {
@@ -184,21 +219,13 @@ public class HyperAxeListener implements Listener {
                         " in water.");
                 return;
             }
-            if (cooldown.containsKey(p.getName())) {
-                Double x = 16.0D - Math.pow(10.0D, -1.0D) * ((System.currentTimeMillis() - (Long)cooldown.get(p.getName())) / 100L);
-                String[] zz = x.toString().replace('.', '-').split("-");
-                String concat = zz[0] + "." + zz[1].charAt(0);
-                try {
-                    p.sendMessage(getData().prefix + ChatColor.GRAY +
-                            "Your cannot use " + ChatColor.GREEN + "Hyper Rush" + ChatColor.GRAY +
-                            " for " + ChatColor.GREEN +
-                            concat + " Seconds");
-                } catch (IndexOutOfBoundsException exc) {
-                    Bukkit.getServer().getLogger().warning("Index out of bounds in Hyper Axe msg. Should have been canceled");
-                }
+            Legend legend = legend(item);
+            if (cooldown.containsKey(legend)){
+                p.sendMessage(getClan().data.prefix + "§7You have a cooldown on this §aHyperAxe. §eCD§7: §a"
+                        + cooldown.get(legend));
                 return;
             }
-            cooldown.put(p.getName(), System.currentTimeMillis());
+            cooldown.put(legend, 12);
             p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 200, 2));
             p.sendMessage(getData().prefix + ChatColor.GRAY + "You used " + ChatColor.GREEN +
                     "Hyper Rush");

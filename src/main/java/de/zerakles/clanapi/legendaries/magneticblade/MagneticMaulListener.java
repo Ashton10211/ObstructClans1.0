@@ -6,7 +6,10 @@ import de.zerakles.main.Clan;
 import de.zerakles.utils.Data;
 import de.zerakles.utils.Display;
 import de.zerakles.utils.Utils;
+import net.minecraft.server.v1_8_R3.IChatBaseComponent;
+import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 import org.bukkit.*;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -41,6 +44,8 @@ public class MagneticMaulListener implements Listener {
 
     private HashMap<String, Float> smoother = new HashMap<>();
 
+    private HashMap<Legend, Integer> cd = new HashMap<>();
+
     public HashMap<Legend, Player> MagneticMauls = new HashMap<>();
 
     public int getDamage(){
@@ -74,6 +79,36 @@ public class MagneticMaulListener implements Listener {
             continue;
         }
         return false;
+    }
+
+    private void showActionbar(Player player, String text) {
+        PacketPlayOutChat packet = new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + text + "\"}"), (byte) 2);
+        ((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
+    }
+
+    private String barCooldown(int cd){
+        String green = "§a§l";
+        String red = "§c§l";
+        if(cd != 0){
+            for(int s = 0; s<cd; s++){
+                green = green + "▌ ";
+            }
+        }
+        int c = 10-cd;
+        for(int s = 0; s<c; s++){
+            red = red + "▌ ";
+        }
+        return green + red;
+    }
+
+    public  Legend legend(ItemStack itemStack){
+        for (Legend legend:MagneticMauls.keySet()
+        ) {
+            if(legend.getItemStack().equals(itemStack)){
+                return legend;
+            }
+        }
+        return null;
     }
 
     public MagneticMaulListener(){
@@ -166,9 +201,24 @@ public class MagneticMaulListener implements Listener {
         }
         if (isCorrectItem(Utils.getItemInHand(p),p)) {
             smoother.put(p.getName(), (float) Math.max(0.0D, (Float) smoother.get(p.getName()) - 0.5D));
-            Display.displayProgress(null, getCharge(p), null, false, p);
+            float cdF = getCharge(p)*10;
+            int cd = (int) cdF;
+            String cdS = barCooldown(cd);
+            showActionbar(p, cdS);
+        }
+        for (Legend legend : MagneticMauls.keySet()){
+            if(lastTick.containsKey(legend)){
+                if(lastTick.get(legend)+1000< System.currentTimeMillis()){
+                    if(cd.get(legend)!= 0){
+                        cd.replace(legend, cd.get(legend)-1);
+                        return;
+                    }
+                }
+            }
         }
     }
+
+    public HashMap<Legend, Long> lastTick = new HashMap<>();
 
     @EventHandler
     public void onClick(PlayerInteractEvent e) {
@@ -179,6 +229,21 @@ public class MagneticMaulListener implements Listener {
                 for (Entity ent : e.getPlayer().getNearbyEntities(7.0D, 7.0D, 7.0D)) {
                     if (!(ent instanceof LivingEntity))
                         continue;
+                    Legend legend = legend(e.getPlayer().getItemInHand());
+                    if(cd.containsKey(legend)){
+                        if(cd.get(legend) == 10){
+                            e.getPlayer().sendMessage(getData().prefix + "§7This §aMagneticMaul have to recharge!");
+                            return;
+                        }
+                        if(lastTick.get(legend) + 1000L < System.currentTimeMillis()){
+                            cd.replace(legend, cd.get(legend)+1);
+                            lastTick.remove(legend);
+                            lastTick.put(legend, System.currentTimeMillis());
+                        }
+                    } else {
+                        lastTick.put(legend, System.currentTimeMillis());
+                        cd.put(legend, 0);
+                    }
                     if (ent.isDead())
                         continue;
                     if (getLookingAt(e.getPlayer(), ent)) {
@@ -200,7 +265,10 @@ public class MagneticMaulListener implements Listener {
         float charge = (Float) charges.get(player.getName());
         charge = (float)Math.min(1.0D, charge + 0.013D);
         charges.put(player.getName(), charge);
-        Display.displayProgress(null, charge, null, false, player);
+        charge = charge *10;
+        int cd = (int) charge;
+        String cdS = barCooldown(cd);
+        showActionbar(player,cdS);
         return (charge >= 1.0F);
     }
 
