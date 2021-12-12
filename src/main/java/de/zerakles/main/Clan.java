@@ -101,14 +101,14 @@ public class Clan extends JavaPlugin {
         Bukkit.getWorld("world").getWorldBorder().setWarningTime(3);
         Bukkit.getWorld("world").getWorldBorder().setWarningDistance(5);
         Bukkit.getWorld("world").getWorldBorder().setSize(2500);
-        Bukkit.getScheduler().scheduleAsyncRepeatingTask(getClan(), new Runnable() {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(getClan(), new Runnable() {
             @Override
             public void run() {
                 for(Player all: Bukkit.getOnlinePlayers()){
                     scoreboardMaster.sendScoreboard(all);
                 }
             }
-        },0,20*60);
+        },0,20);
     }
 
 

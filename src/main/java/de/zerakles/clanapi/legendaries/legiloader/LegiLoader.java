@@ -27,6 +27,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -168,87 +169,124 @@ public class LegiLoader implements Listener {
     public void onJoin(PlayerJoinEvent playerJoinEvent){
         Player player = playerJoinEvent.getPlayer();
         String uuid = player.getUniqueId().toString();
+        ArrayList<Legend> remove = new ArrayList<>();
         if(AlligatorsToothsS.size() > 0){
             for (Legend legend : AlligatorsToothsS.keySet()) {
                 if(AlligatorsToothsS.get(legend).equals(uuid)){
                     Clan.getClan().alligatorsToothListener.AlligatorThooths.put(legend, player);
-                    AlligatorsToothsS.remove(legend);
+                    remove.add(legend);
                     continue;
                 }
             }
         }
+        for (Legend legend : remove) {
+            AlligatorsToothsS.remove(legend);
+        }
+        remove.clear();
         if(GiantBroadSwordsS.size() > 0){
             for (Legend legend : GiantBroadSwordsS.keySet()) {
                 if(GiantBroadSwordsS.get(legend).equals(uuid)){
                     Clan.getClan().giantbroadswordListener.GiantBroadSwords.put(legend, player);
-                    GiantBroadSwordsS.remove(legend);
+                    remove.add(legend);
                     continue;
                 }
             }
         }
+        for (Legend legend : remove) {
+            GiantBroadSwordsS.remove(legend);
+        }
+        remove.clear();
         if(HyperAxesS.size() > 0){
             for (Legend legend : HyperAxesS.keySet()) {
                 if(HyperAxesS.get(legend).equals(uuid)){
                     Clan.getClan().hyperAxeListener.HyperAxes.put(legend, player);
-                    HyperAxesS.remove(legend);
+                    remove.add(legend);
                     continue;
                 }
             }
         }
+        for (Legend legend : remove) {
+            HyperAxesS.remove(legend);
+        }
+        remove.clear();
         if(LancesS.size() > 0){
             for (Legend legend : LancesS.keySet()) {
                 if(LancesS.get(legend).equals(uuid)){
                     Clan.getClan().lanceListener.Lances.put(legend, player);
-                    LancesS.remove(legend);
+                    remove.add(legend);
                     continue;
                 }
             }
         }
+        for (Legend legend : remove) {
+            LancesS.remove(legend);
+        }
+        remove.clear();
         if(MagneticMaulsS.size() > 0){
             for (Legend legend : MagneticMaulsS.keySet()) {
                 if(MagneticMaulsS.get(legend).equals(uuid)){
                     Clan.getClan().magneticMaul.MagneticMauls.put(legend, player);
-                    MagneticMaulsS.remove(legend);
+                    remove.add(legend);
                     continue;
                 }
             }
         }
+        for (Legend legend : remove) {
+            MagneticMaulsS.remove(legend);
+        }
+        remove.clear();
         if(MeridianSceptersS.size() > 0){
             for (Legend legend : MeridianSceptersS.keySet()) {
                 if(MeridianSceptersS.get(legend).equals(uuid)){
                     Clan.getClan().meridianscepter.Scepter.put(legend, player);
-                    MeridianSceptersS.remove(legend);
+                    remove.add(legend);
                     continue;
                 }
             }
         }
+        for (Legend legend : remove) {
+            MeridianSceptersS.remove(legend);
+        }
+        remove.clear();
         if(RunedPickAxesS.size() > 0){
             for (Legend legend : RunedPickAxesS.keySet()) {
                 if(RunedPickAxesS.get(legend).equals(uuid)){
                     Clan.getClan().runedPickaxe.RunedPickaxes.put(legend, player);
-                    RunedPickAxesS.remove(legend);
+                    remove.add(legend);
                     continue;
                 }
             }
         }
+        for (Legend legend : remove) {
+            RunedPickAxesS.remove(legend);
+        }
+        remove.clear();
         if(ScythS.size() > 0){
             for (Legend legend : ScythS.keySet()) {
                 if(ScythS.get(legend).equals(uuid)){
                     Clan.getClan().scytheOfTheFallenLordListener.ScytheOfs.put(legend, player);
-                    ScythS.remove(legend);
+                    remove.add(legend);
                     continue;
                 }
             }
         }
+        for (Legend legend : remove) {
+            ScythS.remove(legend);
+        }
+        remove.clear();
         if(WindBladeS.size() > 0){
             for (Legend legend : WindBladeS.keySet()) {
                 if(WindBladeS.get(legend).equals(uuid)){
                     Clan.getClan().windBladeListener.WindBlades.put(legend, player);
-                    WindBladeS.remove(legend);
+                    remove.add(legend);
                     continue;
                 }
             }
         }
+        for (Legend legend : remove) {
+            WindBladeS.remove(legend);
+        }
+        remove.clear();
     }
 
     private void checkLegi(HashMap<Legend, Player> alligatorsTooths, HashMap<Legend, String> alligatorsToothsS,
@@ -266,39 +304,39 @@ public class LegiLoader implements Listener {
             String original = fileConfiguration.getString("slegend." + z + ".original");
             String holder = fileConfiguration.getString("slegend." + z + ".owner.uuid");
             if(string.equalsIgnoreCase("Alligator")){
-                alligatorsToothsS.put(Alligatorstooth(original), holder);
+                AlligatorsToothsS.put(Alligatorstooth(original), holder);
                 continue;
             }
             if(string.equalsIgnoreCase("Giant")){
-                alligatorsToothsS.put(Alligatorstooth(original), holder);
+                GiantBroadSwordsS.put(Alligatorstooth(original), holder);
                 continue;
             }
             if(string.equalsIgnoreCase("Hyper")){
-                alligatorsToothsS.put(HyperAxe(original), holder);
+                HyperAxesS.put(HyperAxe(original), holder);
                 continue;
             }
             if(string.equalsIgnoreCase("Lance")){
-                alligatorsToothsS.put(Lance(original), holder);
+                LancesS.put(Lance(original), holder);
                 continue;
             }
             if(string.equalsIgnoreCase("Magnetic")){
-                alligatorsToothsS.put(MagneticMaul(original), holder);
+                MagneticMaulsS.put(MagneticMaul(original), holder);
                 continue;
             }
             if(string.equalsIgnoreCase("Meridian")){
-                alligatorsToothsS.put(MerdianScepter(original), holder);
+                MeridianSceptersS.put(MerdianScepter(original), holder);
                 continue;
             }
             if(string.equalsIgnoreCase("Runed")){
-                alligatorsToothsS.put(RunedPickaxe(original), holder);
+                RunedPickAxesS.put(RunedPickaxe(original), holder);
                 continue;
             }
             if(string.equalsIgnoreCase("Scyth")){
-                alligatorsToothsS.put(ScytheOfTheFallenLord(original), holder);
+                ScythS.put(ScytheOfTheFallenLord(original), holder);
                 continue;
             }
             if(string.equalsIgnoreCase("Windblade")){
-                alligatorsToothsS.put(WindBlade(original), holder);
+                WindBladeS.put(WindBlade(original), holder);
                 continue;
             }
         }
@@ -308,39 +346,39 @@ public class LegiLoader implements Listener {
             String name = fileConfiguration.getString("legend." + z +".owner.name");
             String uuid = fileConfiguration.getString("legend." + z +".owner.uuid");
             if(string.equalsIgnoreCase("Alligator")){
-                alligatorsToothsS.put(Alligatorstooth(original), uuid);
+                AlligatorsToothsS.put(Alligatorstooth(original), uuid);
                 continue;
             }
             if(string.equalsIgnoreCase("Giant")){
-                alligatorsToothsS.put(Alligatorstooth(original), uuid);
+                GiantBroadSwordsS.put(Alligatorstooth(original), uuid);
                 continue;
             }
             if(string.equalsIgnoreCase("Hyper")){
-                alligatorsToothsS.put(HyperAxe(original), uuid);
+                HyperAxesS.put(HyperAxe(original), uuid);
                 continue;
             }
             if(string.equalsIgnoreCase("Lance")){
-                alligatorsToothsS.put(Lance(original), uuid);
+                LancesS.put(Lance(original), uuid);
                 continue;
             }
             if(string.equalsIgnoreCase("Magnetic")){
-                alligatorsToothsS.put(MagneticMaul(original), uuid);
+                MagneticMaulsS.put(MagneticMaul(original), uuid);
                 continue;
             }
             if(string.equalsIgnoreCase("Meridian")){
-                alligatorsToothsS.put(MerdianScepter(original), uuid);
+                MeridianSceptersS.put(MerdianScepter(original), uuid);
                 continue;
             }
             if(string.equalsIgnoreCase("Runed")){
-                alligatorsToothsS.put(RunedPickaxe(original), uuid);
+                RunedPickAxesS.put(RunedPickaxe(original), uuid);
                 continue;
             }
             if(string.equalsIgnoreCase("Scyth")){
-                alligatorsToothsS.put(ScytheOfTheFallenLord(original), uuid);
+                ScythS.put(ScytheOfTheFallenLord(original), uuid);
                 continue;
             }
             if(string.equalsIgnoreCase("Windblade")){
-                alligatorsToothsS.put(WindBlade(original), uuid);
+                WindBladeS.put(WindBlade(original), uuid);
                 continue;
             }
         }
