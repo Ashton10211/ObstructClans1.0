@@ -137,8 +137,10 @@ public class WindBladeListener implements Listener {
     private String barCooldown(int cd){
         String green = "§a§l";
         String red = "§c§l";
-        for(int s = 0; s<cd; s++){
-            red = red + "▌ ";
+        if(cd > 0) {
+            for (int s = 0; s < cd; s++) {
+                red = red + "▌ ";
+            }
         }
         int c = 12-cd;
         for(int s = 0; s<c; s++){
@@ -203,9 +205,13 @@ public class WindBladeListener implements Listener {
         groundCounts.put(p.getName(), Math.max(0.0F, (Float) groundCounts.get(p.getName()) - 0.15F));
         smoother.put(p.getName(), (float) Math.max(0.0D, (Float) smoother.get(p.getName()) - 0.5D));
         if (GetCharge(p) == 0.0F) {
-            Display.displayProgress(null, 0.0D, null, false, p);
+            String cdS = barCooldown(0);
+            showActionbar(p, cdS);
         } else {
-            Display.displayProgress(null, GetCharge(p), null, false, p);
+            float gch = GetCharge(p);
+            int cd = (int) (gch*10);
+            String cdS = barCooldown(cd);
+            showActionbar(p, cdS);
         }
     }
 
@@ -215,7 +221,9 @@ public class WindBladeListener implements Listener {
         float charge = charges.get(player.getName());
         charge = (float)Math.min(1.0D, charge + 0.01D);
         charges.put(player.getName(), charge);
-        Display.displayProgress(null, charge, null, false, player);
+        int cd = (int) (charge*10);
+        String cdS = barCooldown(cd);
+        showActionbar(player, cdS);
         return (charge >= 1.0F);
     }
 
