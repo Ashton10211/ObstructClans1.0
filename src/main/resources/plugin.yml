@@ -5,9 +5,11 @@ main: de.zerakles.main.Clan
 api-version: 1.8
 commands:
   clan:
-  c:
+    aliases: [c]
   a:
+  cc:
   ac:
   shop:
   setup:
   legendary:
+  rune:

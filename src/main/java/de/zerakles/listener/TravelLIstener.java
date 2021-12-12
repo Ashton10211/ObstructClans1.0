@@ -3,6 +3,8 @@ package de.zerakles.listener;
 import de.zerakles.clanapi.ClanAPI;
 import de.zerakles.main.Clan;
 import de.zerakles.utils.Data;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,6 +23,9 @@ public class TravelLIstener implements Listener {
     private ClanAPI getClanAPI(){
         return getClan().getClanAPI();
     }
+
+    final Location shopspawn = new Location(Bukkit.getWorld("world"), -624, 67, 309);
+
     @EventHandler
     public void onBankShop(InventoryClickEvent inventoryClickEvent)throws NullPointerException {
         if (inventoryClickEvent.getWhoClicked() instanceof Player) {
@@ -54,7 +59,7 @@ public class TravelLIstener implements Listener {
                 }
                 if (inventoryClickEvent.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§a§lShop")) {
                     player.closeInventory();
-                    player.teleport(getData().Shop);
+                    player.teleport(shopspawn);
                     return;
                 }
             }

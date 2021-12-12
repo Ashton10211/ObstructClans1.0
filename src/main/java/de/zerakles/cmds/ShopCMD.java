@@ -3,6 +3,7 @@ package de.zerakles.cmds;
 import de.zerakles.clanapi.ClanAPI;
 import de.zerakles.main.Clan;
 import de.zerakles.utils.Data;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -25,7 +26,7 @@ public class ShopCMD implements CommandExecutor {
                     player.sendMessage(getData().prefix + "§cShop don't exist!");
                     return true;
                 }
-                player.teleport(getData().Shop);
+                player.sendMessage(ChatColor.BLUE + "Kasey> " + ChatColor.YELLOW + "I can't let you do that");
                 return true;
             }
             if(args.length == 1){

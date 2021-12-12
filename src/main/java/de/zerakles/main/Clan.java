@@ -133,12 +133,14 @@ public class Clan extends JavaPlugin {
 
     private void loadCommands(){
         getCommand("clan").setExecutor(new ClanCommand());
-        getCommand("c").setExecutor(new ClanChat());
+        getCommand("cc").setExecutor(new ClanChat());
         getCommand("a").setExecutor(new AcceptCommand());
         getCommand("ac").setExecutor(new AllyChat());
         getCommand("shop").setExecutor(new ShopCMD());
         getCommand("setup").setExecutor(new SetupCMD());
         getCommand("legendary").setExecutor(new LegendaryCMD());
+        getCommand("rune").setExecutor(new RuneCMD());
+
     }
 
     private void loadListeners(){

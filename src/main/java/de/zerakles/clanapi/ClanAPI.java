@@ -719,7 +719,7 @@ public class ClanAPI {
         if(getData().Shop == null){
             return false;
         }
-        if(loc.distance(getData().Shop) < 50){
+        if(loc.distance(getData().Shop) < 55){
             return true;
         }
         return false;
