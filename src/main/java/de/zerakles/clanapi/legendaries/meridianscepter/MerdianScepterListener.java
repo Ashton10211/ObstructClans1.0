@@ -153,7 +153,7 @@ public class MerdianScepterListener implements Listener {
                     }
                     if(tick == 20) {
                         for (Player all : Bukkit.getOnlinePlayers()) {
-                            all.playSound(shot.getArrow().getLocation(), Sound.SHOOT_ARROW, 1F, 1F);
+                           // all.playSound(shot.getArrow().getLocation(), Sound.SHOOT_ARROW, 1F, 1F);
                         }
                     }
                 }
