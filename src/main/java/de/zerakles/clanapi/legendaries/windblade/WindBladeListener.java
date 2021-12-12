@@ -139,12 +139,12 @@ public class WindBladeListener implements Listener {
         String red = "§c§l";
         if(cd > 0) {
             for (int s = 0; s < cd; s++) {
-                red = red + "▌ ";
+                green = green + "▌ ";
             }
         }
-        int c = 12-cd;
+        int c = 10-cd;
         for(int s = 0; s<c; s++){
-            green = green + "▌ ";
+            red = red + "▌ ";
         }
         return green + red;
     }
@@ -370,7 +370,9 @@ public class WindBladeListener implements Listener {
         memoryRemove(p, true);
     }
 
+    int tick = 0;
     private void doCoolDowns() {
+        tick++;
         for (Legend legend : cooldown.keySet()) {
             if (cooldown.get(legend) == 0) {
                 Player p = WindBlades.get(legend);
@@ -383,7 +385,14 @@ public class WindBladeListener implements Listener {
                     continue;
                 }
                 p.playSound(p.getLocation(), Sound.valueOf("BLOCK_NOTE_PLING"), 5.0F, 1.0F);
+            } else{
+                if(tick == 20) {
+                    cooldown.replace(legend, cooldown.get(legend) - 1);
+                }
             }
+        }
+        if(tick == 20){
+            tick = 0;
         }
     }
 
