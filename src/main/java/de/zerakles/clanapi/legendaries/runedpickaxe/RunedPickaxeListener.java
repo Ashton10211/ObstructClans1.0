@@ -6,10 +6,13 @@ import de.zerakles.main.Clan;
 import de.zerakles.utils.Data;
 import de.zerakles.utils.Display;
 import de.zerakles.utils.Utils;
+import net.minecraft.server.v1_8_R3.IChatBaseComponent;
+import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -87,9 +90,37 @@ public class RunedPickaxeListener implements Listener {
             b.breakNaturally();
     }
 
-    private HashMap<String, Long> cooldown = new HashMap<>();
+    private void showActionbar(Player player, String text) {
+        PacketPlayOutChat packet = new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + text + "\"}"), (byte) 2);
+        ((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
+    }
 
-    private HashMap<String, Long> instantMining = new HashMap<>();
+    private String barCooldown(int cd){
+        String green = "§a§l";
+        String red = "§c§l";
+        for(int s = 0; s<cd; s++){
+            red = red + "▌ ";
+        }
+        int c = 12-cd;
+        for(int s = 0; s<c; s++){
+            green = green + "▌ ";
+        }
+        return green + red;
+    }
+
+    public  Legend legend(ItemStack itemStack){
+        for (Legend legend:RunedPickaxes.keySet()
+        ) {
+            if(legend.getItemStack().equals(itemStack)){
+                return legend;
+            }
+        }
+        return null;
+    }
+
+    private HashMap<Legend, Integer> cooldown = new HashMap<>();
+
+    private HashMap<String, Integer> instantMining = new HashMap<>();
 
     @EventHandler
     public void onClick(PlayerInteractEvent e) {
@@ -99,27 +130,19 @@ public class RunedPickaxeListener implements Listener {
             if (isCorrectItem(item,p)) {
                 if (p.getLocation().getBlock().isLiquid()) {
                     p.sendMessage(getData().prefix + ChatColor.GRAY + "You cannot use " +
-                            ChatColor.GREEN + RunedPickaxes.get(p).getName() + ChatColor.GRAY +
+                            ChatColor.GREEN + "§aRunedPickaxe" + ChatColor.GRAY +
                             " in water.");
                     return;
                 }
-                if (cooldown.containsKey(p.getName())) {
-                    Double x = 15.0D - Math.pow(10.0D, -1.0D) * ((System.currentTimeMillis() - cooldown.get(p.getName())) / 100L);
-                    String[] zz = x.toString().replace('.', '-').split("-");
-                    String concat = zz[0] + "." + zz[1].charAt(0);
-                    try {
-                        p.sendMessage(getData().prefix + ChatColor.GRAY +
-                                "Your cannot use " + ChatColor.GREEN + "Instant Mine" + ChatColor.GRAY +
-                                " for " + ChatColor.GREEN +
-                                concat + " Seconds");
-                    } catch (IndexOutOfBoundsException exc) {
-                        Bukkit.getServer().getLogger().warning("Index out of bounds in Runed Pickaxe msg. Should have been canceled");
-                    }
+                Legend legend = legend(item);
+                if (cooldown.containsKey(legend)){
+                    p.sendMessage(getClan().data.prefix + "§7You have a cooldown on this §RunedPickaxe. §eCD§7: §a"
+                            + cooldown.get(legend));
                     return;
                 }
                 if (instantMining.containsKey(p.getName()))
                     return;
-                instantMining.put(p.getName(), System.currentTimeMillis());
+                instantMining.put(p.getName(), 12);
                 p.removePotionEffect(PotionEffectType.FAST_DIGGING);
                 Display.displayTitleAndSubtitle(p, " ", ChatColor.WHITE + "Instant mine enabled for " + ChatColor.YELLOW +
                         "12 Seconds", 5, 30, 5);
@@ -136,11 +159,12 @@ public class RunedPickaxeListener implements Listener {
             }
         }
     }
-
+    int tick = 0;
     public void loop(){
        Bukkit.getScheduler().scheduleSyncRepeatingTask(getClan(), new Runnable() {
            @Override
            public void run() {
+               tick++;
                for (Player p : Bukkit.getServer().getOnlinePlayers()) {
                    if (!instantMining.containsKey(p.getName()))
                        if (isCorrectItem(p.getItemInHand(),p))
@@ -152,29 +176,33 @@ public class RunedPickaxeListener implements Listener {
                        instantMining.remove(s);
                        continue;
                    }
-                   if ((System.currentTimeMillis() - instantMining.get(s)) / 1000L > 11L) {
+                   if (instantMining.get(s) == 0) {
                        instantMining.remove(s);
-                       cooldown.put(p.getName(), System.currentTimeMillis());
+                       Legend legend = legend(p.getItemInHand());
+                       cooldown.put(legend,4);
                        continue;
                    }
                    if (isCorrectItem(p.getItemInHand(), p)) {
-                       double divide = (System.currentTimeMillis() - instantMining.get(s)) / 12000.0D;
-                       Display.displayProgress("Mine", divide,
-                               null, true, p);
+                       int ins = instantMining.get(s);
+                       String insS = barCooldown(ins);
+                       showActionbar(p, insS);
+                       if(tick == 20){
+                           instantMining.replace(s, instantMining.get(s)-1);
+                       }
                    }
                }
-               for (String s : cooldown.keySet()) {
-                   Player p = Bukkit.getServer().getPlayer(s);
+               for (Legend s : cooldown.keySet()) {
+                   Player p = RunedPickaxes.get(s);
                    if (p == null || !p.isOnline()) {
                        cooldown.remove(s);
                        continue;
                    }
-                   if ((System.currentTimeMillis() - cooldown.get(s)) / 1000L > 12L) {
+                   if (cooldown.get(s) == 0) {
                        cooldown.remove(s);
                        p.sendMessage(getData().prefix + ChatColor.GRAY +
                                "You can use " + ChatColor.GREEN + "Instant Mine");
                        if (isCorrectItem(p.getItemInHand(),p))
-                           Display.display(ChatColor.GREEN + "Instant Mine " + " Recharged", p);
+                           showActionbar(p, "§6§lInstant Mine Recharged");
                        if (Utils.is1_8()) {
                            p.playSound(p.getLocation(), Sound.valueOf("NOTE_PLING"), 5.0F, 1.0F);
                            continue;
@@ -183,111 +211,16 @@ public class RunedPickaxeListener implements Listener {
                        continue;
                    }
                    if (isCorrectItem(p.getItemInHand(),p)) {
-                       Double x = 15.0D - Math.pow(10.0D, -1.0D) * ((System.currentTimeMillis() - cooldown.get(p.getName())) / 100L);
-                       double divide = (System.currentTimeMillis() - cooldown.get(s)) / 15000.0D;
-                       String[] zz = x.toString().replace('.', '-').split("-");
-                       String concat = String.valueOf(zz[0]) + "." + zz[1].charAt(0);
-                       Display.displayProgress("§e§lMine", divide,
-                               ChatColor.WHITE + " " + concat + " §e§lSeconds", false, p);
-                   }
-               }for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-                   if (!instantMining.containsKey(p.getName()))
-                       if (isCorrectItem(p.getItemInHand(),p))
-                           p.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 80, 103));
-               }
-               for (String s : instantMining.keySet()) {
-                   Player p = Bukkit.getServer().getPlayer(s);
-                   if (p == null || !p.isOnline()) {
-                       instantMining.remove(s);
-                       continue;
-                   }
-                   if ((System.currentTimeMillis() - instantMining.get(s)) / 1000L > 11L) {
-                       instantMining.remove(s);
-                       cooldown.put(p.getName(), System.currentTimeMillis());
-                       continue;
-                   }
-                   if (isCorrectItem(Utils.getItemInHand(p),p)) {
-                       double divide = (System.currentTimeMillis() - instantMining.get(s)) / 12000.0D;
-                       Display.displayProgress("Mine", divide,
-                               null, true, p);
-                   }
-               }
-               for (String s : cooldown.keySet()) {
-                   Player p = Bukkit.getServer().getPlayer(s);
-                   if (p == null || !p.isOnline()) {
-                       cooldown.remove(s);
-                       continue;
-                   }
-                   if ((System.currentTimeMillis() - (Long) cooldown.get(s)) / 1000L > 14L) {
-                       cooldown.remove(s);
-                       p.sendMessage(getData().prefix + ChatColor.GRAY +
-                               "You can use " + ChatColor.GREEN + "Instant Mine");
-                       if (isCorrectItem(Utils.getItemInHand(p),p))
-                           Display.display(ChatColor.GREEN + "Instant Mine " + " Recharged", p);
-                       if (Utils.is1_8()) {
-                           p.playSound(p.getLocation(), Sound.valueOf("NOTE_PLING"), 5.0F, 1.0F);
-                           continue;
+                       int cd = cooldown.get(s);
+                       String cdS = barCooldown(cd);
+                       showActionbar(p, cdS);
+                       if(tick == 20){
+                           cooldown.replace(s, cooldown.get(s)-1);
                        }
-                       p.playSound(p.getLocation(), Sound.valueOf("BLOCK_NOTE_PLING"), 5.0F, 1.0F);
-                       continue;
-                   }
-                   if (isCorrectItem(Utils.getItemInHand(p),p)) {
-                       Double x = 15.0D - Math.pow(10.0D, -1.0D) * ((System.currentTimeMillis() - cooldown.get(p.getName())) / 100L);
-                       double divide = (System.currentTimeMillis() - cooldown.get(s)) / 15000.0D;
-                       String[] zz = x.toString().replace('.', '-').split("-");
-                       String concat = String.valueOf(zz[0]) + "." + zz[1].substring(0, 1);
-                       Display.displayProgress("Mine", divide,
-                               ChatColor.WHITE + " " + concat + " Seconds", false, p);
-                   }
-               }for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-                   if (!instantMining.containsKey(p.getName()))
-                       if (isCorrectItem(Utils.getItemInHand(p),p))
-                           p.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 80, 103));
-               }
-               for (String s : instantMining.keySet()) {
-                   Player p = Bukkit.getServer().getPlayer(s);
-                   if (p == null || !p.isOnline()) {
-                       instantMining.remove(s);
-                       continue;
-                   }
-                   if ((System.currentTimeMillis() - instantMining.get(s)) / 1000L > 11L) {
-                       instantMining.remove(s);
-                       cooldown.put(p.getName(), System.currentTimeMillis());
-                       continue;
-                   }
-                   if (isCorrectItem(Utils.getItemInHand(p),p)) {
-                       double divide = (System.currentTimeMillis() - instantMining.get(s)) / 12000.0D;
-                       Display.displayProgress("Mine", divide,
-                               null, true, p);
                    }
                }
-               for (String s : cooldown.keySet()) {
-                   Player p = Bukkit.getServer().getPlayer(s);
-                   if (p == null || !p.isOnline()) {
-                       cooldown.remove(s);
-                       continue;
-                   }
-                   if ((System.currentTimeMillis() - cooldown.get(s)) / 1000L > 14L) {
-                       cooldown.remove(s);
-                       p.sendMessage(getData().prefix + ChatColor.GRAY +
-                               "You can use " + ChatColor.GREEN + "Instant Mine");
-                       if (isCorrectItem(Utils.getItemInHand(p),p))
-                           Display.display(ChatColor.GREEN + "Instant Mine " + " Recharged", p);
-                       if (Utils.is1_8()) {
-                           p.playSound(p.getLocation(), Sound.valueOf("NOTE_PLING"), 5.0F, 1.0F);
-                           continue;
-                       }
-                       p.playSound(p.getLocation(), Sound.valueOf("BLOCK_NOTE_PLING"), 5.0F, 1.0F);
-                       continue;
-                   }
-                   if (isCorrectItem(Utils.getItemInHand(p),p)) {
-                       Double x = 15.0D - Math.pow(10.0D, -1.0D) * ((System.currentTimeMillis() - cooldown.get(p.getName())) / 100L);
-                       double divide = (System.currentTimeMillis() - cooldown.get(s)) / 15000.0D;
-                       String[] zz = x.toString().replace('.', '-').split("-");
-                       String concat = String.valueOf(zz[0]) + "." + zz[1].charAt(0);
-                       Display.displayProgress("Mine", divide,
-                               ChatColor.WHITE + " " + concat + " Seconds", false, p);
-                   }
+               if(0 == 20){
+                   tick = 0;
                }
            }
        },0,1);

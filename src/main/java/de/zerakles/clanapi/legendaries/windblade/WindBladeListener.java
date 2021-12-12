@@ -6,10 +6,13 @@ import de.zerakles.main.Clan;
 import de.zerakles.utils.Data;
 import de.zerakles.utils.Display;
 import de.zerakles.utils.Utils;
+import net.minecraft.server.v1_8_R3.IChatBaseComponent;
+import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -120,11 +123,39 @@ public class WindBladeListener implements Listener {
 
     private HashMap<String, Float> groundCounts = new HashMap<>();
 
-    private HashMap<String, Long> cooldown = new HashMap<>();
+    private HashMap<Legend, Integer> cooldown = new HashMap<>();
 
     private HashMap<String, Float> smoother = new HashMap<>();
 
     private HashMap<String, Vector> veccs = new HashMap<>();
+
+    private void showActionbar(Player player, String text) {
+        PacketPlayOutChat packet = new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + text + "\"}"), (byte) 2);
+        ((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
+    }
+
+    private String barCooldown(int cd){
+        String green = "§a§l";
+        String red = "§c§l";
+        for(int s = 0; s<cd; s++){
+            red = red + "▌ ";
+        }
+        int c = 12-cd;
+        for(int s = 0; s<c; s++){
+            green = green + "▌ ";
+        }
+        return green + red;
+    }
+
+    public  Legend legend(ItemStack itemStack){
+        for (Legend legend:WindBlades.keySet()
+        ) {
+            if(legend.getItemStack().equals(itemStack)){
+                return legend;
+            }
+        }
+        return null;
+    }
 
     @EventHandler
     public void onDmg(EntityDamageByEntityEvent e) {
@@ -209,17 +240,11 @@ public class WindBladeListener implements Listener {
             }
             if (GetCharge(p) <= 0.0F)
                 return;
-            if (cooldown.containsKey(p.getName())) {
-                Double x = 3.0D - Math.pow(10.0D, -1.0D) * ((System.currentTimeMillis() - cooldown.get(p.getName())) / 100L);
-                String[] zz = x.toString().replace('.', '-').split("-");
-                String concat = String.valueOf(zz[0]) + "." + zz[1].substring(0, 1);
-                try {
-                    p.sendMessage(getData().prefix + ChatColor.GRAY +
-                            "Your flight powers will recharge in " + ChatColor.GREEN +
-                            concat + " Seconds");
-                } catch (IndexOutOfBoundsException exc) {
-                    Bukkit.getServer().getLogger().warning("Index out of bounds in Wind Blade msg. Should have been canceled");
-                }
+            Legend legend = legend(item);
+            if (cooldown.containsKey(legend)) {
+                p.sendMessage(getData().prefix + ChatColor.GRAY +
+                        "Your flight powers will recharge in " + ChatColor.GREEN +
+                        cooldown.get(legend) + " Seconds");
                 return;
             }
             windLaunch(p);
@@ -311,7 +336,8 @@ public class WindBladeListener implements Listener {
             } else {
                 p.playSound(p.getLocation(), Sound.valueOf("BLOCK_ANVIL_USE"), 3.0F, 1.0F);
             }
-            cooldown.put(p.getName(), System.currentTimeMillis());
+            Legend legend = legend(p.getItemInHand());
+            cooldown.put(legend, 3);
             return;
         }
         veccs.put(p.getName(), vec);
@@ -328,33 +354,6 @@ public class WindBladeListener implements Listener {
         }
     }
     private void memoryRemove(Player p, boolean logged) {
-        if (logged) {
-            if (cooldown.containsKey(p.getName()))
-                cooldown.remove(p.getName());
-            if (charges.containsKey(p.getName()))
-                charges.remove(p.getName());
-        }
-        if (veccs.containsKey(p.getName()))
-            veccs.remove(p.getName());
-        if (smoother.containsKey(p.getName())) {
-            if (p.getGameMode() == GameMode.SPECTATOR || p.getGameMode() == GameMode.CREATIVE) {
-                p.setAllowFlight(true);
-                smoother.remove(p.getName());
-            } else {
-                p.setAllowFlight(false);
-            }
-            smoother.remove(p.getName());
-        }
-        if (groundCounts.containsKey(p.getName())) {
-            if (logged) {
-                if (groundCounts.containsKey(p.getName()))
-                    groundCounts.remove(p.getName());
-                return;
-            }
-            if (!haveLegendary(p) &&
-                    groundCounts.containsKey(p.getName()))
-                groundCounts.remove(p.getName());
-        }
     }
 
     @EventHandler
@@ -364,11 +363,11 @@ public class WindBladeListener implements Listener {
     }
 
     private void doCoolDowns() {
-        for (String s : cooldown.keySet()) {
-            if (System.currentTimeMillis() - (Long) cooldown.get(s) >= 3000L) {
-                Player p = Bukkit.getServer().getPlayer(s);
-                cooldown.remove(s);
-                Player pl = Bukkit.getServer().getPlayer(s);
+        for (Legend legend : cooldown.keySet()) {
+            if (cooldown.get(legend) == 0) {
+                Player p = WindBlades.get(legend);
+                cooldown.remove(legend);
+                Player pl = WindBlades.get(legend);
                 pl.sendMessage(getData().prefix +
                         ChatColor.GRAY + "Your flight powers have replenished!");
                 if (Utils.is1_8()) {
