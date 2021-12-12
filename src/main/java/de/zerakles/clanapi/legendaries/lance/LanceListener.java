@@ -142,7 +142,7 @@ public class LanceListener implements Listener {
                     return;
                 } else {
                     Cooldown.put(player, System.currentTimeMillis());
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 6, 6));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 6, 8));
                     player.playSound(player.getLocation(), Sound.HORSE_GALLOP, 1F, 1F);
                     player.sendMessage(getData().prefix + ChatColor.GRAY + "You used " + ChatColor.GREEN +
                             "Charge.");

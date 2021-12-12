@@ -68,19 +68,57 @@ public class ScoreboardMaster {
             zone = "§bShop";
         }
 
+
+
+
+
         ScoreboardScore s9 = new ScoreboardScore(board, obj, zone);
         ScoreboardScore s10 = new ScoreboardScore(board, obj, "    ");
 
-        s1.setScore(9);
-        s2.setScore(8);
-        s3.setScore(7);
-        s4.setScore(6);
-        s5.setScore(5);
-        s6.setScore(4);
-        s7.setScore(3);
-        s8.setScore(2);
-        s9.setScore(1);
-        s10.setScore(0);
+
+        if(!getClanAPI().playerExists(player.getUniqueId().toString())){
+            ScoreboardScore s21 = new ScoreboardScore(board, obj, "   ");
+            ScoreboardScore s19 = new ScoreboardScore(board, obj, "§e§lClan Energy");
+            ScoreboardScore s20 = new ScoreboardScore(board, obj, "§c§lDisabled");
+            s1.setScore(12);
+            s2.setScore(11);
+            s3.setScore(10);
+            s21.setScore(9);
+            s19.setScore(8);
+            s20.setScore(7);
+            s4.setScore(6);
+            s5.setScore(5);
+            s6.setScore(4);
+            s7.setScore(3);
+            s8.setScore(2);
+            s9.setScore(1);
+            s10.setScore(0);
+
+        }
+
+
+
+        if(getClanAPI().playerExists(player.getUniqueId().toString())){
+            ScoreboardScore s21 = new ScoreboardScore(board, obj, "   ");
+            ScoreboardScore s19 = new ScoreboardScore(board, obj, "§e§lClan Energy");
+            ScoreboardScore s20 = new ScoreboardScore(board, obj, "§c§lDisabled");
+            s1.setScore(12);
+            s2.setScore(11);
+            s3.setScore(10);
+            s21.setScore(9);
+            s19.setScore(8);
+            s20.setScore(7);
+            s4.setScore(6);
+            s5.setScore(5);
+            s6.setScore(4);
+            s7.setScore(3);
+            s8.setScore(2);
+            s9.setScore(1);
+            s10.setScore(0);
+
+        }
+
+
 
         PacketPlayOutScoreboardScore ps1 = new PacketPlayOutScoreboardScore(s1);
         PacketPlayOutScoreboardScore ps2 = new PacketPlayOutScoreboardScore(s2);
