@@ -23,6 +23,16 @@ import java.util.HashMap;
 public class InventoryMasterListener implements Listener {
 
     @EventHandler
+    public void onCheckInventoryClickEvent(InventoryClickEvent inventoryClickEvent){
+        if(inventoryClickEvent.getWhoClicked() instanceof  Player){
+            if(inventoryClickEvent.getClickedInventory().getTitle().contains("§8§lCheck")){
+                inventoryClickEvent.setCancelled(true);
+                return;
+            }
+        }
+    }
+
+    @EventHandler
     public void onManagerInv(InventoryClickEvent inventoryClickEvent){
         if(inventoryClickEvent.getWhoClicked() instanceof Player){
             if(inventoryClickEvent.getInventory().getTitle().equalsIgnoreCase("§l§8Manage Clan")){

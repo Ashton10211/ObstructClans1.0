@@ -1574,4 +1574,83 @@ public class ClanAPI {
         }
         return null;
     }
+
+    public void openCheckClan(Player player, String clanName) {
+        Inventory inventory = Bukkit.createInventory(player, 54, "§8§lCheck: " + clanName);
+        HashMap<String, String> members = getAllClanMembers(clanName);
+        ArrayList<String>lore = new ArrayList<>();
+        int i = members.size();
+        ItemStack itemStack = new ItemStack(Material.RECORD_9);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName("§a" + clanName);
+        itemStack.setItemMeta(itemMeta);
+        lore.add("");
+        lore.add("§eFounder §f" + getOwner(clanName));
+        int online = 0;
+        for (String string:members.keySet()
+             ) {
+            for (Player p:Bukkit.getOnlinePlayers()
+                 ) {
+                if(p.getUniqueId().toString().equals(string)){
+                    online = online+1;
+                    continue;
+                }
+            }
+        }
+        lore.add("§eMembers §f" + online + "/" + i);
+        lore.add("§eTerritory  §f" + getChunks(clanName).size() + "/"+ i*2);
+        //todo Warpoints
+        lore.add("§eWarpoints §f" + getWarpoints(clanName));
+        lore.add("");
+        //todo Energy
+        lore.add("§eEnergy §disabled");
+        itemMeta.setLore(lore);
+        lore.clear();
+        itemStack.setItemMeta(itemMeta);
+        inventory.setItem(4, itemStack);
+        ItemStack playerHead = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+        SkullMeta playerHeadItemMeta = (SkullMeta) playerHead.getItemMeta();
+        int heads = 18;
+        for (Player all : Bukkit.getOnlinePlayers()
+        ) {
+            if (members.containsKey(all.getUniqueId().toString())) {
+                playerHeadItemMeta.setOwner(all.getName());
+                playerHeadItemMeta.setDisplayName("§l§a" + all.getName());
+                lore.clear();
+                lore.add(" ");
+                lore.add("§eTitle: " + members.get(all.getUniqueId().toString()));
+                playerHeadItemMeta.setLore(lore);
+                playerHead.setItemMeta(playerHeadItemMeta);
+                inventory.setItem(heads, playerHead);
+                heads++;
+                members.remove(all.getUniqueId().toString());
+                continue;
+            }
+        }
+
+        for (OfflinePlayer all:Bukkit.getOfflinePlayers()
+        ) {
+            if (members.containsKey(all.getUniqueId().toString())) {
+                ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (byte) 0);
+                ItemMeta skullMeta = skull.getItemMeta();
+                lore.clear();
+                lore.add(" ");
+                lore.add("§eTitle: " + members.get(all.getUniqueId().toString()));
+                lore.add("");
+                lore.add("§cOffline");
+                skullMeta.setDisplayName("§c" + all.getName());
+                skullMeta.setLore(lore);
+                skull.setItemMeta(skullMeta);
+                inventory.setItem(heads, skull);
+                heads++;
+                members.remove(all.getUniqueId().toString());
+                continue;
+            }
+        }
+        player.openInventory(inventory);
+    }
+
+    private Integer getWarpoints(String clanName) {
+        return 0;
+    }
 }

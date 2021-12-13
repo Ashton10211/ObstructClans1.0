@@ -52,6 +52,7 @@ public class ClanCommand implements CommandExecutor {
                     home(player);
                     return true;
                 }
+                checkClan((Player) sender, args[0]);
             }
             if(args.length == 2){
                 if(args[0].equalsIgnoreCase("create")){
@@ -103,6 +104,18 @@ public class ClanCommand implements CommandExecutor {
             sender.sendMessage(getData().prefix + getData().mustBeAPlayer);
         }
         return false;
+    }
+
+    private void checkClan(Player sender, String clanName) {
+        if(!getClanApi().clanExists(clanName)) {
+            sender.sendMessage(getData().prefix + getData().clanDoesNotExist);
+            return;
+        }
+        if(getClanApi().getClan(sender.getUniqueId().toString()) == clanName){
+            getClanApi().openManageClanEx(sender);
+            return;
+        }
+        getClanApi().openCheckClan(sender, clanName);
     }
 
     private void unClaimAll(Player player) {
@@ -420,6 +433,11 @@ public class ClanCommand implements CommandExecutor {
     private void createClan(Player player, String clanName) {
         UUID uuid = UUID.randomUUID();
         if(getClanApi().clanExists(clanName)){
+            player.sendMessage(getData().prefix + getData().clanWithThisNameAlreadyExists);
+            return;
+        }
+        if(clanName.equalsIgnoreCase("claim") || clanName.equalsIgnoreCase("unclaim")
+                || clanName.equalsIgnoreCase("home")){
             player.sendMessage(getData().prefix + getData().clanWithThisNameAlreadyExists);
             return;
         }
