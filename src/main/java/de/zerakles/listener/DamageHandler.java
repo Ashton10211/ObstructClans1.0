@@ -4,12 +4,16 @@ import de.zerakles.clanapi.ClanAPI;
 import de.zerakles.main.Clan;
 import de.zerakles.utils.Data;
 import de.zerakles.utils.ZoneTypes;
+import net.minecraft.server.v1_8_R3.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class DamageHandler implements Listener {
     private Data getData(){
