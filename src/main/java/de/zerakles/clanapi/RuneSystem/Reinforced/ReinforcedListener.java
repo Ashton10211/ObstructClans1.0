@@ -1,5 +1,6 @@
 package de.zerakles.clanapi.RuneSystem.Reinforced;
 
+import de.zerakles.utils.UtilItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -15,6 +16,40 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class ReinforcedListener implements Listener {
+
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (!(event.getWhoClicked() instanceof Player)) {
+            return;
+        }
+
+        ItemStack item = event.getCurrentItem();
+        if (item == null) {
+            return;
+        }
+        if (!(UtilItem.isArmour(item.getType()))) {
+            return;
+        }
+        if (!(item.hasItemMeta())) {
+            return;
+        }
+        if (!(item.getItemMeta().getLore().get(0).contains("Reinforced Rune"))) {
+            return;
+        }
+
+
+        if(!(ChatColor.stripColor(item.getItemMeta().getLore().get(0)).contains("Reinforced Rune"))) {
+            return;
+        }
+
+
+        Player player = (Player) event.getWhoClicked();
+
+        player.sendMessage("Works!");
+    }
+
+
 
     @EventHandler
     public void onDamage(EntityDamageEvent entityDamageEvent) {
@@ -33,31 +68,13 @@ public class ReinforcedListener implements Listener {
             }
         }
     }
-
-
-
-
-
-
-@EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) {
-    Player player = event.getPlayer();
-
-
-    if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-        if (player.getItemInHand().getItemMeta().getLore().contains("§aReinforced Rune")) {
-            if (event.getClickedBlock().getType() == Material.STONE) {
-                player.sendMessage("You have started Enchating with a Reinforced Rune, right click with a item you want to enchant");
-
-                if (player.getItemInHand().getType() == Material.IRON_BOOTS) {
-                    player.sendMessage("TESTING1");
-
-                }
-            }
-        }
-    }
 }
-}
+
+
+
+
+
+
 
 
 

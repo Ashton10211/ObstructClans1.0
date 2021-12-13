@@ -166,7 +166,6 @@ public class Clan extends JavaPlugin {
         pm.registerEvents(new alter(), getClan());
         pm.registerEvents(new Maze(), getClan());
         pm.registerEvents(new ReinforcedListener(), getClan());
-        pm.registerEvents(new ImmortalChestListener(), getClan());
 
 
         pm.registerEvents(alligatorsToothListener, getClan());
