@@ -10,6 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -431,6 +432,9 @@ public class ClanAPI {
         player.openInventory(inventory);
         return;
     }
+
+
+
 
     public void openInviteToClan(Player player) {
         Inventory inventory = Bukkit.createInventory(player, 54, "§l§8Invite Players");

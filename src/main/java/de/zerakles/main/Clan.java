@@ -1,6 +1,8 @@
 package de.zerakles.main;
 
 import de.zerakles.clanapi.ClanAPI;
+import de.zerakles.clanapi.ImmortalPackage.ImmortalChestListener;
+import de.zerakles.clanapi.RuneSystem.Reinforced.ReinforcedListener;
 import de.zerakles.clanapi.legendaries.alligatorstooth.AlligatorsToothListener;
 import de.zerakles.clanapi.legendaries.giantbroadsword.GiantBroadSwordListener;
 import de.zerakles.clanapi.legendaries.hyperaxe.HyperAxeListener;
@@ -163,6 +165,8 @@ public class Clan extends JavaPlugin {
         pm.registerEvents(new SoupListener(), getClan());
         pm.registerEvents(new alter(), getClan());
         pm.registerEvents(new Maze(), getClan());
+        pm.registerEvents(new ReinforcedListener(), getClan());
+        pm.registerEvents(new ImmortalChestListener(), getClan());
 
 
         pm.registerEvents(alligatorsToothListener, getClan());

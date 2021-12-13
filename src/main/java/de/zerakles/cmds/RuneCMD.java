@@ -1,6 +1,7 @@
 package de.zerakles.cmds;
 
 
+import de.zerakles.clanapi.ImmortalPackage.ImmortalChest;
 import de.zerakles.clanapi.RuneSystem.Reinforced.Reinforced;
 import de.zerakles.clanapi.legendaries.alligatorstooth.Alligatorstooth;
 import de.zerakles.clanapi.legendaries.giantbroadsword.GiantBroadSword;
@@ -24,6 +25,7 @@ public class RuneCMD implements CommandExecutor {
         if (sender.hasPermission("clan.runes")) {
             if (args.length == 0) {
                 sender.sendMessage(Clan.getClan().data.prefix + "§e/rune Reinforced");
+                sender.sendMessage(Clan.getClan().data.prefix + "§e/rune Immortal");
 
             }
             if (args.length == 1) {
@@ -33,9 +35,9 @@ public class RuneCMD implements CommandExecutor {
                         ((Player) sender).getInventory().addItem(reinforced.rune.getItemStack());
                         return true;
                     }
-                    if (args[0].equalsIgnoreCase("GiantBroadSword")) {
-                        GiantBroadSword giantBroadSword = new GiantBroadSword(((Player) sender).getPlayer());
-                        ((Player) sender).getInventory().addItem(giantBroadSword.legend.getItemStack());
+                    if (args[0].equalsIgnoreCase("Immortal")) {
+                        ImmortalChest ImmortalChest = new ImmortalChest(((Player) sender).getPlayer());
+                        ((Player) sender).getInventory().addItem(ImmortalChest.rune.getItemStack());
                         return true;
                     }
                     if (args[0].equalsIgnoreCase("HyperAxe")) {
