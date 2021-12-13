@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -16,7 +17,14 @@ public class KitSelector implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent playerInteractEvent){
-
+        Player player = playerInteractEvent.getPlayer();
+        if(!checkItemStack(player.getItemInHand())){
+            return;
+        }
+        if(playerInteractEvent.getAction() == Action.RIGHT_CLICK_AIR
+                || playerInteractEvent.getAction() == Action.RIGHT_CLICK_BLOCK){
+            openClassShop(player);
+        }
     }
 
     public void openClassShop(Player player){
@@ -52,9 +60,9 @@ public class KitSelector implements Listener {
         assassinMeta.setLore(lore);
         lore.clear();
         assassin.setItemMeta(assassinMeta);
-        inventory.setItem(3, mage);
+        inventory.setItem(3, assassin);
         ItemStack ranger = new ItemStack(Material.CHAINMAIL_HELMET);
-        ItemMeta rangerMeta = assassin.getItemMeta();
+        ItemMeta rangerMeta = ranger.getItemMeta();
         rangerMeta.setDisplayName("§a§lRanger");
         lore.add("");
         lore.add("§fRangers are masters of the bow,");
@@ -84,7 +92,7 @@ public class KitSelector implements Listener {
         lore.clear();
         knight.setItemMeta(knightMeta);
         inventory.setItem(5, knight);
-        ItemStack brute = new ItemStack(Material.CHAINMAIL_HELMET);
+        ItemStack brute = new ItemStack(Material.DIAMOND_HELMET);
         ItemMeta bruteMeta = brute.getItemMeta();
         bruteMeta.setDisplayName("§a§lBrute");
         lore.add("");

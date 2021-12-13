@@ -61,6 +61,9 @@ public class MagneticMaulListener implements Listener {
     public boolean checkItemInHand(ItemStack itemStack, Player player){
         for (Legend legend: MagneticMauls.keySet()
         ) {
+            if(!itemStack.getItemMeta().hasLore()){
+                return false;
+            }
             if(itemStack.getItemMeta().getLore().contains("§8" + legend.getUuid())){
                 return true;
             }

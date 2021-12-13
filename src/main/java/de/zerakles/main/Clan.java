@@ -3,6 +3,7 @@ package de.zerakles.main;
 import de.zerakles.clanapi.ClanAPI;
 import de.zerakles.clanapi.ImmortalPackage.ImmortalChestListener;
 import de.zerakles.clanapi.RuneSystem.Reinforced.ReinforcedListener;
+import de.zerakles.clanapi.classes.Manager;
 import de.zerakles.clanapi.legendaries.alligatorstooth.AlligatorsToothListener;
 import de.zerakles.clanapi.legendaries.giantbroadsword.GiantBroadSwordListener;
 import de.zerakles.clanapi.legendaries.hyperaxe.HyperAxeListener;
@@ -69,6 +70,7 @@ public class Clan extends JavaPlugin {
     public ScytheOfTheFallenLordListener scytheOfTheFallenLordListener;
     public MerdianScepterListener meridianscepter;
     public LanceListener lanceListener;
+    public Manager manager;
 
     public ScoreboardMaster scoreboardMaster = new ScoreboardMaster();
     @Override
@@ -94,6 +96,7 @@ public class Clan extends JavaPlugin {
         lanceListener = new LanceListener();
         legiLoader = new LegiLoader(UUID.randomUUID(), false);
         legiLoader.loadLegis();
+        manager = new Manager();
         loadCommands();
         loadListeners();
         super.onEnable();
