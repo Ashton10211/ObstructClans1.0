@@ -13,6 +13,10 @@ import java.util.HashMap;
 
 public class Manager {
 
+    public Manager(){
+        loadListener();
+    }
+
     private ArrayList<Player>inKit = new ArrayList<>();
     private HashMap<Player, String> kit = new HashMap<>();
 
