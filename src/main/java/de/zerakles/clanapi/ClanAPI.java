@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 
 public class ClanAPI {
@@ -1585,7 +1586,8 @@ public class ClanAPI {
         itemMeta.setDisplayName("§a" + clanName);
         itemStack.setItemMeta(itemMeta);
         lore.add("");
-        lore.add("§eFounder §f" + getOwner(clanName));
+        String name  = Bukkit.getOfflinePlayer(UUID.fromString(getOwner(clanName))).getName();
+        lore.add("§eFounder §f" + name);
         int online = 0;
         for (String string:members.keySet()
              ) {
@@ -1598,12 +1600,16 @@ public class ClanAPI {
             }
         }
         lore.add("§eMembers §f" + online + "/" + i);
-        lore.add("§eTerritory  §f" + getChunks(clanName).size() + "/"+ i*2);
+        if(getChunks(clanName)!=null) {
+            lore.add("§eTerritory  §f" + getChunks(clanName).size() + "/" + i * 2);
+        } else {
+            lore.add("§eTerritory  §f" + 0 + "/" + i * 2);
+        }
         //todo Warpoints
         lore.add("§eWarpoints §f" + getWarpoints(clanName));
         lore.add("");
         //todo Energy
-        lore.add("§eEnergy §disabled");
+        lore.add("§eEnergy §cdisabled");
         itemMeta.setLore(lore);
         lore.clear();
         itemStack.setItemMeta(itemMeta);
