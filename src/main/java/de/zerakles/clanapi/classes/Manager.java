@@ -6,6 +6,7 @@ import de.zerakles.clanapi.classes.listener.MageListener;
 import de.zerakles.main.Clan;
 import de.zerakles.utils.Data;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -17,6 +18,8 @@ public class Manager {
 
     public EffectManager effectManager;
     public MageListener mageListener;
+
+    public String prefix = ChatColor.DARK_BLUE + "Class>";
 
     public Manager(){
         effectManager = new EffectManager();
@@ -62,8 +65,8 @@ public class Manager {
                      ) {
                     String kit = getKit(player);
                     if(!fullKit(player, kit)){
-                        player.sendMessage(getData().prefix + "§7You don't have all items of your kit equipped.");
-                        player.sendMessage(getData().prefix + "§7Kit was §cremoved§7!");
+                        player.sendMessage(prefix + "§7You don't have all items of your kit equipped.");
+                        player.sendMessage(prefix + "§7Kit was §cremoved§7!");
                         removeKit(player);
                     }
                 }
@@ -73,7 +76,7 @@ public class Manager {
 
     public void registerKit(Player player, String kit){
         if(!fullKit(player, kit)){
-            player.sendMessage(getData().prefix + "§7You need to equip a full §a" + kit.toUpperCase() + " §7Kit.");
+            player.sendMessage(prefix + "§7You need to equip a full §a" + kit.toUpperCase() + " §7Kit.");
             return;
         }
         if(kitContains(player)){
@@ -81,7 +84,7 @@ public class Manager {
             addKit(player,kit);
         }
         addKit(player, kit);
-        player.sendMessage(getData().prefix + "§7Kit was equipped!");
+        player.sendMessage(prefix + "§7Kit was equipped!");
     }
 
     public void loadListener(){

@@ -118,7 +118,7 @@ public class MageListener implements Listener {
 
     private boolean canUse(Player player){
         if(player.getLocation().getBlock().isLiquid()){
-            player.sendMessage(getData().prefix + "§7You can't use this skill in water!");
+            player.sendMessage(getManager().prefix + "§7You can't use this skill in water!");
             return false;
         }
         return true;
@@ -159,7 +159,7 @@ public class MageListener implements Listener {
 
     private void createZone(Item itemDrop, Player player) {
         if(cooldown.containsKey(player)){
-            player.sendMessage(getData().prefix + "§7Spell is on cooldown. CD: §e" + cooldown.get(player) + "s");
+            player.sendMessage(getManager().prefix + "§7Spell is on cooldown. CD: §e" + cooldown.get(player) + "s");
             return;
         }
         String clanName = "";
@@ -169,7 +169,7 @@ public class MageListener implements Listener {
         Zone zone = new Zone(itemDrop.getLocation(), player, clanName, 10);
         cooldown.put(player, 12);
         zoneArrayList.add(zone);
-        player.sendMessage(getData().prefix + "§7Spell §aArcticArmor §7was used.");
+        player.sendMessage(getManager().prefix + "§7Spell §aArcticArmor §7was used.");
     }
 
 }
