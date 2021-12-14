@@ -25,6 +25,7 @@ public class Manager {
         effectManager = new EffectManager();
         mageListener = new MageListener();
         mageListener.loop();
+        mageListener.hardLoop();
         loadListener();
         loop();
     }
