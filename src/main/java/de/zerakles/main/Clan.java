@@ -1,6 +1,8 @@
 package de.zerakles.main;
 
+import com.mysql.jdbc.Field;
 import de.zerakles.clanapi.ClanAPI;
+import de.zerakles.clanapi.Fields.FieldsListener;
 import de.zerakles.clanapi.ImmortalPackage.ImmortalChestListener;
 import de.zerakles.clanapi.RuneSystem.Reinforced.ReinforcedListener;
 import de.zerakles.clanapi.classes.Manager;
@@ -21,6 +23,7 @@ import de.zerakles.clanapi.raids.alter.alter;
 import de.zerakles.cmds.*;
 import de.zerakles.config.Config;
 import de.zerakles.config.Shop;
+
 import de.zerakles.config.VillagerLoader;
 import de.zerakles.listener.*;
 import de.zerakles.mysql.MySQL;
@@ -36,7 +39,6 @@ import org.bukkit.entity.Villager;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.Field;
 import java.util.UUID;
 
 public class Clan extends JavaPlugin {
@@ -45,6 +47,7 @@ public class Clan extends JavaPlugin {
     private static ClanAPI clanAPI;
     private Config config = new Config();
     public Shop shop = new Shop();
+
 
     public VillagerLoader villagerLoader = new VillagerLoader();
 
@@ -145,6 +148,8 @@ public class Clan extends JavaPlugin {
         getCommand("setup").setExecutor(new SetupCMD());
         getCommand("legendary").setExecutor(new LegendaryCMD());
         getCommand("rune").setExecutor(new RuneCMD());
+        getCommand("field").setExecutor(new FieldsCMD());
+
 
     }
 
@@ -169,6 +174,7 @@ public class Clan extends JavaPlugin {
         pm.registerEvents(new alter(), getClan());
         pm.registerEvents(new Maze(), getClan());
         pm.registerEvents(new ReinforcedListener(), getClan());
+        pm.registerEvents(new FieldsListener(), getClan());
 
 
         pm.registerEvents(alligatorsToothListener, getClan());

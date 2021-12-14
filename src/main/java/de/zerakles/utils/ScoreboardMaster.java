@@ -64,6 +64,9 @@ public class ScoreboardMaster {
         if(zoneTypes == ZoneTypes.ENEMYCLAN){
             zone = "§cEnemy Clan";
         }
+        if(zoneTypes == ZoneTypes.FIELDS){
+            zone = "§6Fields";
+        }
         if(zoneTypes == ZoneTypes.SHOP){
             zone = "§bShop";
         }

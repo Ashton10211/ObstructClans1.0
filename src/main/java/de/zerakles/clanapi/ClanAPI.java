@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.MaterialData;
 
+import javax.swing.plaf.PanelUI;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -138,6 +139,9 @@ public class ClanAPI {
         }
         return null;
     }
+
+
+
 
     public String getChunkOwner(Location location) {
         ResultSet resultSet = getMySQL().getResult("SELECT * FROM chunks WHERE X='"
@@ -660,6 +664,9 @@ public class ClanAPI {
         }, 0, 1200);
     }
 
+
+
+
     public ZoneTypes getZone(Location loc, Player player) {
         if (getChunkOwner(loc) != null) {
             String Owner = getChunkOwner(loc);
@@ -683,12 +690,17 @@ public class ClanAPI {
             if(isShop(loc)){
                 return ZoneTypes.SHOP;
             }
+            if(isField(loc)){
+                return ZoneTypes.FIELDS;
+            }
             if(isSpawn(loc)){
                 return ZoneTypes.SPAWN;
             }
             return ZoneTypes.WILDERNESS;
         }
     }
+
+
 
     public ZoneTypes getZone(Location loc, Entity player) {
         if (getChunkOwner(loc) != null) {
@@ -725,6 +737,16 @@ public class ClanAPI {
             return false;
         }
         if(loc.distance(getData().Shop) < 55){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isField(Location loc) {
+        if(getData().Field == null){
+            return false;
+        }
+        if(loc.distance(getData().Field) < 55){
             return true;
         }
         return false;

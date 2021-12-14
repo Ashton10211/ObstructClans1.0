@@ -75,6 +75,7 @@ public class Data {
     public HashMap<String, String> toAlly = new HashMap<>();
     public HashMap<Player, ZoneTypes> zones = new HashMap<>();
     public Location Shop;
+    public Location Field;
 
     //Spawn Locations
     public Location BankShop= null;

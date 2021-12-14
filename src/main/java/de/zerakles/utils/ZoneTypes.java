@@ -1,5 +1,5 @@
 package de.zerakles.utils;
 
 public enum ZoneTypes {
-    SPAWN, CLAN, WILDERNESS, ENEMYCLAN, SHOP;
+    SPAWN, CLAN, WILDERNESS, ENEMYCLAN, FIELDS, SHOP;
 }
