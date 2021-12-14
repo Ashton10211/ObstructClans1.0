@@ -55,6 +55,12 @@ public class WindBladeListener implements Listener {
     public boolean checkItemInHand(ItemStack itemStack, Player player){
         for (Legend legend: WindBlades.keySet()
         ) {
+            if(!itemStack.hasItemMeta()){
+                return false;
+            }
+            if(!itemStack.getItemMeta().hasLore()){
+                return false;
+            }
             if(itemStack.getItemMeta().getLore().contains("§8" + legend.getUuid())){
                 return true;
             }

@@ -1,11 +1,14 @@
 package de.zerakles.clanapi.classes.listener;
 
+import de.zerakles.clanapi.classes.Manager;
+import de.zerakles.main.Clan;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -14,6 +17,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 
 public class KitSelector implements Listener {
+
+    private Manager getManager(){
+        return Clan.getClan().manager;
+    }
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent playerInteractEvent){
@@ -27,8 +34,24 @@ public class KitSelector implements Listener {
         }
     }
 
+    @EventHandler
+    public void inventoryClick(InventoryClickEvent inventoryClickEvent){
+        if(!(inventoryClickEvent.getWhoClicked() instanceof Player))
+            return;
+        Player player = (Player) inventoryClickEvent.getWhoClicked();
+        if(!inventoryClickEvent.getClickedInventory().getTitle().equalsIgnoreCase("§a§lClass Selector"))
+            return;
+        inventoryClickEvent.setCancelled(true);
+        if(!inventoryClickEvent.getCurrentItem().hasItemMeta())
+            return;
+        if(inventoryClickEvent.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§a§lMage")){
+            getManager().registerKit(player, "Mage");
+            return;
+        }
+    }
+
     public void openClassShop(Player player){
-        Inventory inventory = Bukkit.createInventory(player, 9, "§a§lClass Shop");
+        Inventory inventory = Bukkit.createInventory(player, 9, "§a§lClass Selector");
         ArrayList<String>lore = new ArrayList<>();
         //0; 1; 2 = Mage;  3=Assassin; 4=Ranger; 5=Knight; 6=Bruce; 7 8
         ItemStack mage = new ItemStack(Material.GOLD_HELMET);
