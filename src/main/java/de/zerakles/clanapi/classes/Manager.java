@@ -1,8 +1,10 @@
 package de.zerakles.clanapi.classes;
 
+import de.zerakles.clanapi.classes.effects.EffectManager;
 import de.zerakles.clanapi.classes.listener.KitSelector;
 import de.zerakles.clanapi.classes.listener.MageListener;
 import de.zerakles.main.Clan;
+import de.zerakles.utils.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -13,12 +15,23 @@ import java.util.HashMap;
 
 public class Manager {
 
+    public EffectManager effectManager;
+    public MageListener mageListener;
+
     public Manager(){
         loadListener();
+        loop();
+        effectManager = new EffectManager();
+        mageListener = new MageListener();
+        mageListener.loop();
     }
 
     private ArrayList<Player>inKit = new ArrayList<>();
     private HashMap<Player, String> kit = new HashMap<>();
+
+    private Data getData(){
+        return Clan.getClan().data;
+    }
 
     public String getKit(Player player){
         return kit.get(player);
@@ -29,7 +42,7 @@ public class Manager {
     }
 
     private void removeKit(Player player){
-        kit.remove(player);
+        kit.remove(player); inKit.remove(player);
     }
 
     private boolean kitContains(Player player){
@@ -40,18 +53,40 @@ public class Manager {
         this.kit.put(player, kit);
     }
 
+    public void loop(){
+        Bukkit.getScheduler().scheduleAsyncRepeatingTask(Clan.getClan(), new Runnable() {
+            @Override
+            public void run() {
+                for (Player player:inKit
+                     ) {
+                    String kit = getKit(player);
+                    if(!fullKit(player, kit)){
+                        player.sendMessage(getData().prefix + "§7You don't have all items of your kit equipped.");
+                        player.sendMessage(getData().prefix + "§7Kit was §cremoved§7!");
+                        removeKit(player);
+                    }
+                }
+            }
+        },0,20);
+    }
+
     public void registerKit(Player player, String kit){
+        if(!fullKit(player, kit)){
+            player.sendMessage(getData().prefix + "§7You need to equip a full §a" + kit.toUpperCase() + " §7Kit.");
+            return;
+        }
         if(kitContains(player)){
             removeKit(player);
             addKit(player,kit);
         }
         addKit(player, kit);
+        player.sendMessage(getData().prefix + "§7Kit was equipped!");
     }
 
     public void loadListener(){
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new KitSelector(), Clan.getClan());
-        pluginManager.registerEvents(new MageListener(), Clan.getClan());
+        pluginManager.registerEvents(mageListener, Clan.getClan());
     }
 
     public boolean fullKit(Player player, String kit){
