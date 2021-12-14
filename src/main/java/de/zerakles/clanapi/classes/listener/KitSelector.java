@@ -36,11 +36,12 @@ public class KitSelector implements Listener {
 
     @EventHandler
     public void inventoryClick(InventoryClickEvent inventoryClickEvent){
-        if(!(inventoryClickEvent instanceof Player))
+        if(!(inventoryClickEvent.getWhoClicked() instanceof Player))
             return;
         Player player = (Player) inventoryClickEvent.getWhoClicked();
         if(!inventoryClickEvent.getClickedInventory().getTitle().equalsIgnoreCase("§a§lClass Selector"))
             return;
+        inventoryClickEvent.setCancelled(true);
         if(!inventoryClickEvent.getCurrentItem().hasItemMeta())
             return;
         if(inventoryClickEvent.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§a§lMage")){

@@ -43,13 +43,21 @@ public class MageListener implements Listener {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(getClan(), new Runnable() {
             @Override
             public void run() {
+                ArrayList<Zone> zoneRemove = new ArrayList<>();
                 if(zoneArrayList.size() > 0) {
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         for (Zone zone:zoneArrayList
                              ) {
+                            if(zone.liveTime == 0){
+                                zoneRemove.add(zone);
+                                continue;
+                            }
+                            if(zone.liveTime>0){
+                                zone.setLiveTime(zone.liveTime-1);
+                            }
                             if(zone.getLocation().distance(player.getLocation()) < 7){
                                 if(zone.getPlayer().getUniqueId().equals(player.getUniqueId())){
-                                    player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 4, 2));
+                                    player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 120, 1));
                                     for (Player all:Bukkit.getOnlinePlayers()
                                          ) {
                                         all.playEffect(player.getLocation(), Effect.FLYING_GLYPH, 9999);
@@ -59,7 +67,7 @@ public class MageListener implements Listener {
                                 }
                                 if(getClanAPI().playerExists(player.getUniqueId().toString())){
                                     if(getClanAPI().getClan(player.getUniqueId().toString()).equalsIgnoreCase(zone.getClanName())){
-                                        player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 4, 2));
+                                        player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 120, 1));
                                         for (Player all:Bukkit.getOnlinePlayers()
                                         ) {
                                             all.playEffect(player.getLocation(), Effect.FLYING_GLYPH, 9999);
@@ -67,7 +75,7 @@ public class MageListener implements Listener {
                                         }
                                         continue;
                                     }
-                                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 4, 2));
+                                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 120, 1));
                                     for (Player all:Bukkit.getOnlinePlayers()
                                     ) {
                                         all.playEffect(player.getLocation(), Effect.SLIME, 9999);
@@ -75,7 +83,7 @@ public class MageListener implements Listener {
                                     }
                                     continue;
                                 }
-                                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 4, 2));
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 120, 1));
                                 for (Player all:Bukkit.getOnlinePlayers()
                                 ) {
                                     all.playEffect(player.getLocation(), Effect.SLIME, 9999);
@@ -86,11 +94,23 @@ public class MageListener implements Listener {
                         }
                     }
                 }
+                for (Zone zone:zoneRemove
+                     ) {
+                    zoneArrayList.remove(zone);
+                }
+                ArrayList<Player> toRemove = new ArrayList<>();
                 if(cooldown.size() > 0){
                     for (Player player:cooldown.keySet()
                          ) {
+                        if(cooldown.get(player) == 0){
+                            toRemove.add(player);
+                        }
                         cooldown.replace(player, cooldown.get(player)-1);
                     }
+                }
+                for (Player player:toRemove
+                     ) {
+                    cooldown.remove(player);
                 }
             }
         },0,20);

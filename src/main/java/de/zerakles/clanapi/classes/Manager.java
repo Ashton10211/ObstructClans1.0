@@ -19,15 +19,15 @@ public class Manager {
     public MageListener mageListener;
 
     public Manager(){
-        loadListener();
-        loop();
         effectManager = new EffectManager();
         mageListener = new MageListener();
         mageListener.loop();
+        loadListener();
+        loop();
     }
 
-    private ArrayList<Player>inKit = new ArrayList<>();
-    private HashMap<Player, String> kit = new HashMap<>();
+    public ArrayList<Player>inKit = new ArrayList<>();
+    public HashMap<Player, String> kit = new HashMap<>();
 
     private Data getData(){
         return Clan.getClan().data;
@@ -45,12 +45,13 @@ public class Manager {
         kit.remove(player); inKit.remove(player);
     }
 
-    private boolean kitContains(Player player){
+    public boolean kitContains(Player player){
         return kit.containsKey(player);
     }
 
-    private void addKit(Player player, String kit){
-        this.kit.put(player, kit);
+    public void addKit(Player player, String kitS){
+        kit.put(player, kitS);
+        inKit.add(player);
     }
 
     public void loop(){
@@ -91,6 +92,18 @@ public class Manager {
 
     public boolean fullKit(Player player, String kit){
         if(kit.equalsIgnoreCase("Mage")){
+            if(player.getInventory().getHelmet()==null){
+                return false;
+            }
+            if(player.getInventory().getChestplate()==null){
+                return false;
+            }
+            if(player.getInventory().getLeggings()==null){
+                return false;
+            }
+            if(player.getInventory().getBoots()==null){
+                return false;
+            }
             if((player.getInventory().getHelmet().getType() == Material.GOLD_HELMET) &&
                     (player.getInventory().getHelmet().getItemMeta().getDisplayName().equalsIgnoreCase("§a§lMage Helmet"))
                             && (player.getInventory().getChestplate().getType() == Material.GOLD_CHESTPLATE)
