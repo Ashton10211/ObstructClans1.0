@@ -26,11 +26,13 @@ public class alter implements Listener {
         Player player = event.getPlayer();
         Location raidteleporter  = event.getClickedBlock().getLocation();
 
-
+        //please try using the java convention!
         final Location raidteleporter1 = new Location(Bukkit.getWorld("world"), 22, 78, -178);
 
 
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+
+            //please only write oneliner like this!
             if(raidteleporter.equals(raidteleporter1))
             if (player.getItemInHand().getType() == Material.IRON_INGOT) {
                 if(event.getClickedBlock().getType() == Material.PRISMARINE) {
@@ -41,14 +43,14 @@ public class alter implements Listener {
                 }
             }
 
+            //code makes no sense at this point!
+
             if (!raidteleporter.equals(raidteleporter1));
             {
             }
             if (event.getClickedBlock().getType() != Material.PRISMARINE) {
                 return;
-            }
-
-            else if (player.getItemInHand().getType() != Material.IRON_INGOT) {
+            } else if (player.getItemInHand().getType() != Material.IRON_INGOT) {
                 player.sendMessage(ChatColor.BLUE + "Guardian Of The Sea Messenger> " + ChatColor.YELLOW + "You don't have the right materials to summon the Guardian of The Sea");
             }
         }
