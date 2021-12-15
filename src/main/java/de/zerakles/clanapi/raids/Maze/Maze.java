@@ -24,6 +24,12 @@ public class Maze implements Listener {
         boolean level1 = false;
         boolean level2 = false;
 
+        /*
+
+         Please check if clickedblock is != null because clicking other things can be clicked block too (like sign (signs are not a normal block))
+
+         */
+
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             if (event.getClickedBlock().getType() == Material.LEVER) {
                 if (lever.equals(lever1))
