@@ -1,5 +1,6 @@
 package de.zerakles.clanapi.classes;
 
+import de.zerakles.clanapi.classes.effects.EffectListener;
 import de.zerakles.clanapi.classes.effects.EffectManager;
 import de.zerakles.clanapi.classes.listener.KitSelector;
 import de.zerakles.clanapi.classes.listener.MageListener;
@@ -19,7 +20,7 @@ public class Manager {
     public EffectManager effectManager;
     public MageListener mageListener;
 
-    public String prefix = ChatColor.DARK_BLUE + "Class>";
+    public String prefix = ChatColor.DARK_BLUE + "Class> ";
 
     public Manager(){
         effectManager = new EffectManager();
@@ -73,6 +74,12 @@ public class Manager {
                 }
             }
         },0,20);
+        Bukkit.getScheduler().scheduleAsyncRepeatingTask(Clan.getClan(), new Runnable() {
+            @Override
+            public void run() {
+                effectManager.loop();
+            }
+        },0,1);
     }
 
     public void registerKit(Player player, String kit){
@@ -92,6 +99,7 @@ public class Manager {
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new KitSelector(), Clan.getClan());
         pluginManager.registerEvents(mageListener, Clan.getClan());
+        pluginManager.registerEvents(new EffectListener(), Clan.getClan());
     }
 
     public boolean fullKit(Player player, String kit){

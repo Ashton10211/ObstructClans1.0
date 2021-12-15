@@ -3,15 +3,18 @@ package de.zerakles.clanapi.classes.listener;
 import de.zerakles.clanapi.ClanAPI;
 import de.zerakles.clanapi.classes.Manager;
 import de.zerakles.clanapi.classes.effects.EnumEffect;
+import de.zerakles.clanapi.legendaries.meridianscepter.utils.MerdianScepterShot;
 import de.zerakles.main.Clan;
 import de.zerakles.utils.Data;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -138,8 +141,12 @@ public class MageListener implements Listener {
                         toRemovePrisonCD.add(player);
                         continue;
                     }
-                    prisonCooldown.remove(player, prisonCooldown.get(player)-1);
+                    prisonCooldown.replace(player, prisonCooldown.get(player)-1);
                     continue;
+                }
+                for (Player pl :toRemovePrisonCD
+                    ) {
+                    prisonCooldown.remove(pl);
                 }
             }
         }, 0, 20);
@@ -149,12 +156,29 @@ public class MageListener implements Listener {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(getClan(), new Runnable() {
             @Override
             public void run() {
-                for (Arrow arrow : arrowPlayerHashMap.keySet()){
-                    if(arrow.isOnGround()){
-                        arrow.remove();
+                for (MerdianScepterShot arrow : arrowPlayerHashMap.keySet()){
+                    if(arrow.getArrow().isOnGround()){
+                        arrow.getArrow().remove();
                     }else{
                         for(Player all:Bukkit.getOnlinePlayers())
-                            all.playEffect(arrow.getLocation(), Effect.BLAZE_SHOOT, 9999);
+                            all.playEffect(arrow.getArrow().getLocation(), Effect.BLAZE_SHOOT, 9999);
+                    }
+                }
+                if (!arrowPlayerHashMap.isEmpty()) {
+
+                    ArrayList<MerdianScepterShot> copy = new ArrayList<>();
+                    for (MerdianScepterShot shot:arrowPlayerHashMap.keySet()
+                         ) {
+                        copy.add(shot);
+                    }
+                    for (MerdianScepterShot shot : copy) {
+                        if (!shot.getArrow().isDead() && !shot.isGone())
+                            shot.update();
+                    }
+                }
+                for (MerdianScepterShot shot : arrowPlayerHashMap.keySet()){
+                    if(shot.getArrow().isOnGround()){
+                        shot.delete();
                     }
                 }
             }
@@ -162,7 +186,7 @@ public class MageListener implements Listener {
     }
 
     public HashMap<Player, Integer> prisonCooldown = new HashMap<>();
-    public HashMap<Arrow,Player> arrowPlayerHashMap = new HashMap<>();
+    public HashMap<MerdianScepterShot,Player> arrowPlayerHashMap = new HashMap<>();
 
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent entityDamageEvent){
@@ -175,74 +199,14 @@ public class MageListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onArrowHit(ProjectileHitEvent projectileHitEvent){
-        if(!(projectileHitEvent instanceof Arrow))
-            return;
-        Arrow arrow = (Arrow) projectileHitEvent.getEntity();
-        if(!arrowPlayerHashMap.containsKey(arrow))
-            return;
-        arrowPlayerHashMap.remove(arrow);
-        arrow.remove();
-        for(Player all: Bukkit.getOnlinePlayers()){
-            if(all.getLocation().distance(arrow.getLocation())<1.25){
-                Location location = all.getLocation();
-                Location b1 = location;
-                Location b2;
-                Location b3 = location;
-                Location b4;
-                Location b5 = location;
-                Location b6;
-                Location b7 = location;
-                Location b8;
-                b1.setX(location.getX()-1);
-                b1.setY(location.getY()+1);
-                b2 = b1;
-                b2.setY(b1.getY()+1);
 
-                b3.setX(location.getX()+1);
-                b3.setY(location.getY()+1);
-                b4 = b3;
-                b4.setY(b3.getY()+1);
-
-                b5.setX(location.getZ()-1);
-                b5.setY(location.getY()+1);
-                b6 = b5;
-                b6.setY(b5.getY()+1);
-
-                b7.setX(location.getZ()+1);
-                b7.setY(location.getY()+1);
-                b8 = b7;
-                b8.setY(b7.getY()+1);
-                b1.getBlock().setType(Material.PACKED_ICE);
-                b2.getBlock().setType(Material.PACKED_ICE);
-                b3.getBlock().setType(Material.PACKED_ICE);
-                b4.getBlock().setType(Material.PACKED_ICE);
-                b5.getBlock().setType(Material.PACKED_ICE);
-                b6.getBlock().setType(Material.PACKED_ICE);
-                b7.getBlock().setType(Material.PACKED_ICE);
-                b8.getBlock().setType(Material.PACKED_ICE);
-                Bukkit.getScheduler().scheduleSyncDelayedTask(getClan(), new Runnable() {
-                    @Override
-                    public void run() {
-                        b1.getBlock().setType(Material.AIR);
-                        b2.getBlock().setType(Material.AIR);
-                        b3.getBlock().setType(Material.AIR);
-                        b4.getBlock().setType(Material.AIR);
-                        b5.getBlock().setType(Material.AIR);
-                        b6.getBlock().setType(Material.AIR);
-                        b7.getBlock().setType(Material.AIR);
-                        b8.getBlock().setType(Material.AIR);
-                    }
-                },10);
-            }
-        }
-    }
 
     @EventHandler
     public void onInteractTwo(PlayerInteractEvent playerInteractEvent){
         Player player = playerInteractEvent.getPlayer();
         ItemStack itemStack = playerInteractEvent.getPlayer().getItemInHand();
+        if(playerInteractEvent.getAction() != Action.RIGHT_CLICK_AIR && playerInteractEvent.getAction() != Action.RIGHT_CLICK_BLOCK)
+            return;
         if(!getManager().hasKit(player))
             return;
         if(isSilenced(player))
@@ -255,11 +219,55 @@ public class MageListener implements Listener {
             player.sendMessage(getManager().prefix + "§7Spell is on cooldown! CD:§e" + prisonCooldown.get(player));
             return;
         }
-        Arrow arrow = player.shootArrow();
-        arrow.setKnockbackStrength(0);
+        MerdianScepterShot shot = new MerdianScepterShot(getClan(), player);
+        shot.launch();
         player.sendMessage(getManager().prefix + "§7Shot!");
-        arrowPlayerHashMap.put(arrow, player);
+        arrowPlayerHashMap.put(shot, player);
         prisonCooldown.put(player, 15);
+    }
+
+    @EventHandler
+    public void onDmg(EntityDamageByEntityEvent e) {
+        if (e.isCancelled()) {
+            if (e.getDamager() instanceof Arrow) {
+                Arrow arrow = (Arrow)e.getDamager();
+                for (MerdianScepterShot shot : arrowPlayerHashMap.keySet()) {
+                    if (shot.getArrow() == arrow) {
+                        arrow.teleport(new Location(arrow.getWorld(), 0.0D, -10.0D, 0.0D));
+                        arrow.setKnockbackStrength(0);
+                        shot.delete();
+                    }
+                }
+            }
+            return;
+        }
+        if (e.getDamager() instanceof Arrow &&
+                e.getEntity() instanceof LivingEntity) {
+            Arrow arrow = (Arrow)e.getDamager();
+            LivingEntity struckEnt = (LivingEntity)e.getEntity();
+            if (struckEnt.isDead())
+                return;
+            for (MerdianScepterShot shot : arrowPlayerHashMap.keySet()) {
+                if (shot.getArrow() == arrow) {
+                    if (shot.getShooter() == struckEnt) {
+                        e.setCancelled(true);
+                        continue;
+                    }
+                    arrow.setKnockbackStrength(0);
+                    arrow.teleport(new Location(arrow.getWorld(), 0.0D, -10.0D, 0.0D));
+                    String string = struckEnt.getType().toString().toLowerCase().replace("_", " ");
+                }
+                if(e.getEntity() instanceof Player) {
+                    e.setCancelled(true);
+                    shot.delete();
+                    arrowPlayerHashMap.remove(arrow);
+                    arrow.remove();
+                    Bukkit.getConsoleSender().sendMessage("hit");
+                    getManager().effectManager.registerEffect(EnumEffect.FROZEN, (Player) e.getEntity());
+                    e.getEntity().sendMessage(getManager().prefix + "§7You are §aFROZEN. §7You cant move for 2 Seconds!");
+                }
+            }
+        }
     }
 
     public ArrayList<Player>bonusMagic = new ArrayList<>();
@@ -268,6 +276,8 @@ public class MageListener implements Listener {
     public void onInteract(PlayerInteractEvent playerInteractEvent){
         Player player = playerInteractEvent.getPlayer();
         ItemStack itemStack = playerInteractEvent.getPlayer().getItemInHand();
+        if(playerInteractEvent.getAction() != Action.RIGHT_CLICK_AIR && playerInteractEvent.getAction() != Action.RIGHT_CLICK_BLOCK)
+            return;
         if(!getManager().hasKit(player))
             return;
         if(!getManager().getKit(player).equalsIgnoreCase("Mage"))
