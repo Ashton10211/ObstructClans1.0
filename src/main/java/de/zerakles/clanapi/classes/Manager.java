@@ -105,6 +105,7 @@ public class Manager {
         pluginManager.registerEvents(new KitSelector(), Clan.getClan());
         pluginManager.registerEvents(mageListener, Clan.getClan());
         pluginManager.registerEvents(new EffectListener(), Clan.getClan());
+        pluginManager.registerEvents(assassinListener, Clan.getClan());
     }
 
     public boolean fullKit(Player player, String kit){
