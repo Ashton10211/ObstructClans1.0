@@ -2,6 +2,7 @@ package de.zerakles.clanapi.classes;
 
 import de.zerakles.clanapi.classes.effects.EffectListener;
 import de.zerakles.clanapi.classes.effects.EffectManager;
+import de.zerakles.clanapi.classes.listener.AssassinListener;
 import de.zerakles.clanapi.classes.listener.KitSelector;
 import de.zerakles.clanapi.classes.listener.MageListener;
 import de.zerakles.main.Clan;
@@ -19,6 +20,7 @@ public class Manager {
 
     public EffectManager effectManager;
     public MageListener mageListener;
+    public AssassinListener assassinListener;
 
     public String prefix = ChatColor.DARK_BLUE + "Class> ";
 
@@ -27,6 +29,9 @@ public class Manager {
         mageListener = new MageListener();
         mageListener.loop();
         mageListener.hardLoop();
+        assassinListener = new AssassinListener();
+        assassinListener.loop();
+        assassinListener.hardLoop();
         loadListener();
         loop();
     }

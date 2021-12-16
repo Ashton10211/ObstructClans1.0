@@ -215,6 +215,8 @@ public class MageListener implements Listener {
             return;
         if(!isSword(itemStack))
             return;
+        if(!canUse(player))
+            return;
         if(prisonCooldown.containsKey(player)){
             player.sendMessage(getManager().prefix + "§7Spell is on cooldown! CD:§e" + prisonCooldown.get(player));
             return;
@@ -276,6 +278,8 @@ public class MageListener implements Listener {
     public void onInteract(PlayerInteractEvent playerInteractEvent){
         Player player = playerInteractEvent.getPlayer();
         ItemStack itemStack = playerInteractEvent.getPlayer().getItemInHand();
+        if(!canUse(player))
+            return;
         if(playerInteractEvent.getAction() != Action.RIGHT_CLICK_AIR && playerInteractEvent.getAction() != Action.RIGHT_CLICK_BLOCK)
             return;
         if(!getManager().hasKit(player))
@@ -284,6 +288,9 @@ public class MageListener implements Listener {
             return;
         if(!isAxe(itemStack))
             return;
+        if(!canUse(player)){
+            return;
+        }
         if(bonusMagic.contains(player)){
             player.sendMessage(getManager().prefix + "§cYour spell is already active!");
             return;

@@ -48,6 +48,10 @@ public class KitSelector implements Listener {
             getManager().registerKit(player, "Mage");
             return;
         }
+        if(inventoryClickEvent.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§a§lAssassin")){
+            getManager().registerKit(player, "Assassin");
+            return;
+        }
     }
 
     public void openClassShop(Player player){
