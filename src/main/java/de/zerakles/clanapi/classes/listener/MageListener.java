@@ -121,7 +121,7 @@ public class MageListener implements Listener {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     if (!getManager().hasKit(player))
                         continue;
-                    if (!getManager().getKit(player).equalsIgnoreCase("Mage")) {
+                    if (getManager().getKit(player).equalsIgnoreCase("Mage")) {
                         if (isSilenced(player))
                             continue;
                         player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 20, 2));

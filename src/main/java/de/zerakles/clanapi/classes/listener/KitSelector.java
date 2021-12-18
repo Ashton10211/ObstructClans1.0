@@ -52,6 +52,18 @@ public class KitSelector implements Listener {
             getManager().registerKit(player, "Assassin");
             return;
         }
+        if(inventoryClickEvent.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§a§lBrute")){
+            getManager().registerKit(player, "Brute");
+            return;
+        }
+        if(inventoryClickEvent.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§a§lKnight")){
+            getManager().registerKit(player, "Knight");
+            return;
+        }
+        if(inventoryClickEvent.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§a§lRanger")){
+            getManager().registerKit(player, "Ranger");
+            return;
+        }
     }
 
     public void openClassShop(Player player){

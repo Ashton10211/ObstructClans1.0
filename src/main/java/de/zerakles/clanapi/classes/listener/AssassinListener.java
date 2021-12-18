@@ -144,7 +144,7 @@ public class AssassinListener implements Listener {
             return;
         if(!getManager().hasKit(player))
             return;
-        if(!isSilenced(player))
+        if(isSilenced(player))
             return;
         if(!canUse(player))
             return;
@@ -156,12 +156,12 @@ public class AssassinListener implements Listener {
             return;
         silenceArrow.add(player);
         silenceCooldown.put(player, 10);
-        player.sendMessage(getManager().prefix + "§7Your next §aArrow §7have a §5silence §aeffect for your enemy!");
+        player.sendMessage(getManager().prefix + "§7Your next §aArrow §7have a §5silence §aeffect §7for your enemy!");
         return;
     }
 
     public void loop(){
-        Bukkit.getScheduler().scheduleAsyncRepeatingTask(getClan(), new Runnable() {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(getClan(), new Runnable() {
             @Override
             public void run() {
                 for(Player player : smokeDelay.keySet()){
@@ -299,14 +299,15 @@ public class AssassinListener implements Listener {
             return;
         if(!getManager().getKit(player).equalsIgnoreCase("Assassin"))
             return;
-        if(!isSilenced(player))
+        if(isSilenced(player))
             return;
         if(!canUse(player))
             return;
         if(!isSword(itemStack))
             return;
-        if(!noKnockBackCD.containsKey(player))
+        if(noKnockBackCD.containsKey(player))
             return;
+        player.sendMessage(getManager().prefix + "§7Your attacks dont do any knockback for 10sec!");
         noKnockBack.put(player, 10);
         noKnockBackCD.put(player, 20);
     }
@@ -366,7 +367,7 @@ public class AssassinListener implements Listener {
             return;
         if(!getManager().getKit(player).equalsIgnoreCase("Assassin"))
             return;
-        if(!isSilenced(player))
+        if(isSilenced(player))
             return;
         if(!canUse(player))
             return;
@@ -395,7 +396,7 @@ public class AssassinListener implements Listener {
             return;
         if(!getManager().getKit(player).equalsIgnoreCase("Assassin"))
             return;
-        if(!isSilenced(player))
+        if(isSilenced(player))
             return;
         if(bonusDamage.containsKey(player)){
             if(bonusDamage.get(player) == 20)
