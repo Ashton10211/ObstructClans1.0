@@ -43,6 +43,8 @@ import java.util.UUID;
 
 public class Clan extends JavaPlugin {
 
+    //Message from Areeoh
+
     private static Clan clan;
     private static ClanAPI clanAPI;
     private Config config = new Config();
