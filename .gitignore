@@ -1,2 +1,6 @@
-# Project exclude paths
+/workspace.xml
+/discord.xml
+/artifacts
+/target
 /target/
+/out
