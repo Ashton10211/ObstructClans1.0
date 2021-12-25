@@ -4,6 +4,7 @@ import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.ClanRelation;
 import com.obstruct.clans.clans.MemberRole;
+import com.obstruct.clans.clans.events.ClanLeaveEvent;
 import com.obstruct.clans.pillage.PillageManager;
 import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;
@@ -45,10 +46,7 @@ public class ClanLeaveCommand extends Command<Player> {
             UtilMessage.message(player, "Clans", "You must pass on Leadership before leaving.");
             return true;
         }
-        clan.getMembers().remove(clan.getClanMember(player.getUniqueId()));
-        UtilMessage.message(player, "Clans", "You left " + ChatColor.YELLOW + "Clan " + clan.getName() + ChatColor.GRAY + ".");
-        clan.inform(true, "Clans", ChatColor.YELLOW + player.getName() + ChatColor.GRAY + " left the Clan.", player.getUniqueId());
-        getExecutorService().execute(() -> manager.saveClan(clan));
+        Bukkit.getServer().getPluginManager().callEvent(new ClanLeaveEvent(player, clan));
         return true;
     }
 }

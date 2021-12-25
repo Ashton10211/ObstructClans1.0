@@ -3,6 +3,7 @@ package com.obstruct.clans.clans.commands.subcommands;
 import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.MemberRole;
+import com.obstruct.clans.clans.events.ClanKickEvent;
 import com.obstruct.clans.pillage.PillageManager;
 import com.obstruct.core.shared.client.Client;
 import com.obstruct.core.shared.client.ClientDataRepository;
@@ -59,14 +60,7 @@ public class ClanKickCommand extends Command<Player> {
                 UtilMessage.message(player, "Clans", "You cannot kick a player while you are getting Pillaged.");
                 return;
             }
-            clan.getMembers().remove(clan.getClanMember(target.getUuid()));
-            UtilMessage.message(player, "Clans", "You kicked " + ChatColor.YELLOW + target.getName() + ChatColor.GRAY + " from the Clan.");
-            if (Bukkit.getPlayer(target.getUuid()) != null) {
-                UtilMessage.message(Bukkit.getPlayer(target.getUuid()), "Clans", ChatColor.YELLOW + player.getName() + ChatColor.GRAY + " kicked you from " + ChatColor.YELLOW + "Clan " + clan.getName() + ChatColor.GRAY + ".");
-            }
-            clan.inform(true, "Clans", ChatColor.AQUA + player.getName() + ChatColor.GRAY + " kicked " + ChatColor.YELLOW + target.getName() + ChatColor.GRAY + " from the Clan.", player.getUniqueId());
-            //Already running async
-            getManager(ClanManager.class).saveClan(clan);
+            Bukkit.getPluginManager().callEvent(new ClanKickEvent(player, target, clan));
         });
         return true;
     }

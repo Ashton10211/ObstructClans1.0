@@ -3,11 +3,13 @@ package com.obstruct.clans.clans.commands.subcommands;
 import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.MemberRole;
+import com.obstruct.clans.clans.events.ClanNeutralEvent;
 import com.obstruct.clans.pillage.PillageManager;
 import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;
 import com.obstruct.core.spigot.utility.UtilMessage;
 import com.obstruct.core.spigot.utility.UtilTime;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -44,11 +46,11 @@ public class ClanNeutralCommand extends Command<Player> {
                 return;
             }
             if (clan.isAllied(target)) {
-                neutralClan(player, clan, target);
+                Bukkit.getServer().getPluginManager().callEvent(new ClanNeutralEvent(player, clan, target));
                 return;
             }
             if (target.getNeutralRequestMap().containsKey(clan.getName()) && !UtilTime.elapsed(target.getNeutralRequestMap().get(clan.getName()), 300000L)) {
-                neutralClan(player, clan, target);
+                Bukkit.getServer().getPluginManager().callEvent(new ClanNeutralEvent(player, clan, target));
                 return;
             }
             if (!clan.getNeutralRequestMap().containsKey(target.getName())) {
@@ -61,32 +63,6 @@ public class ClanNeutralCommand extends Command<Player> {
             UtilMessage.message(player, "Clans", "You have already requested to neutral with " + getManager(ClanManager.class).getClanRelation(clan, target).getSuffix() + "Clan " + target.getName() + ChatColor.GRAY + ".");
         });
         return true;
-    }
-
-    private void neutralClan(Player player, Clan clan, Clan target) {
-        if (clan.isAllied(target)) {
-            clan.getAllianceMap().remove(target.getName());
-            target.getAllianceMap().remove(clan.getName());
-            UtilMessage.message(player, "Clans", "You are now neutral with " + ChatColor.YELLOW + "Clan " + target.getName() + ChatColor.GRAY + ".");
-            clan.inform(true, "Clans", "Your Clan is now neutral with " + ChatColor.YELLOW + "Clan " + target.getName() + ChatColor.GRAY + ".", player.getUniqueId());
-            target.inform(true, "Clans", "Your Clan is now neutral with " + ChatColor.YELLOW + "Clan " + clan.getName() + ChatColor.GRAY + ".");
-
-            getManager(ClanManager.class).saveClan(clan);
-            getManager(ClanManager.class).saveClan(target);
-            return;
-        }
-        UtilMessage.message(player, "Clans", "You have accepted neutrality with " + ChatColor.YELLOW + "Clan " + target.getName() + ChatColor.GRAY + ".");
-        clan.inform(true, "Clans", ChatColor.AQUA + player.getName() + ChatColor.GRAY + " accepted neutrality with " + ChatColor.YELLOW + "Clan " + target.getName() + ChatColor.GRAY + ".", player.getUniqueId());
-        target.inform(true, "Clans", ChatColor.YELLOW + "Clan " + clan.getName() + ChatColor.GRAY + " has accepted neutrality with your Clan.");
-        target.getAllianceRequestMap().remove(clan.getName());
-        clan.getAllianceRequestMap().remove(target.getName());
-        target.getNeutralRequestMap().remove(clan.getName());
-        clan.getNeutralRequestMap().remove(target.getName());
-        target.getEnemyMap().remove(clan.getName());
-        clan.getEnemyMap().remove(target.getName());
-
-        getManager(ClanManager.class).saveClan(clan);
-        getManager(ClanManager.class).saveClan(target);
     }
 
     public void invalidArgsRequired(Player player) {

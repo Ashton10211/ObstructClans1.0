@@ -1,6 +1,8 @@
 package com.obstruct.clans.clans;
 
 import com.obstruct.clans.clans.codec.LocationConverter;
+import com.obstruct.clans.clans.listeners.ClanListener;
+import com.obstruct.clans.clans.listeners.ClanMovementListener;
 import com.obstruct.core.shared.client.Client;
 import com.obstruct.core.shared.mongodb.MongoManager;
 import com.obstruct.core.shared.utility.UtilJava;
@@ -14,6 +16,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -44,7 +47,8 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
 
     @Override
     public void registerModules() {
-
+        addModule(new ClanMovementListener(this));
+        addModule(new ClanListener(this));
     }
 
     //This gets called on startup. Uses the main thread to load the clans,
@@ -118,6 +122,11 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
         return getClan(player.getUniqueId());
     }
 
+    //Method to get a Clan based on their location's chunk.
+    public Clan getClan(Location location) {
+        return getClan(location.getChunk());
+    }
+
     //Method to get a Clan based on their Chunk. AKA their claim.
     //Loops through their territory and finds if it equals the given chunk.
     public Clan getClan(Chunk chunk) {
@@ -184,7 +193,7 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
     }
 
     public ClanRelation getClanRelation(Clan clan, Clan other) {
-        if (other instanceof AdminClan) {
+        if (other != null && other.isAdmin()) {
             return ClanRelation.ADMIN;
         }
         if (clan == null || other == null) {
@@ -203,5 +212,16 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
             return ClanRelation.ENEMY;
         }
         return ClanRelation.NEUTRAL;
+    }
+
+    public Clan getClan(String world, int x, int z) {
+        for (Clan clan : getClanMap().values()) {
+            for (String claim : clan.getClaims()) {
+                if (claim.contains(world + ":" + x + ":" + z)) {
+                    return clan;
+                }
+            }
+        }
+        return null;
     }
 }

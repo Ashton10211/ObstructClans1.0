@@ -3,6 +3,7 @@ package com.obstruct.clans.clans.commands.subcommands;
 import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.MemberRole;
+import com.obstruct.clans.clans.events.ClanClaimEvent;
 import com.obstruct.core.shared.client.Client;
 import com.obstruct.core.shared.client.ClientDataRepository;
 import com.obstruct.core.shared.redis.RedisManager;
@@ -11,10 +12,7 @@ import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;
 import com.obstruct.core.spigot.utility.UtilFormat;
 import com.obstruct.core.spigot.utility.UtilMessage;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -84,31 +82,16 @@ public class ClanClaimCommand extends Command<Player> {
                 for (int z = -1; z <= 1; z++) {
                     Chunk lChunk = player.getWorld().getChunkAt(chunk.getX() + x, chunk.getZ() + z);
                     if (getManager(ClanManager.class).getClan(lChunk) != null) {
-                        claimChunk(player, clan, chunk);
+                        Bukkit.getServer().getPluginManager().callEvent(new ClanClaimEvent(player, chunk, clan, !admin, true));
                         return true;
                     }
                 }
             }
         } else {
-            claimChunk(player, clan, chunk);
+            Bukkit.getServer().getPluginManager().callEvent(new ClanClaimEvent(player, chunk, clan, !admin, true));
             return true;
         }
         UtilMessage.message(player, "Clans", "You need to claim next to your own territory.");
         return false;
-    }
-
-    private void claimChunk(Player player, Clan clan, Chunk chunk) {
-        clan.getClaims().add(UtilFormat.chunkToString(chunk));
-        UtilMessage.message(player, "Clans", "You claimed Territory " + ChatColor.YELLOW + "(" + chunk.getX() + "," + chunk.getZ() + ")" + ChatColor.GRAY + ".");
-        clan.inform(true, "Clans", ChatColor.YELLOW + player.getName() + ChatColor.GRAY + " claimed Territory " + ChatColor.YELLOW + "(" + chunk.getX() + "," + chunk.getZ() + ")" + ChatColor.GRAY + ".", player.getUniqueId());
-        getManager(BlockRegenManager.class).outlineChunk(chunk, Material.GLOWSTONE);
-
-        for (Entity entity : chunk.getEntities()) {
-            if(entity instanceof Player) {
-
-            }
-        }
-
-        getExecutorService().execute(() -> getManager(ClanManager.class).saveClan(clan));
     }
 }

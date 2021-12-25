@@ -4,6 +4,7 @@ import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.ClanRelation;
 import com.obstruct.clans.clans.MemberRole;
+import com.obstruct.clans.clans.events.ClanInviteEvent;
 import com.obstruct.clans.pillage.PillageManager;
 import com.obstruct.core.shared.client.Client;
 import com.obstruct.core.shared.client.ClientDataRepository;
@@ -13,6 +14,7 @@ import com.obstruct.core.spigot.framework.command.CommandManager;
 import com.obstruct.core.spigot.utility.UtilMessage;
 import com.obstruct.core.spigot.utility.UtilPlayer;
 import com.obstruct.core.spigot.utility.UtilTime;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -66,10 +68,7 @@ public class ClanInviteCommand extends Command<Player> {
             UtilMessage.message(player, "Clans", "You cannot invite a Player while your Clan has a Pillage active.");
             return false;
         }
-        clan.getInviteeMap().put(target.getUniqueId(), System.currentTimeMillis());
-        clan.inform(true, "Clans", ChatColor.AQUA + player.getName() + ChatColor.GRAY + " invited " + ChatColor.YELLOW + target.getName() + ChatColor.GRAY + " to the Clan.", player.getUniqueId());
-        UtilMessage.message(player, "Clans", "You invited " + ChatColor.YELLOW + target.getName() + ChatColor.GRAY + " to " + ChatColor.YELLOW + "Clan " + clan.getName() + ChatColor.GRAY + ".");
-        UtilMessage.message(target, "Clans", ChatColor.YELLOW + player.getName() + ChatColor.GRAY + " has invited you to join " + ChatColor.YELLOW + "Clan " + clan.getName() + ChatColor.GRAY + ".");
+        Bukkit.getPluginManager().callEvent(new ClanInviteEvent(player, target, clan));
         return true;
     }
 

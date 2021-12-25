@@ -30,6 +30,9 @@ public class LocationConverter extends TypeConverter implements SimpleValueConve
 
     @Override
     public Object encode(Object value, MappedField optionalExtraInfo) {
+        if(!(value instanceof Location)) {
+            return super.encode(value, optionalExtraInfo);
+        }
         Location location = (Location) value;
         BasicDBObject basicDBObject = new BasicDBObject();
 

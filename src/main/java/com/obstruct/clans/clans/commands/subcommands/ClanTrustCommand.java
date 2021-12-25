@@ -4,10 +4,13 @@ import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.ClanRelation;
 import com.obstruct.clans.clans.MemberRole;
+import com.obstruct.clans.clans.events.ClanRevokeTrustEvent;
+import com.obstruct.clans.clans.events.ClanTrustEvent;
 import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;
 import com.obstruct.core.spigot.utility.UtilMessage;
 import com.obstruct.core.spigot.utility.UtilTime;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -41,14 +44,7 @@ public class ClanTrustCommand extends Command<Player> {
                 return;
             }
             if (clan.isTrusted(target)) {
-                clan.getAllianceMap().put(target.getName(), false);
-                target.getAllianceMap().put(clan.getName(), false);
-                UtilMessage.message(player, "Clans", "You have revoked trust with " + getManager(ClanManager.class).getClanRelation(clan, target).getSuffix() + "Clan " + target.getName() + ChatColor.GRAY + ".");
-                clan.inform(true, "Clans", ChatColor.AQUA + player.getName() + ChatColor.GRAY + " has revoked trust with " + getManager(ClanManager.class).getClanRelation(clan, target).getSuffix() + "Clan " + target.getName() + ChatColor.GRAY + ".", player.getUniqueId());
-                target.inform(true, "Clans", getManager(ClanManager.class).getClanRelation(clan, target).getSuffix() + "Clan " + clan.getName() + ChatColor.GRAY + " has revoked trust with your Clan.");
-
-                getManager(ClanManager.class).saveClan(clan);
-                getManager(ClanManager.class).saveClan(target);
+                Bukkit.getPluginManager().callEvent(new ClanRevokeTrustEvent(player, clan, target));
                 return;
             }
             ClanRelation clanRelation = getManager(ClanManager.class).getClanRelation(clan, target);
@@ -57,17 +53,7 @@ public class ClanTrustCommand extends Command<Player> {
                 return;
             }
             if (target.getTrustRequestMap().containsKey(clan.getName()) && !UtilTime.elapsed(target.getTrustRequestMap().get(clan.getName()), 300000L)) {
-                target.getTrustRequestMap().remove(clan.getName());
-                clan.getTrustRequestMap().remove(target.getName());
-                clan.getAllianceMap().put(target.getName(), true);
-                target.getAllianceMap().put(clan.getName(), true);
-
-                UtilMessage.message(player, "Clans", "You have accepted trust with " + getManager(ClanManager.class).getClanRelation(clan, target).getSuffix() + "Clan " + target.getName() + ChatColor.GRAY + ".");
-                clan.inform(true, "Clans", ChatColor.AQUA + player.getName() + ChatColor.GRAY + " accepted trust with your Clan.", player.getUniqueId());
-                target.inform(true, "Clans", getManager(ClanManager.class).getClanRelation(clan, target).getSuffix() + "Clan " + clan.getName() + ChatColor.GRAY + " has accepted trust with your Clan.");
-
-                getManager(ClanManager.class).saveClan(clan);
-                getManager(ClanManager.class).saveClan(target);
+                Bukkit.getPluginManager().callEvent(new ClanTrustEvent(player, clan, target));
                 return;
             }
             if (!clan.getTrustRequestMap().containsKey(target.getName())) {

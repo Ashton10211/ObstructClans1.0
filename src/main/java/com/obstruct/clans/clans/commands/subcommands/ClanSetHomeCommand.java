@@ -3,9 +3,11 @@ package com.obstruct.clans.clans.commands.subcommands;
 import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.MemberRole;
+import com.obstruct.clans.clans.events.ClanSetHomeEvent;
 import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;
 import com.obstruct.core.spigot.utility.UtilMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -36,10 +38,7 @@ public class ClanSetHomeCommand extends Command<Player> {
             UtilMessage.message(player, "Clans", "You can only set home between 40 and 100 Y");
             return false;
         }
-        clan.setHome(player.getLocation().getBlock().getLocation());
-        UtilMessage.message(player, "Clans", "You set the Clan Home at " + ChatColor.YELLOW + "(" + (int) player.getLocation().getX() + ", " + (int) player.getLocation().getZ() + ")" + ChatColor.GRAY + ".");
-        clan.inform(true, "Clans", ChatColor.AQUA + player.getName() + ChatColor.GRAY + " has set the Clan Home at " + ChatColor.YELLOW + "(" + (int)player.getLocation().getX() + "," + (int)player.getLocation().getZ() + ")" + ChatColor.GRAY + ".", player.getUniqueId());
-        getExecutorService().execute(() -> getManager(ClanManager.class).saveClan(clan));
+        Bukkit.getPluginManager().callEvent(new ClanSetHomeEvent(player, clan));
         return true;
     }
 }

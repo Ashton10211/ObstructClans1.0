@@ -1,6 +1,7 @@
 package com.obstruct.clans.clans.commands.subcommands;
 
 import com.obstruct.clans.clans.*;
+import com.obstruct.clans.clans.events.ClanJoinEvent;
 import com.obstruct.clans.pillage.PillageManager;
 import com.obstruct.core.shared.client.Client;
 import com.obstruct.core.shared.client.ClientDataRepository;
@@ -9,6 +10,7 @@ import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;
 import com.obstruct.core.spigot.utility.UtilMessage;
 import com.obstruct.core.spigot.utility.UtilTime;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -37,7 +39,7 @@ public class ClanJoinCommand extends Command<Player> {
             }
             Client client = getManager(RedisManager.class).getModule(ClientDataRepository.class).getClient(player.getUniqueId());
             if (!client.isAdministrating()) {
-                if (target instanceof AdminClan) {
+                if (target.isAdmin()) {
                     UtilMessage.message(player, "Clans", "You cannot join Admin Clans.");
                     return;
                 }
@@ -51,12 +53,7 @@ public class ClanJoinCommand extends Command<Player> {
                 }
             }
             if (client.isAdministrating() || (target.getInviteeMap().containsKey(player.getUniqueId()) && !UtilTime.elapsed(target.getInviteeMap().get(player.getUniqueId()), 300000L))) {
-                target.getInviteeMap().remove(player.getUniqueId());
-                target.getMembers().add(new ClanMember(player.getUniqueId(), MemberRole.RECRUIT));
-                UtilMessage.message(player, "Clans", "You joined " + ChatColor.YELLOW + "Clan " + target.getName() + ChatColor.GRAY + ".");
-                target.inform(true, "Clans", ChatColor.YELLOW + player.getName() + ChatColor.GRAY + " joined the Clan.", player.getUniqueId());
-                //Already running async
-                getManager(ClanManager.class).saveClan(target);
+                Bukkit.getPluginManager().callEvent(new ClanJoinEvent(player, target));
                 return;
             }
             UtilMessage.message(player, "Clans", "You have not been invited to " + ChatColor.YELLOW + "Clan " + target.getName() + ChatColor.GRAY + ".");

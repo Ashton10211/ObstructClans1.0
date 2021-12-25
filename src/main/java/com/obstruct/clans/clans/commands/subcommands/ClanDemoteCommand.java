@@ -3,6 +3,7 @@ package com.obstruct.clans.clans.commands.subcommands;
 import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.MemberRole;
+import com.obstruct.clans.clans.events.ClanDemoteEvent;
 import com.obstruct.core.shared.client.Client;
 import com.obstruct.core.shared.client.ClientDataRepository;
 import com.obstruct.core.shared.redis.RedisManager;
@@ -10,6 +11,7 @@ import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;
 import com.obstruct.core.spigot.utility.UtilFormat;
 import com.obstruct.core.spigot.utility.UtilMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -57,11 +59,7 @@ public class ClanDemoteCommand extends Command<Player> {
                     return;
                 }
             }
-            clan.getClanMember(target.getUuid()).demote();
-            UtilMessage.message(player, "Clans", "You demoted " + ChatColor.AQUA + target.getName() + ChatColor.GRAY + " to " + ChatColor.GREEN + UtilFormat.cleanString(clan.getClanMember(target.getUuid()).getMemberRole().name()) + ChatColor.GRAY + ".");
-            clan.inform(true, "Clans", ChatColor.AQUA + player.getName() + ChatColor.GRAY + " demoted " + ChatColor.AQUA + target.getName() + ChatColor.GRAY + " to " + ChatColor.GREEN + UtilFormat.cleanString(clan.getClanMember(target.getUuid()).getMemberRole().name()) + ChatColor.GRAY + ".", player.getUniqueId());
-            //Already running async
-            getManager(ClanManager.class).saveClan(clan);
+            Bukkit.getServer().getPluginManager().callEvent(new ClanDemoteEvent(player, target, clan));
         });
         return true;
     }

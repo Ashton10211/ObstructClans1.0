@@ -1,14 +1,15 @@
 package com.obstruct.clans.clans.commands.subcommands;
 
-import com.obstruct.clans.clans.AdminClan;
 import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.MemberRole;
+import com.obstruct.clans.clans.events.ClanAllyEvent;
 import com.obstruct.clans.pillage.PillageManager;
 import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;
 import com.obstruct.core.spigot.utility.UtilMessage;
 import com.obstruct.core.spigot.utility.UtilTime;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -40,7 +41,7 @@ public class ClanAllyCommand extends Command<Player> {
                 UtilMessage.message(player, "Clans", "You cannot request an alliance with yourself.");
                 return;
             }
-            if (target instanceof AdminClan) {
+            if (target.isAdmin()) {
                 UtilMessage.message(player, "Clans", "You cannot request an alliance with Admin Clans.");
                 return;
             }
@@ -65,17 +66,7 @@ public class ClanAllyCommand extends Command<Player> {
                 return;
             }
             if (target.getAllianceRequestMap().containsKey(clan.getName()) && !UtilTime.elapsed(target.getAllianceRequestMap().get(clan.getName()), 300000L)) {
-                clan.getAllianceRequestMap().remove(target.getName());
-                target.getAllianceRequestMap().remove(clan.getName());
-                clan.getAllianceMap().put(target.getName(), false);
-                target.getAllianceMap().put(clan.getName(), false);
-
-                UtilMessage.message(player, "Clans", "You have accepted alliance with " + getManager(ClanManager.class).getClanRelation(clan, target).getSuffix() + "Clan " + target.getName() + ChatColor.GRAY + ".");
-                target.inform(true, "Clans", getManager(ClanManager.class).getClanRelation(clan, target).getSuffix() + "Clan " + clan.getName() + ChatColor.GRAY + " has accepted alliance with your Clan.");
-                clan.inform(true, "Clans", ChatColor.AQUA + player.getName() + ChatColor.GRAY + " has accepted alliance with your Clan.", player.getUniqueId());
-                //Already running async
-                getManager(ClanManager.class).saveClan(clan);
-                getManager(ClanManager.class).saveClan(target);
+                Bukkit.getServer().getPluginManager().callEvent(new ClanAllyEvent(player, clan, target));
                 return;
             }
             if (!clan.getAllianceRequestMap().containsKey(target.getName())) {

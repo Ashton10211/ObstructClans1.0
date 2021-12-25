@@ -3,11 +3,13 @@ package com.obstruct.clans.clans.commands.subcommands;
 import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.MemberRole;
+import com.obstruct.clans.clans.events.ClanUnclaimEvent;
 import com.obstruct.clans.pillage.PillageManager;
 import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;
 import com.obstruct.core.spigot.utility.UtilFormat;
 import com.obstruct.core.spigot.utility.UtilMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -42,13 +44,7 @@ public class ClanUnclaimCommand extends Command<Player> {
             UtilMessage.message(player, "Clans", "You cannot unclaim land while you are getting Pillaged.");
             return false;
         }
-        if (clan.getHome() != null && clan.getHome().getChunk().equals(player.getLocation().getChunk())) {
-            clan.setHome(null);
-        }
-        clan.getClaims().remove(UtilFormat.chunkToString(player.getLocation().getChunk()));
-        UtilMessage.message(player, "Clans", "You unclaimed land " + ChatColor.YELLOW + "(" + player.getLocation().getChunk().getX() + "," + ChatColor.YELLOW + player.getLocation().getChunk().getZ() + ChatColor.YELLOW + ")" + ChatColor.GRAY + ".");
-        clan.inform(true, "Clans", ChatColor.AQUA + player.getName() + ChatColor.GRAY + " unclaimed land " + ChatColor.YELLOW + "(" + player.getLocation().getChunk().getX() + "," + player.getLocation().getChunk().getZ() + ")" + ChatColor.GRAY + ".", player.getUniqueId());
-        getExecutorService().execute(() -> getManager(ClanManager.class).saveClan(clan));
+        Bukkit.getServer().getPluginManager().callEvent(new ClanUnclaimEvent(player, clan));
         return true;
     }
 }

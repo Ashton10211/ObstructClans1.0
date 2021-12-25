@@ -1,5 +1,6 @@
 package com.obstruct.clans.clans;
 
+import com.obstruct.core.spigot.utility.UtilTime;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Indexed;
@@ -13,6 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -29,10 +31,11 @@ public class Clan {
     private long age;
     private Location home;
     private Set<String> claims;
+    private int energy;
     private HashMap<String, Boolean> allianceMap;
     private HashMap<String, Integer> enemyMap;
     private Set<ClanMember> members;
-    private int energy;
+    private boolean admin, safe;
 
     //Transient makes sure it doesn't get saved to database. Just saves to memory.
     @Transient
@@ -60,6 +63,16 @@ public class Clan {
         this.enemyMap = new HashMap<>();
         this.members = new HashSet<>();
         this.energy = 2400;
+    }
+
+    public boolean isSafe(Location location) {
+        if (!isAdmin()) {
+            return false;
+        }
+        if (!getName().toLowerCase().contains(" spawn")) {
+            return isSafe();
+        }
+        return (location.getY() >= 80.0D);
     }
 
     //Gets ClanMember from the members Set above.
@@ -137,11 +150,33 @@ public class Clan {
         return getMembers().stream().anyMatch(clanMember -> (Bukkit.getPlayer(clanMember.getUuid()) != null));
     }
 
-    //TODO
     public String getEnergyString() {
-        if(this instanceof AdminClan) {
+        if (isAdmin()) {
             return "Unlimited";
         }
-        return "";
+        double days = UtilTime.trim(getHoursOfEnergy() / 24.0D, 2.0D);
+        if(days < 1.0D) {
+            return UtilTime.trim(days * 24.0D, 2.0D) + " Hours";
+        }
+        if(days == 1.0D) {
+            return days + " Day";
+        }
+        return days + " Days";
+    }
+
+    public double getEnergyFromHours(int hour) {
+        return hour * 24.0D * (getClaims().isEmpty() ? 12.5D : (getClaims().size() * 25.0D)) / 24.0D;
+    }
+
+    public double getHoursOfEnergy() {
+        return getEnergy() / (getClaims().isEmpty() ? 12.5D : getClaims().size() * 25.0D);
+    }
+
+    public Set<Player> getOnlinePlayers() {
+        return getMembers().stream().filter(member -> Bukkit.getPlayer(member.getUuid()) != null).map(clanMember -> Bukkit.getPlayer(clanMember.getUuid())).collect(Collectors.toSet());
+    }
+
+    public String getDominanceString(Clan other) {
+        return ChatColor.WHITE + "(" + ChatColor.GREEN + getEnemyMap().get(other.getName()) + ChatColor.WHITE + ":" + ChatColor.RED + other.getEnemyMap().get(getName()) + ChatColor.WHITE + ")" + ChatColor.RESET;
     }
 }

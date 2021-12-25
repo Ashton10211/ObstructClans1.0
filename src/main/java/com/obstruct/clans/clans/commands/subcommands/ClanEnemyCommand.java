@@ -1,13 +1,14 @@
 package com.obstruct.clans.clans.commands.subcommands;
 
-import com.obstruct.clans.clans.AdminClan;
 import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.MemberRole;
+import com.obstruct.clans.clans.events.ClanEnemyEvent;
 import com.obstruct.clans.pillage.PillageManager;
 import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;
 import com.obstruct.core.spigot.utility.UtilMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -43,7 +44,7 @@ public class ClanEnemyCommand extends Command<Player> {
                 UtilMessage.message(player, "Clans", "You are already enemies with " + getManager(ClanManager.class).getClanRelation(clan, target).getSuffix() + "Clan " + target.getName() + ChatColor.GRAY + ".");
                 return;
             }
-            if (target instanceof AdminClan) {
+            if (target.isAdmin()) {
                 UtilMessage.message(player, "Clans", "You cannot wage war with Admin Clans.");
                 return;
             }
@@ -51,22 +52,7 @@ public class ClanEnemyCommand extends Command<Player> {
                 UtilMessage.message(player, "Clans", "You cannot enemy " + ChatColor.LIGHT_PURPLE + "Clan " + target.getName() + ChatColor.GRAY + " while a Pillage is active.");
                 return;
             }
-            if (clan.isAllied(target)) {
-                clan.getAllianceMap().remove(target.getName());
-                target.getAllianceRequestMap().remove(clan.getName());
-            }
-            clan.getAllianceRequestMap().remove(target.getName());
-            target.getAllianceRequestMap().remove(clan.getName());
-            clan.getEnemyMap().put(target.getName(), 0);
-            target.getEnemyMap().put(clan.getName(), 0);
-
-            UtilMessage.message(player, "Clans", "You waged war with " + getManager(ClanManager.class).getClanRelation(clan, target).getSuffix() + "Clan " + target.getName() + ChatColor.GRAY + ".");
-            target.inform(true, "Clans", getManager(ClanManager.class).getClanRelation(clan, target).getSuffix() + "Clan " + clan.getName() + ChatColor.GRAY + " waged war with your Clan.");
-            clan.inform(true, "Clans", ChatColor.AQUA + player.getName() + ChatColor.GRAY + " waged war with " + getManager(ClanManager.class).getClanRelation(clan, target).getSuffix() + "Clan " + target.getName() + ChatColor.GRAY + ".");
-
-            //Already running async
-            getManager(ClanManager.class).saveClan(clan);
-            getManager(ClanManager.class).saveClan(target);
+            Bukkit.getPluginManager().callEvent(new ClanEnemyEvent(player, clan, target));
         });
         return true;
     }

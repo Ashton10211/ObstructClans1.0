@@ -4,12 +4,14 @@ import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.ClanMember;
 import com.obstruct.clans.clans.MemberRole;
+import com.obstruct.clans.clans.events.ClanCreateEvent;
 import com.obstruct.core.shared.client.Client;
 import com.obstruct.core.shared.client.ClientDataRepository;
 import com.obstruct.core.shared.redis.RedisManager;
 import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;
 import com.obstruct.core.spigot.utility.UtilMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -57,10 +59,11 @@ public class ClanCreateCommand extends Command<Player> {
             }
         }
         Clan clan = new Clan(args[1]);
-        clan.getMembers().add(new ClanMember(player.getUniqueId(), MemberRole.LEADER));
-        getManager(ClanManager.class).addClan(clan);
-        UtilMessage.broadcast("Clans", ChatColor.YELLOW + player.getName() + ChatColor.GRAY + " formed " + ChatColor.YELLOW + "Clan " + clan.getName() + ChatColor.GRAY + ".");
-        getExecutorService().execute(() -> getManager(ClanManager.class).saveClan(clan));
+        if(client.isAdministrating()) {
+            clan.setAdmin(true);
+            clan.setSafe(true);
+        }
+        Bukkit.getServer().getPluginManager().callEvent(new ClanCreateEvent(player, clan));
         return true;
     }
 

@@ -4,6 +4,8 @@ import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.ClanMember;
 import com.obstruct.clans.clans.ClanRelation;
+import com.obstruct.clans.clans.events.*;
+import com.obstruct.clans.clans.listeners.ClanMovementListener;
 import com.obstruct.core.shared.client.Client;
 import com.obstruct.core.shared.client.ClientDataRepository;
 import com.obstruct.core.shared.client.Rank;
@@ -14,9 +16,11 @@ import com.obstruct.core.spigot.scoreboard.data.PlayerScoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scoreboard.*;
 
@@ -40,6 +44,184 @@ public class ClanScoreboard extends PlayerScoreboard implements Listener {
         updateSideBar(event.getPlayer());
     }
 
+    @EventHandler
+    public void onClanMove(ClanMoveEvent event) {
+        updateSideBar(event.getPlayer(), event.getLocTo());
+    }
+
+    @EventHandler
+    public void onClanEnergyUpdate(ClanEnergyUpdateEvent event) {
+        for (Player online : event.getClan().getOnlinePlayers()) {
+            updateSideBar(online);
+        }
+    }
+
+    @EventHandler
+    public void onClanClaim(ClanClaimEvent event) {
+        for (Entity entity : event.getChunk().getEntities()) {
+            if (entity instanceof Player) {
+                updateSideBar((Player) entity);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onClaimUnclaim(ClanUnclaimEvent event) {
+        for (Entity entity : event.getChunk().getEntities()) {
+            if (entity instanceof Player) {
+                updateSideBar((Player) entity);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onClanCreate(ClanCreateEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        for (Player online : event.getClan().getOnlinePlayers()) {
+            updateSideBar(online);
+        }
+        addPlayer(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onClanDisband(ClanDisbandEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        event.getClan().getOnlinePlayers().forEach(this::updateSideBar);
+        removeClan(event.getClan());
+    }
+
+    @EventHandler
+    public void onClanJoin(ClanJoinEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        event.getClan().getOnlinePlayers().forEach(this::updateSideBar);
+        addPlayer(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onClanLeave(ClanLeaveEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        event.getClan().getOnlinePlayers().forEach(this::updateSideBar);
+        removePlayer(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onClanKick(ClanKickEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        Player target = Bukkit.getPlayer(event.getTarget().getUuid());
+        if (target != null) {
+            event.getClan().getOnlinePlayers().forEach(this::updateSideBar);
+            removePlayer(target);
+        }
+    }
+
+    @EventHandler
+    public void onClanAlly(ClanAllyEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        event.getClan().getOnlinePlayers().forEach(this::updateSideBar);
+        event.getOther().getOnlinePlayers().forEach(this::updateSideBar);
+        updateRelation(event.getClan());
+        updateRelation(event.getOther());
+    }
+
+    @EventHandler
+    public void onClanTrust(ClanTrustEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        event.getClan().getOnlinePlayers().forEach(this::updateSideBar);
+        event.getOther().getOnlinePlayers().forEach(this::updateSideBar);
+        updateRelation(event.getClan());
+        updateRelation(event.getOther());
+    }
+
+    @EventHandler
+    public void onClanTrustRevoke(ClanRevokeTrustEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        event.getClan().getOnlinePlayers().forEach(this::updateSideBar);
+        event.getOther().getOnlinePlayers().forEach(this::updateSideBar);
+        updateRelation(event.getClan());
+        updateRelation(event.getOther());
+    }
+
+    @EventHandler
+    public void onClanEnemy(ClanEnemyEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        event.getClan().getOnlinePlayers().forEach(this::updateSideBar);
+        event.getOther().getOnlinePlayers().forEach(this::updateSideBar);
+        updateRelation(event.getClan());
+        updateRelation(event.getOther());
+    }
+
+    @EventHandler
+    public void onClanNeutral(ClanNeutralEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        event.getClan().getOnlinePlayers().forEach(this::updateSideBar);
+        event.getOther().getOnlinePlayers().forEach(this::updateSideBar);
+        updateRelation(event.getClan());
+        updateRelation(event.getOther());
+    }
+
+//    @EventHandler
+//    public void onClanPillage(ClanPillageStartEvent event) {
+//        if (event.isCancelled()) {
+//            return;
+//        }
+//        event.getPillager().getOnlinePlayers().forEach(this::updateSideBar);
+//        event.getPillagee().getOnlinePlayers().forEach(this::updateSideBar);
+//        updateRelation(event.getPillager());
+//        updateRelation(event.getPillagee());
+//    }
+
+//    @EventHandler
+//    public void onClanPillageEnd(ClanPillageEndEvent event) {
+//        if (event.isCancelled()) {
+//            return;
+//        }
+//        event.getPillager().getOnlinePlayers().forEach(this::updateSideBar);
+//        event.getPillagee().getOnlinePlayers().forEach(this::updateSideBar);
+//        updateRelation(event.getPillager());
+//        updateRelation(event.getPillagee());
+//    }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player player = event.getEntity();
+        if (player == null) {
+            return;
+        }
+        Player killer = player.getKiller();
+        if (killer == null) {
+            return;
+        }
+        Clan clan = getManager(ClanManager.class).getClan(player);
+        if (clan == null) {
+            return;
+        }
+        Clan killerClan = getManager(ClanManager.class).getClan(killer);
+        if (killerClan == null) {
+            return;
+        }
+        updateDominancePoints(clan, killerClan);
+    }
+
     public void updateSideBar(Player player) {
         updateSideBar(player, player.getLocation());
     }
@@ -47,7 +229,7 @@ public class ClanScoreboard extends PlayerScoreboard implements Listener {
     private void updateSideBar(Player player, Location location) {
         Scoreboard scoreboard = player.getScoreboard();
         Objective objective = scoreboard.getObjective("info");
-        if(objective != null) {
+        if (objective != null) {
             objective.unregister();
         }
         objective = scoreboard.registerNewObjective("info", "dummy");
@@ -66,7 +248,7 @@ public class ClanScoreboard extends PlayerScoreboard implements Listener {
 
         Score blank2 = objective.getScore(getBlank(4));
         Score tTerritory = objective.getScore(ChatColor.YELLOW + ChatColor.BOLD.toString() + "Territory");
-        Score territory = objective.getScore("Wilderness");
+        Score territory = objective.getScore(getManager(ClanManager.class).getModule(ClanMovementListener.class).getTerritoryString(player, location, true));
         cClan.setScore(15);
         clan.setScore(14);
         blank.setScore(13);
@@ -94,27 +276,33 @@ public class ClanScoreboard extends PlayerScoreboard implements Listener {
         Clan clan = clanManager.getClan(player);
         for (Player online : Bukkit.getOnlinePlayers()) {
             Scoreboard scoreboard = online.getScoreboard();
-            if(clan == null) {
-                if(scoreboard.getTeam(noneTeam) == null) {
+            if (clan == null) {
+                if (scoreboard.getTeam(noneTeam) == null) {
                     scoreboard.registerNewTeam(noneTeam);
                 }
                 scoreboard.getTeam(noneTeam).setPrefix(ChatColor.YELLOW + "");
-                scoreboard.getTeam(noneTeam).addPlayer(player);
+                if (!scoreboard.getTeam(noneTeam).hasEntry(player.getName())) {
+                    scoreboard.getTeam(noneTeam).addEntry(player.getName());
+                }
                 continue;
             }
             addClan(scoreboard, clan, clanManager.getClan(online));
-            scoreboard.getTeam(clan.getName()).addPlayer(player);
+            if (!scoreboard.getTeam(clan.getName()).hasEntry(player.getName())) {
+                scoreboard.getTeam(clan.getName()).addEntry(player.getName());
+            }
         }
         Scoreboard scoreboard = player.getScoreboard();
         scoreboard.getTeams().forEach(Team::unregister);
         for (Clan c : clanManager.getClanMap().values()) {
-            if(c.isOnline()) {
+            if (c.isOnline()) {
                 addClan(scoreboard, c, clanManager.getClan(player.getUniqueId()));
                 Team team = scoreboard.getTeam(c.getName());
                 for (ClanMember member : c.getMembers()) {
                     Player p = Bukkit.getPlayer(member.getUuid());
-                    if(p != null) {
-                        team.addPlayer(p);
+                    if (p != null) {
+                        if (!team.hasEntry(p.getName())) {
+                            team.addEntry(p.getName());
+                        }
                     }
                 }
             }
@@ -123,44 +311,53 @@ public class ClanScoreboard extends PlayerScoreboard implements Listener {
         for (Player online : Bukkit.getOnlinePlayers()) {
             if (clanManager.getClan(online.getUniqueId()) == null) {
                 Client onlineClient = clientDataRepository.getClient(online.getUniqueId());
-                if(onlineClient.hasRank(Rank.MEDIA, false)) {
+                if (onlineClient.hasRank(Rank.MEDIA, false)) {
                     updateRank(onlineClient);
                     continue;
                 }
-                if(scoreboard.getTeam(noneTeam) == null) {
+                if (scoreboard.getTeam(noneTeam) == null) {
                     scoreboard.registerNewTeam(noneTeam);
+                    scoreboard.getTeam(noneTeam).setPrefix(ChatColor.YELLOW + "");
                 }
-                scoreboard.getTeam(noneTeam).setPrefix(ChatColor.YELLOW + "");
-                scoreboard.getTeam(noneTeam).addPlayer(online);
+                if (!scoreboard.getTeam(noneTeam).hasEntry(online.getName())) {
+                    scoreboard.getTeam(noneTeam).addEntry(online.getName());
+                }
             }
         }
     }
 
     private void updateRank(Client client) {
-        if(client.hasRank(Rank.MEDIA, false)) {
+        if (getManager(ClanManager.class).getClan(client.getUuid()) != null) {
+            return;
+        }
+        if (client.hasRank(Rank.MEDIA, false)) {
             for (Player online : Bukkit.getOnlinePlayers()) {
                 Scoreboard scoreboard = online.getScoreboard();
                 String str = client.getRank().getTrimmedRankPrefix();
-                if(scoreboard.getTeam(str) == null) {
+                if (scoreboard.getTeam(str) == null) {
                     scoreboard.registerNewTeam(str);
                     scoreboard.getTeam(str).setPrefix(client.getRank().getTag(true) + " " + ChatColor.YELLOW);
                 }
-                scoreboard.getTeam(str).addPlayer(client.getPlayer());
+                if (!scoreboard.getTeam(str).hasEntry(client.getPlayer().getName())) {
+                    scoreboard.getTeam(str).addEntry(client.getPlayer().getName());
+                }
             }
         } else {
             for (Player online : Bukkit.getOnlinePlayers()) {
                 Scoreboard scoreboard = online.getScoreboard();
-                if(scoreboard.getTeam(noneTeam) == null) {
+                if (scoreboard.getTeam(noneTeam) == null) {
                     scoreboard.registerNewTeam(noneTeam);
                     scoreboard.getTeam(noneTeam).setPrefix(ChatColor.YELLOW + "");
                 }
-                scoreboard.getTeam(noneTeam).addPlayer(client.getPlayer());
+                if (!scoreboard.getTeam(noneTeam).hasEntry(client.getPlayer().getName())) {
+                    scoreboard.getTeam(noneTeam).addEntry(client.getPlayer().getName());
+                }
             }
         }
     }
 
     private void addClan(Scoreboard scoreboard, Clan clan, Clan other) {
-        if(scoreboard.getTeam(clan.getName()) == null) {
+        if (scoreboard.getTeam(clan.getName()) == null) {
             scoreboard.registerNewTeam(clan.getName());
         }
         ClanRelation clanRelation = getManager(ClanManager.class).getClanRelation(clan, other);
@@ -171,20 +368,20 @@ public class ClanScoreboard extends PlayerScoreboard implements Listener {
         ClanManager manager = getManager(ClanManager.class);
         for (ClanMember member : clan.getMembers()) {
             Player player = Bukkit.getPlayer(member.getUuid());
-            if(player == null) {
+            if (player == null) {
                 continue;
             }
             for (Team team : player.getScoreboard().getTeams()) {
-                if(team.getName().equals(noneTeam)) {
+                if (team.getName().equals(noneTeam)) {
                     team.setPrefix(ChatColor.YELLOW + "");
                     continue;
                 }
                 Clan other = manager.getClan(team.getName());
-                if(other != null) {
+                if (other != null) {
                     ClanRelation clanRelation = manager.getClanRelation(clan, other);
-                    team.setPrefix(clanRelation.getPrefix() + other.getTrimmedName() + clanRelation.getSuffix() + "");
+                    team.setPrefix(clanRelation.getPrefix() + other.getTrimmedName() + clanRelation.getSuffix() + " ");
                     team.setSuffix("");
-                    if(clanRelation == ClanRelation.ENEMY) {
+                    if (clanRelation == ClanRelation.ENEMY) {
                         updateDominancePoints(clan, other);
                     }
                 }
@@ -194,13 +391,13 @@ public class ClanScoreboard extends PlayerScoreboard implements Listener {
 
     public void removePlayer(Player player) {
         Clan clan = getManager(ClanManager.class).getClan(player.getUniqueId());
-        if(clan != null) {
+        if (clan != null) {
             for (Player online : Bukkit.getOnlinePlayers()) {
                 Scoreboard scoreboard = online.getScoreboard();
                 for (Team team : scoreboard.getTeams()) {
-                    if(team.getName().equals(clan.getName())) {
-                        team.removePlayer(player);
-                        if(!clan.isOnline()) {
+                    if (team.getName().equals(clan.getName()) && team.hasEntry(player.getName())) {
+                        team.removeEntry(player.getName());
+                        if (!clan.isOnline()) {
                             team.unregister();
                         }
                     }
@@ -213,13 +410,10 @@ public class ClanScoreboard extends PlayerScoreboard implements Listener {
     public void removeClan(Clan clan) {
         for (Player online : Bukkit.getOnlinePlayers()) {
             for (Team team : online.getScoreboard().getTeams()) {
-                if(team.getName().equals(clan.getName())) {
+                if (team.getName().equals(clan.getName())) {
                     team.unregister();
-                    for (ClanMember member : clan.getMembers()) {
-                        Player player = Bukkit.getPlayer(member.getUuid());
-                        if (player != null) {
-                            addNone(player);
-                        }
+                    for (Player member : clan.getOnlinePlayers()) {
+                        addNone(member);
                     }
                 }
             }
@@ -228,22 +422,30 @@ public class ClanScoreboard extends PlayerScoreboard implements Listener {
 
     private void addNone(Player player) {
         for (Player online : Bukkit.getOnlinePlayers()) {
-            if(online.getScoreboard().getTeam(noneTeam) == null) {
+            if (online.getScoreboard().getTeam(noneTeam) == null) {
                 online.getScoreboard().registerNewTeam(noneTeam);
-                online.getScoreboard().getTeam(noneTeam).setPrefix(ChatColor.YELLOW.toString());
             }
-            online.getScoreboard().getTeam(noneTeam).addPlayer(player);
+            online.getScoreboard().getTeam(noneTeam).setPrefix(ChatColor.YELLOW.toString());
+            if (!online.getScoreboard().getTeam(noneTeam).hasEntry(player.getName())) {
+                online.getScoreboard().getTeam(noneTeam).addEntry(player.getName());
+            }
+            Team entryTeam = player.getScoreboard().getEntryTeam(online.getName());
+            if (!(entryTeam.getName().equals(noneTeam) || entryTeam.getName().contains("@"))) {
+                Clan clan = getManager(ClanManager.class).getClan(entryTeam.getName());
+                entryTeam.setPrefix(ChatColor.GOLD + clan.getTrimmedName() + ChatColor.YELLOW + " ");
+                entryTeam.setSuffix("");
+            }
         }
         updateRank(getManager(RedisManager.class).getModule(ClientDataRepository.class).getClient(player.getUniqueId()));
     }
 
     private void updateDominancePoints(Clan clan, Clan other) {
-        if(getManager(ClanManager.class).getClanRelation(clan,other) != ClanRelation.ENEMY) {
+        if (getManager(ClanManager.class).getClanRelation(clan, other) != ClanRelation.ENEMY) {
             return;
         }
         for (Player online : Bukkit.getOnlinePlayers()) {
             for (Team team : online.getScoreboard().getTeams()) {
-                if(team.getName().equals(noneTeam) || team.getName().contains("@")) {
+                if (team.getName().equals(noneTeam) || team.getName().contains("@")) {
                     continue;
                 }
                 team.setSuffix(" " + getEnemyString(clan, other));
@@ -252,10 +454,10 @@ public class ClanScoreboard extends PlayerScoreboard implements Listener {
     }
 
     private String getEnemyString(Clan clan, Clan other) {
-        if(clan.getEnemyMap().get(other.getName()) < other.getEnemyMap().get(clan.getName())) {
+        if (clan.getEnemyMap().get(other.getName()) < other.getEnemyMap().get(clan.getName())) {
             return ChatColor.RED + "-" + other.getEnemyMap().get(clan.getName());
         }
-        if(clan.getEnemyMap().get(other.getName()) > other.getEnemyMap().get(clan.getName())) {
+        if (clan.getEnemyMap().get(other.getName()) > other.getEnemyMap().get(clan.getName())) {
             return ChatColor.GREEN + "+" + clan.getEnemyMap().get(other.getName());
         }
         return ChatColor.YELLOW + "" + clan.getEnemyMap().get(other.getName());

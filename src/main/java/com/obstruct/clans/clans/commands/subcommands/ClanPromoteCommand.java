@@ -3,11 +3,13 @@ package com.obstruct.clans.clans.commands.subcommands;
 import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.MemberRole;
+import com.obstruct.clans.clans.events.ClanPromoteEvent;
 import com.obstruct.core.shared.client.Client;
 import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;
 import com.obstruct.core.spigot.utility.UtilFormat;
 import com.obstruct.core.spigot.utility.UtilMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -52,13 +54,7 @@ public class ClanPromoteCommand extends Command<Player> {
                 UtilMessage.message(player, "Clans", "You cannot promote " + ChatColor.YELLOW + target.getName() + ChatColor.GRAY + " any further.");
                 return;
             }
-            if (clan.getClanMember(target.getUuid()).getMemberRole() == MemberRole.ADMIN) {
-                clan.getClanMember(player.getUniqueId()).setMemberRole(MemberRole.ADMIN);
-            }
-            clan.getClanMember(target.getUuid()).promote();
-            UtilMessage.message(player, "Clans", "You promoted " + ChatColor.AQUA + target.getName() + ChatColor.GRAY + " to " + ChatColor.GREEN + UtilFormat.cleanString(clan.getClanMember(target.getUuid()).getMemberRole().name()) + ChatColor.GRAY + ".");
-            clan.inform(true, "Clans", ChatColor.AQUA + player.getName() + ChatColor.GRAY + " promoted " + ChatColor.YELLOW + target.getName() + ChatColor.GRAY + " to " + ChatColor.GREEN + UtilFormat.cleanString(clan.getClanMember(target.getUuid()).getMemberRole().name()) + ChatColor.GRAY + ".", player.getUniqueId());
-            getManager(ClanManager.class).saveClan(clan);
+            Bukkit.getPluginManager().callEvent(new ClanPromoteEvent(player, target, clan));
         });
         return true;
     }

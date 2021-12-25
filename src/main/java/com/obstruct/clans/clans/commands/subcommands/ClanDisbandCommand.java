@@ -4,6 +4,7 @@ import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.ClanRelation;
 import com.obstruct.clans.clans.MemberRole;
+import com.obstruct.clans.clans.events.ClanDisbandEvent;
 import com.obstruct.core.shared.client.ClientDataRepository;
 import com.obstruct.core.shared.redis.RedisManager;
 import com.obstruct.core.spigot.common.fancy.FancyMessage;
@@ -50,12 +51,7 @@ public class ClanDisbandCommand extends Command<Player> {
             return false;
         }
         confirmSet.remove(player.getUniqueId());
-        for (Player online : Bukkit.getOnlinePlayers()) {
-            ClanRelation clanRelation = manager.getClanRelation(clan, manager.getClan(online));
-            UtilMessage.message(online, "Clans", clanRelation.getSuffix() + player.getName() + ChatColor.GRAY + " has disbanded " + clanRelation.getSuffix() + "Clan " + clan.getName() + ChatColor.GRAY + ".");
-        }
-        getManager(ClanManager.class).removeClan(clan);
-        getExecutorService().execute(() -> getManager(ClanManager.class).deleteClan(clan));
+        Bukkit.getServer().getPluginManager().callEvent(new ClanDisbandEvent(player, clan, ClanDisbandEvent.DisbandReason.PLAYER));
         return true;
     }
 }
