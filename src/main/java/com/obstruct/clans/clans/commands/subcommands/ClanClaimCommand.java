@@ -15,6 +15,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
@@ -101,6 +102,13 @@ public class ClanClaimCommand extends Command<Player> {
         UtilMessage.message(player, "Clans", "You claimed Territory " + ChatColor.YELLOW + "(" + chunk.getX() + "," + chunk.getZ() + ")" + ChatColor.GRAY + ".");
         clan.inform(true, "Clans", ChatColor.YELLOW + player.getName() + ChatColor.GRAY + " claimed Territory " + ChatColor.YELLOW + "(" + chunk.getX() + "," + chunk.getZ() + ")" + ChatColor.GRAY + ".", player.getUniqueId());
         getManager(BlockRegenManager.class).outlineChunk(chunk, Material.GLOWSTONE);
+
+        for (Entity entity : chunk.getEntities()) {
+            if(entity instanceof Player) {
+
+            }
+        }
+
         getExecutorService().execute(() -> getManager(ClanManager.class).saveClan(clan));
     }
 }

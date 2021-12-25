@@ -32,6 +32,7 @@ public class Clan {
     private HashMap<String, Boolean> allianceMap;
     private HashMap<String, Integer> enemyMap;
     private Set<ClanMember> members;
+    private int energy;
 
     //Transient makes sure it doesn't get saved to database. Just saves to memory.
     @Transient
@@ -58,6 +59,7 @@ public class Clan {
         this.allianceMap = new HashMap<>();
         this.enemyMap = new HashMap<>();
         this.members = new HashSet<>();
+        this.energy = 2400;
     }
 
     //Gets ClanMember from the members Set above.
@@ -65,7 +67,7 @@ public class Clan {
     //Then returns the ClanMember.
     public ClanMember getClanMember(UUID uuid) {
         for (ClanMember member : getMembers()) {
-            if(member.getUuid().equals(uuid)) {
+            if (member.getUuid().equals(uuid)) {
                 return member;
             }
         }
@@ -112,11 +114,11 @@ public class Clan {
 
     public void inform(boolean enablePrefix, String prefix, String message, UUID... uuid) {
         for (ClanMember member : getMembers()) {
-            if(Arrays.asList(uuid).contains(member.getUuid())) {
+            if (Arrays.asList(uuid).contains(member.getUuid())) {
                 continue;
             }
             Player player = Bukkit.getPlayer(member.getUuid());
-            if(player == null) {
+            if (player == null) {
                 continue;
             }
             player.sendMessage((enablePrefix ? (ChatColor.BLUE + prefix + "> " + ChatColor.GRAY) : "") + message);
@@ -125,5 +127,21 @@ public class Clan {
 
     public int getMaxClaims() {
         return 3 + getMembers().size();
+    }
+
+    public String getTrimmedName() {
+        return (getName().length() > 8) ? getName().substring(0, 8) : getName();
+    }
+
+    public boolean isOnline() {
+        return getMembers().stream().anyMatch(clanMember -> (Bukkit.getPlayer(clanMember.getUuid()) != null));
+    }
+
+    //TODO
+    public String getEnergyString() {
+        if(this instanceof AdminClan) {
+            return "Unlimited";
+        }
+        return "";
     }
 }
