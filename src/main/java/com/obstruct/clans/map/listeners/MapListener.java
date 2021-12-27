@@ -172,7 +172,7 @@ public class MapListener extends SpigotModule<MapManager> implements Listener {
             int z = Integer.parseInt(claim.split(":")[2]);
             getManager().getMapSettings().get(player.getUniqueId()).getClanMapData().stream().filter(chunkData -> (chunkData.getX() == x && chunkData.getZ() == z && chunkData.getClan().equals(clan.getName()))).forEach(chunkData -> chunkData.setColor(ClanRelation.SELF.getMapColor()));
         }
-        for (String ally : clan.getAllianceMap().keySet()) {
+        for (String ally : clan.getAlliance().keySet()) {
             Clan allyClan = getManager(ClanManager.class).getClan(ally);
             ClanRelation clanRelation = getManager(ClanManager.class).getClanRelation(clan, allyClan);
             for (String claim : allyClan.getClaims()) {
@@ -181,7 +181,7 @@ public class MapListener extends SpigotModule<MapManager> implements Listener {
                 getManager().getMapSettings().get(player.getUniqueId()).getClanMapData().stream().filter(chunkData -> (chunkData.getX() == x && chunkData.getZ() == z && chunkData.getClan().equals(ally))).forEach(chunkData -> chunkData.setColor(clanRelation.getMapColor()));
             }
         }
-        for (String enemy : clan.getAllianceMap().keySet()) {
+        for (String enemy : clan.getAlliance().keySet()) {
             Clan enemyClan = getManager(ClanManager.class).getClan(enemy);
             ClanRelation clanRelation = getManager(ClanManager.class).getClanRelation(clan, enemyClan);
             for (String claim : enemyClan.getClaims()) {

@@ -6,6 +6,7 @@ public enum ClanRelation {
     SELF(ChatColor.DARK_AQUA, ChatColor.AQUA, (byte) 126),
     NEUTRAL(ChatColor.GOLD, ChatColor.YELLOW, (byte) 74),
     ENEMY(ChatColor.DARK_RED, ChatColor.RED, (byte) 17),
+    SIEGE(ChatColor.DARK_PURPLE, ChatColor.LIGHT_PURPLE, (byte) 66),
     ALLY(ChatColor.DARK_GREEN, ChatColor.GREEN, (byte) 134),
     ALLY_TRUSTED(ChatColor.GREEN, ChatColor.DARK_GREEN, (byte) 133),
     ADMIN(ChatColor.WHITE, ChatColor.WHITE, (byte) 58);

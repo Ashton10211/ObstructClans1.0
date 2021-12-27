@@ -58,6 +58,7 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
         for (Clan clan : getManager(MongoManager.class).getDatastore().find(Clan.class)) {
             addClan(clan);
         }
+        log("Clans", "Loaded " + ChatColor.YELLOW + getClanMap().size() + ChatColor.GRAY + " Clans.");
     }
 
     //Method to remove Clan from memory.
@@ -66,14 +67,14 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
         getClanMap().remove(clan.getName().toLowerCase());
 
         getExecutorService().execute(() -> {
-            clan.getEnemyMap().forEach((s, integer) -> {
+            clan.getWarPoints().forEach((s, integer) -> {
                 Clan enemy = getClan(s);
-                enemy.getEnemyMap().remove(clan.getName());
+                enemy.getWarPoints().remove(clan.getName());
                 saveClan(enemy);
             });
-            clan.getAllianceMap().forEach((s, aBoolean) -> {
+            clan.getAlliance().forEach((s, aBoolean) -> {
                 Clan alliance = getClan(s);
-                alliance.getAllianceMap().remove(clan.getName());
+                alliance.getAlliance().remove(clan.getName());
                 saveClan(alliance);
             });
         });
@@ -158,7 +159,9 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
         if (client != null) {
             Clan c = getClan(client.getUuid());
             if (c != null) {
-                clans.add(c);
+                if(!clans.contains(c)) {
+                    clans.add(c);
+                }
             }
         }
         if (clans.size() == 1) {
@@ -208,9 +211,15 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
         if (clan.isAllied(other)) {
             return ClanRelation.ALLY;
         }
-        if (clan.isEnemy(other)) {
+        if(clan.getWarPoints(other) >= 20 || other.getWarPoints(clan) >= 20) {
+            return ClanRelation.SIEGE;
+        }
+        if(clan.getWarPoints(other) >= 10 || other.getWarPoints(clan) >= 10) {
             return ClanRelation.ENEMY;
         }
+//        if (clan.isEnemy(other)) {
+//            return ClanRelation.ENEMY;
+//        }
         return ClanRelation.NEUTRAL;
     }
 

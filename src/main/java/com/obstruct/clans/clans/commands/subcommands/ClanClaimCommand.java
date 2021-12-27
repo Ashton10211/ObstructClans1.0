@@ -4,6 +4,7 @@ import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.MemberRole;
 import com.obstruct.clans.clans.events.ClanClaimEvent;
+import com.obstruct.clans.pillage.SiegeManager;
 import com.obstruct.core.shared.client.Client;
 import com.obstruct.core.shared.client.ClientDataRepository;
 import com.obstruct.core.shared.redis.RedisManager;
@@ -49,6 +50,10 @@ public class ClanClaimCommand extends Command<Player> {
             }
             if (clan.getClaims().size() >= clan.getMaxClaims()) {
                 UtilMessage.message(player, "Clans", "Your Clan cannot claim anymore Territory.");
+                return false;
+            }
+            if (getManager(SiegeManager.class).isGettingSieged(clan)) {
+                UtilMessage.message(player, "Clans", "You cannot claim Territory while a Siege is active.");
                 return false;
             }
         }

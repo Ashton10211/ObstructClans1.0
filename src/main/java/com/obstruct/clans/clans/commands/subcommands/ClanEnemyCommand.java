@@ -4,7 +4,7 @@ import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.MemberRole;
 import com.obstruct.clans.clans.events.ClanEnemyEvent;
-import com.obstruct.clans.pillage.PillageManager;
+import com.obstruct.clans.pillage.SiegeManager;
 import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;
 import com.obstruct.core.spigot.utility.UtilMessage;
@@ -40,16 +40,16 @@ public class ClanEnemyCommand extends Command<Player> {
                 UtilMessage.message(player, "Clans", "You cannot enemy yourself.");
                 return;
             }
-            if (clan.isEnemy(target)) {
-                UtilMessage.message(player, "Clans", "You are already enemies with " + getManager(ClanManager.class).getClanRelation(clan, target).getSuffix() + "Clan " + target.getName() + ChatColor.GRAY + ".");
-                return;
-            }
+//            if (clan.isEnemy(target)) {
+//                UtilMessage.message(player, "Clans", "You are already enemies with " + getManager(ClanManager.class).getClanRelation(clan, target).getSuffix() + "Clan " + target.getName() + ChatColor.GRAY + ".");
+//                return;
+//            }
             if (target.isAdmin()) {
                 UtilMessage.message(player, "Clans", "You cannot wage war with Admin Clans.");
                 return;
             }
-            if (getManager(PillageManager.class).isPillaging(clan, target) || getManager(PillageManager.class).isPillaged(clan, target)) {
-                UtilMessage.message(player, "Clans", "You cannot enemy " + ChatColor.LIGHT_PURPLE + "Clan " + target.getName() + ChatColor.GRAY + " while a Pillage is active.");
+            if (getManager(SiegeManager.class).isSieging(clan, target) || getManager(SiegeManager.class).isSieged(clan, target)) {
+                UtilMessage.message(player, "Clans", "You cannot enemy " + ChatColor.LIGHT_PURPLE + "Clan " + target.getName() + ChatColor.GRAY + " while a Siege is active.");
                 return;
             }
             Bukkit.getPluginManager().callEvent(new ClanEnemyEvent(player, clan, target));

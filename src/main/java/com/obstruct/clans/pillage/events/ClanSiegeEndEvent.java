@@ -1,49 +1,41 @@
-package com.obstruct.clans.clans.events;
+package com.obstruct.clans.pillage.events;
 
 import com.obstruct.clans.clans.Clan;
-import org.bukkit.Chunk;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerEvent;
 
-public class ClanUnclaimEvent extends PlayerEvent implements Cancellable {
+public class ClanSiegeEndEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
     private boolean isCancelled;
-    private final Chunk chunk;
-    private final Clan clan;
+    private final Clan pillager;
+    private final Clan pillagee;
 
-    public ClanUnclaimEvent(Player who, Chunk chunk, Clan clan) {
-        super(who);
-        this.chunk = chunk;
-        this.clan = clan;
+    public ClanSiegeEndEvent(Clan pillager, Clan pillagee) {
+        this.pillager = pillager;
+        this.pillagee = pillagee;
     }
 
-    public Chunk getChunk() {
-        return this.chunk;
+    public Clan getPillagee() {
+        return this.pillagee;
     }
 
-
-    public Clan getClan() {
-        return this.clan;
+    public Clan getPillager() {
+        return this.pillager;
     }
-
 
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
-
     public HandlerList getHandlers() {
         return handlers;
     }
 
-
     public boolean isCancelled() {
         return this.isCancelled;
     }
-
 
     public void setCancelled(boolean b) {
         this.isCancelled = b;

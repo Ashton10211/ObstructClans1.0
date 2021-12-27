@@ -5,7 +5,7 @@ import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.ClanRelation;
 import com.obstruct.clans.clans.MemberRole;
 import com.obstruct.clans.clans.events.ClanInviteEvent;
-import com.obstruct.clans.pillage.PillageManager;
+import com.obstruct.clans.pillage.SiegeManager;
 import com.obstruct.core.shared.client.Client;
 import com.obstruct.core.shared.client.ClientDataRepository;
 import com.obstruct.core.shared.redis.RedisManager;
@@ -60,12 +60,12 @@ public class ClanInviteCommand extends Command<Player> {
             UtilMessage.message(player, "Clans", ChatColor.YELLOW + player.getName() + ChatColor.GRAY + " has already been invited to your Clan.");
             return false;
         }
-        if (clan.getMembers().size() + clan.getAllianceMap().size() >= 8) {
+        if (clan.getMembers().size() >= clan.getMaxMembers()) {
             UtilMessage.message(player, "Clans", "Your Clan has too many members/allies.");
             return false;
         }
-        if (getManager(PillageManager.class).isGettingPillaged(clan)) {
-            UtilMessage.message(player, "Clans", "You cannot invite a Player while your Clan has a Pillage active.");
+        if (getManager(SiegeManager.class).isGettingSieged(clan)) {
+            UtilMessage.message(player, "Clans", "You cannot invite a Player to your Clan while a Siege is active.");
             return false;
         }
         Bukkit.getPluginManager().callEvent(new ClanInviteEvent(player, target, clan));

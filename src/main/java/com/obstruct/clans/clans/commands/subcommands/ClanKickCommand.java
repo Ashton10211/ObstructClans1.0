@@ -4,7 +4,7 @@ import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.MemberRole;
 import com.obstruct.clans.clans.events.ClanKickEvent;
-import com.obstruct.clans.pillage.PillageManager;
+import com.obstruct.clans.pillage.SiegeManager;
 import com.obstruct.core.shared.client.Client;
 import com.obstruct.core.shared.client.ClientDataRepository;
 import com.obstruct.core.shared.redis.RedisManager;
@@ -56,8 +56,8 @@ public class ClanKickCommand extends Command<Player> {
                     return;
                 }
             }
-            if (getManager(PillageManager.class).isGettingPillaged(clan)) {
-                UtilMessage.message(player, "Clans", "You cannot kick a player while you are getting Pillaged.");
+            if (getManager(SiegeManager.class).isGettingSieged(clan)) {
+                UtilMessage.message(player, "Clans", "You cannot kick a player while a Siege is active.");
                 return;
             }
             Bukkit.getPluginManager().callEvent(new ClanKickEvent(player, target, clan));

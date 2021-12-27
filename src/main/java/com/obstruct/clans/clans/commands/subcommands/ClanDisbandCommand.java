@@ -5,6 +5,7 @@ import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.ClanRelation;
 import com.obstruct.clans.clans.MemberRole;
 import com.obstruct.clans.clans.events.ClanDisbandEvent;
+import com.obstruct.clans.pillage.SiegeManager;
 import com.obstruct.core.shared.client.ClientDataRepository;
 import com.obstruct.core.shared.redis.RedisManager;
 import com.obstruct.core.spigot.common.fancy.FancyMessage;
@@ -44,6 +45,10 @@ public class ClanDisbandCommand extends Command<Player> {
                 UtilMessage.message(player, "Clans", "You must be Leader to disband your Clan.");
                 return false;
             }
+        }
+        if (getManager(SiegeManager.class).isGettingSieged(clan)) {
+            UtilMessage.message(player, "Clans", "You cannot disband your Clan while a Siege is active.");
+            return false;
         }
         if(!confirmSet.contains(player.getUniqueId())) {
             new FancyMessage(ChatColor.BLUE + "Clans> " + ChatColor.RED + ChatColor.BOLD + "Click here to permanently disband this Clan.").tooltip(ChatColor.GOLD + "Clicking this text will disband your Clan.").command("/c disband").send(player);

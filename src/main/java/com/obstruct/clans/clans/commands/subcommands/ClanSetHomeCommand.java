@@ -4,6 +4,7 @@ import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.MemberRole;
 import com.obstruct.clans.clans.events.ClanSetHomeEvent;
+import com.obstruct.clans.pillage.SiegeManager;
 import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;
 import com.obstruct.core.spigot.utility.UtilMessage;
@@ -32,6 +33,10 @@ public class ClanSetHomeCommand extends Command<Player> {
         }
         if (getManager(ClanManager.class).getClan(player.getLocation().getChunk()) == null || !getManager(ClanManager.class).getClan(player.getLocation().getChunk()).equals(clan)) {
             UtilMessage.message(player, "Clans", "You must set your Clan Home in your own Territory.");
+            return false;
+        }
+        if (getManager(SiegeManager.class).isGettingSieged(clan)) {
+            UtilMessage.message(player, "Clans", "You cannot set Clan home while a Siege is active.");
             return false;
         }
         if (player.getLocation().getY() < 40.0D || player.getLocation().getY() > 100.0D) {

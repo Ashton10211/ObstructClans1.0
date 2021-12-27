@@ -11,6 +11,7 @@ import org.bson.types.ObjectId;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -32,9 +33,10 @@ public class Clan {
     private Location home;
     private Set<String> claims;
     private int energy;
-    private HashMap<String, Boolean> allianceMap;
-    private HashMap<String, Integer> enemyMap;
+    private HashMap<String, Boolean> alliance;
+    private HashMap<String, Integer> warPoints;
     private Set<ClanMember> members;
+    private long siegeCooldown;
     private boolean admin, safe;
 
     //Transient makes sure it doesn't get saved to database. Just saves to memory.
@@ -59,9 +61,10 @@ public class Clan {
         this.allianceRequestMap = new HashMap<>();
         this.trustRequestMap = new HashMap<>();
         this.neutralRequestMap = new HashMap<>();
-        this.allianceMap = new HashMap<>();
-        this.enemyMap = new HashMap<>();
+        this.alliance = new HashMap<>();
+        this.warPoints = new HashMap<>();
         this.members = new HashSet<>();
+        this.siegeCooldown = 0L;
         this.energy = 2400;
     }
 
@@ -105,24 +108,27 @@ public class Clan {
         if (other == null) {
             return false;
         }
-        if (!getAllianceMap().containsKey(other.getName())) {
+        if (!getAlliance().containsKey(other.getName())) {
             return false;
         }
-        return getAllianceMap().get(other.getName());
+        return getAlliance().get(other.getName());
     }
 
     public boolean isAllied(Clan other) {
         if (other == null) {
             return false;
         }
-        return getAllianceMap().containsKey(other.getName());
+        return getAlliance().containsKey(other.getName());
     }
 
-    public boolean isEnemy(Clan other) {
-        if (other == null) {
-            return false;
+    public int getWarPoints(Clan other) {
+        if(other == null) {
+            return 0;
         }
-        return getEnemyMap().containsKey(other.getName());
+        if(!getWarPoints().containsKey(other.getName())) {
+            return 0;
+        }
+        return getWarPoints().get(other.getName());
     }
 
     public void inform(boolean enablePrefix, String prefix, String message, UUID... uuid) {
@@ -140,6 +146,26 @@ public class Clan {
 
     public int getMaxClaims() {
         return 3 + getMembers().size();
+    }
+
+    public int getMaxMembers() {
+        if(getAlliance().size() <= 1) {
+            return 8;
+        }
+        if(getAlliance().size() <= 2) {
+            return 5;
+        }
+        return 3;
+    }
+
+    public int getMaxAllies() {
+        if(getMembers().size() <= 3) {
+            return 3;
+        }
+        if(getMembers().size() <= 5) {
+            return 2;
+        }
+        return 1;
     }
 
     public String getTrimmedName() {
@@ -176,7 +202,16 @@ public class Clan {
         return getMembers().stream().filter(member -> Bukkit.getPlayer(member.getUuid()) != null).map(clanMember -> Bukkit.getPlayer(clanMember.getUuid())).collect(Collectors.toSet());
     }
 
-    public String getDominanceString(Clan other) {
-        return ChatColor.WHITE + "(" + ChatColor.GREEN + getEnemyMap().get(other.getName()) + ChatColor.WHITE + ":" + ChatColor.RED + other.getEnemyMap().get(getName()) + ChatColor.WHITE + ")" + ChatColor.RESET;
+    public String getWarPointsString(Clan other) {
+        if(!(getWarPoints().containsKey(other.getName()) || other.getWarPoints().containsKey(getName()))) {
+            return "";
+        }
+        return ChatColor.WHITE + "(" + ChatColor.GREEN + getWarPoints().get(other.getName()) + ChatColor.WHITE + ":" + ChatColor.RED + other.getWarPoints().get(getName()) + ChatColor.WHITE + ")" + ChatColor.RESET;
+    }
+
+    public void playSound(Sound sound, float volume, float pitch) {
+        for (Player player : getOnlinePlayers()) {
+            player.playSound(player.getLocation(), sound, pitch, volume);
+        }
     }
 }

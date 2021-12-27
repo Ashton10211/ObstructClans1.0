@@ -4,7 +4,7 @@ import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.MemberRole;
 import com.obstruct.clans.clans.events.ClanAllyEvent;
-import com.obstruct.clans.pillage.PillageManager;
+import com.obstruct.clans.pillage.SiegeManager;
 import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;
 import com.obstruct.core.spigot.utility.UtilMessage;
@@ -45,23 +45,23 @@ public class ClanAllyCommand extends Command<Player> {
                 UtilMessage.message(player, "Clans", "You cannot request an alliance with Admin Clans.");
                 return;
             }
-            if (getManager(PillageManager.class).isPillaging(clan, target) || getManager(PillageManager.class).isPillaged(clan, target)) {
-                UtilMessage.message(player, "Clans", "You cannot ally " + ChatColor.LIGHT_PURPLE + "Clan " + target.getName() + ChatColor.GRAY + " while a Pillage is active.");
+            if (getManager(SiegeManager.class).isSieging(clan, target) || getManager(SiegeManager.class).isSieged(clan, target)) {
+                UtilMessage.message(player, "Clans", "You cannot ally " + ChatColor.LIGHT_PURPLE + "Clan " + target.getName() + ChatColor.GRAY + " while a Siege is active.");
                 return;
             }
             if (clan.isAllied(target)) {
                 UtilMessage.message(player, "Clans", "Your Clan already has an alliance with " + getManager(ClanManager.class).getClanRelation(clan, target).getSuffix() + "Clan " + target.getName() + ChatColor.GRAY + ".");
                 return;
             }
-            if (clan.isEnemy(target)) {
-                UtilMessage.message(player, "Clans", "You must be neutral with " + getManager(ClanManager.class).getClanRelation(clan, target).getSuffix() + "Clan " + target.getName() + ChatColor.GRAY + " before requesting an alliance.");
-                return;
-            }
-            if (clan.getAllianceMap().size() + clan.getMembers().size() >= 8) {
+//            if (clan.isEnemy(target)) {
+//                UtilMessage.message(player, "Clans", "You must be neutral with " + getManager(ClanManager.class).getClanRelation(clan, target).getSuffix() + "Clan " + target.getName() + ChatColor.GRAY + " before requesting an alliance.");
+//                return;
+//            }
+            if (clan.getMaxAllies() >= clan.getAlliance().size()) {
                 UtilMessage.message(player, "Clans", "Your Clan has too many members/allies.");
                 return;
             }
-            if (target.getAllianceMap().size() + target.getMembers().size() >= 8) {
+            if (target.getMaxAllies() >= target.getAlliance().size()) {
                 UtilMessage.message(player, "Clans", ChatColor.YELLOW + "Clan " + target.getName() + ChatColor.GRAY + " has too many members/allies.");
                 return;
             }

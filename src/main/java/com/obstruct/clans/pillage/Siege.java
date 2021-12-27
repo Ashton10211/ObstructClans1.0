@@ -2,7 +2,7 @@ package com.obstruct.clans.pillage;
 
 import com.obstruct.clans.clans.Clan;
 
-public class Pillage {
+public class Siege {
 
     private final Clan pillager;
     private final Clan pillagee;
@@ -10,7 +10,7 @@ public class Pillage {
     private long lastAnnounce;
     private final long length;
 
-    public Pillage(Clan pillager, Clan pillagee, long length) {
+    public Siege(Clan pillager, Clan pillagee, long length) {
         this.start = System.currentTimeMillis();
         this.lastAnnounce = System.currentTimeMillis();
         this.pillager = pillager;

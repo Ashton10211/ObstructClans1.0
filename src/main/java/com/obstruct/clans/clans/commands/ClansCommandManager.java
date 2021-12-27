@@ -1,6 +1,8 @@
 package com.obstruct.clans.clans.commands;
 
+import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.commands.subcommands.*;
+import com.obstruct.clans.clans.menu.ManageClanMenu;
 import com.obstruct.core.spigot.framework.SpigotBasePlugin;
 import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;
@@ -20,7 +22,7 @@ public class ClansCommandManager extends CommandManager {
         addModule(new ClanCreateCommand(this));
         addModule(new ClanDemoteCommand(this));
         addModule(new ClanDisbandCommand(this));
-        addModule(new ClanEnemyCommand(this));
+        //addModule(new ClanEnemyCommand(this));
         addModule(new ClanHomeCommand(this));
         addModule(new ClanInviteCommand(this));
         addModule(new ClanJoinCommand(this));
@@ -30,7 +32,7 @@ public class ClansCommandManager extends CommandManager {
         addModule(new ClanNeutralCommand(this));
         addModule(new ClanPromoteCommand(this));
         addModule(new ClanSetHomeCommand(this));
-        addModule(new ClanTrustCommand(this));
+        //addModule(new ClanTrustCommand(this));
         addModule(new ClanUnclaimCommand(this));
     }
 
@@ -45,7 +47,7 @@ public class ClansCommandManager extends CommandManager {
 
         @Override
         public boolean execute(Player player, String[] strings) {
-            player.sendMessage("Open menu");
+            player.openInventory(new ManageClanMenu(getManager(ClanManager.class), player).getInventory());
             return false;
         }
     }

@@ -6,6 +6,7 @@ import com.obstruct.clans.clans.ClanMember;
 import com.obstruct.clans.clans.ClanRelation;
 import com.obstruct.clans.clans.events.*;
 import com.obstruct.clans.clans.listeners.ClanMovementListener;
+import com.obstruct.clans.gamer.GamerManager;
 import com.obstruct.core.shared.client.Client;
 import com.obstruct.core.shared.client.ClientDataRepository;
 import com.obstruct.core.shared.client.Rank;
@@ -244,7 +245,7 @@ public class ClanScoreboard extends PlayerScoreboard implements Listener {
         Score energy = objective.getScore((pClan == null) ? "" : (ChatColor.GREEN + pClan.getEnergyString()));
         Score blank1 = objective.getScore(getBlank(2));
         Score gGold = objective.getScore(ChatColor.YELLOW + ChatColor.BOLD.toString() + "Gold");
-        Score gold = objective.getScore("TODO");
+        Score gold = objective.getScore(ChatColor.GOLD.toString() + getManager(GamerManager.class).getGamer(player).getGold());
 
         Score blank2 = objective.getScore(getBlank(4));
         Score tTerritory = objective.getScore(ChatColor.YELLOW + ChatColor.BOLD.toString() + "Territory");
@@ -440,27 +441,31 @@ public class ClanScoreboard extends PlayerScoreboard implements Listener {
     }
 
     private void updateDominancePoints(Clan clan, Clan other) {
-        if (getManager(ClanManager.class).getClanRelation(clan, other) != ClanRelation.ENEMY) {
-            return;
-        }
-        for (Player online : Bukkit.getOnlinePlayers()) {
+        for (Player online : clan.getOnlinePlayers()) {
             for (Team team : online.getScoreboard().getTeams()) {
                 if (team.getName().equals(noneTeam) || team.getName().contains("@")) {
                     continue;
                 }
-                team.setSuffix(" " + getEnemyString(clan, other));
+                //team.setSuffix(" " + getEnemyString(clan, other));
+            }
+        }
+        for (Player online : other.getOnlinePlayers()) {
+            for (Team team : online.getScoreboard().getTeams()) {
+                if (team.getName().equals(noneTeam) || team.getName().contains("@")) {
+                    continue;
+                }
+                //team.setSuffix(" " + getEnemyString(clan, other));
             }
         }
     }
 
-    private String getEnemyString(Clan clan, Clan other) {
-        if (clan.getEnemyMap().get(other.getName()) < other.getEnemyMap().get(clan.getName())) {
-            return ChatColor.RED + "-" + other.getEnemyMap().get(clan.getName());
+    private String getEnemyString(Clan dead, Clan killer) {
+        if (dead.getWarPoints().get(killer.getName()) <= killer.getWarPoints().get(dead.getName())) {
+            return ChatColor.RED + "-" + killer.getWarPoints().get(dead.getName());
+        } else if (dead.getWarPoints().get(killer.getName()) > killer.getWarPoints().get(dead.getName())) {
+            return ChatColor.GREEN + "+" + dead.getWarPoints().get(killer.getName());
         }
-        if (clan.getEnemyMap().get(other.getName()) > other.getEnemyMap().get(clan.getName())) {
-            return ChatColor.GREEN + "+" + clan.getEnemyMap().get(other.getName());
-        }
-        return ChatColor.YELLOW + "" + clan.getEnemyMap().get(other.getName());
+        return ChatColor.YELLOW + "" + dead.getWarPoints().get(killer.getName());
     }
 
     @Override

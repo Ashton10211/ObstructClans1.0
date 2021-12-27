@@ -7,23 +7,16 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
-public class ClanUnclaimEvent extends PlayerEvent implements Cancellable {
+public class ClanUnclaimAllEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
     private boolean isCancelled;
-    private final Chunk chunk;
     private final Clan clan;
 
-    public ClanUnclaimEvent(Player who, Chunk chunk, Clan clan) {
+    public ClanUnclaimAllEvent(Player who, Clan clan) {
         super(who);
-        this.chunk = chunk;
         this.clan = clan;
     }
-
-    public Chunk getChunk() {
-        return this.chunk;
-    }
-
 
     public Clan getClan() {
         return this.clan;

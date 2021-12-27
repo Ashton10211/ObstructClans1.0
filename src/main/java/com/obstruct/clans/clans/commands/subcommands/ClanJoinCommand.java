@@ -2,7 +2,7 @@ package com.obstruct.clans.clans.commands.subcommands;
 
 import com.obstruct.clans.clans.*;
 import com.obstruct.clans.clans.events.ClanJoinEvent;
-import com.obstruct.clans.pillage.PillageManager;
+import com.obstruct.clans.pillage.SiegeManager;
 import com.obstruct.core.shared.client.Client;
 import com.obstruct.core.shared.client.ClientDataRepository;
 import com.obstruct.core.shared.redis.RedisManager;
@@ -13,8 +13,6 @@ import com.obstruct.core.spigot.utility.UtilTime;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-
-import java.util.UUID;
 
 public class ClanJoinCommand extends Command<Player> {
 
@@ -43,12 +41,12 @@ public class ClanJoinCommand extends Command<Player> {
                     UtilMessage.message(player, "Clans", "You cannot join Admin Clans.");
                     return;
                 }
-                if (target.getMembers().size() + target.getAllianceMap().size() >= 8) {
+                if (target.getMembers().size() >= target.getMaxMembers()) {
                     UtilMessage.message(player, "Clans", ChatColor.YELLOW + "Clan " + target.getName() + ChatColor.GRAY + " has too many members/allies.");
                     return;
                 }
-                if (getManager(PillageManager.class).isGettingPillaged(target)) {
-                    UtilMessage.message(player, "Clans", "You cannot join a Clan while they are getting Pillaged.");
+                if (getManager(SiegeManager.class).isGettingSieged(target)) {
+                    UtilMessage.message(player, "Clans", "You cannot join a Clan while they have a Siege active.");
                     return;
                 }
             }

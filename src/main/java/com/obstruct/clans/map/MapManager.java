@@ -21,6 +21,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -46,6 +47,13 @@ public class MapManager extends SpigotManager<SpigotModule<?>> {
         super.initialize(plugin);
 
         loadMap();
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                saveMapData();
+            }
+        }.runTaskTimer(getPlugin(), 6000L, 6000L);
     }
 
     @Override
@@ -64,25 +72,36 @@ public class MapManager extends SpigotManager<SpigotModule<?>> {
             e.printStackTrace();
         }
 
-        MapView map = Bukkit.getMap((short)0);
-        if (map == null) {
-            map = Bukkit.createMap(Bukkit.getWorld("world"));
-        }
-        if (!(map.getRenderers().get(0) instanceof MinimapRenderer)) {
-            for (MapRenderer r : map.getRenderers()) {
-                map.removeRenderer(r);
+        try {
+            MapView map = Bukkit.getServer().getMap((short) 0);
+            if (map == null) {
+                map = Bukkit.createMap(Bukkit.getWorld("world"));
             }
-            MinimapRenderer renderer = new MinimapRenderer(this);
-            map.addRenderer(renderer);
-            map.addRenderer(new ClanMapRenderer(this));
+            if (!(map.getRenderers().get(0) instanceof MinimapRenderer)) {
+                for (MapRenderer r : map.getRenderers()) {
+                    map.removeRenderer(r);
+                }
+                MinimapRenderer renderer = new MinimapRenderer(this);
+                map.addRenderer(renderer);
+                map.addRenderer(new ClanMapRenderer(this));
+            }
+            loadMapData((MinimapRenderer)map.getRenderers().get(0));
+        } catch (Exception e) {
         }
-        loadMapData((MinimapRenderer)map.getRenderers().get(0));
     }
 
     public synchronized void loadMapData(MinimapRenderer minimapRenderer) {
         final long l = System.currentTimeMillis();
 
         final File file = new File(getPlugin().getDataFolder().getPath(), "map.json");
+        if(!file.exists()) {
+            file.mkdir();
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         JSONParser parser = new JSONParser();
         try {
@@ -158,6 +177,7 @@ public class MapManager extends SpigotManager<SpigotModule<?>> {
                 try {
                     final File file = new File(getPlugin().getDataFolder().getPath(), "map.json");
                     if (!file.exists()) {
+                        file.getParentFile().mkdir();
                         file.createNewFile();
                     }
                     ObjectMapper mapper = new ObjectMapper();

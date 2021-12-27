@@ -5,6 +5,7 @@ import com.obstruct.clans.clans.ClanManager;
 import com.obstruct.clans.clans.MemberRole;
 import com.obstruct.clans.clans.events.ClanPromoteEvent;
 import com.obstruct.core.shared.client.Client;
+import com.obstruct.core.shared.utility.UtilDebug;
 import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;
 import com.obstruct.core.spigot.utility.UtilFormat;

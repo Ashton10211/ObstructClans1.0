@@ -7,6 +7,7 @@ import com.obstruct.clans.clans.events.ClanDemoteEvent;
 import com.obstruct.core.shared.client.Client;
 import com.obstruct.core.shared.client.ClientDataRepository;
 import com.obstruct.core.shared.redis.RedisManager;
+import com.obstruct.core.shared.utility.UtilDebug;
 import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;
 import com.obstruct.core.spigot.utility.UtilFormat;
