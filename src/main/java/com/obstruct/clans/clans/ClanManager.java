@@ -1,8 +1,7 @@
 package com.obstruct.clans.clans;
 
 import com.obstruct.clans.clans.codec.LocationConverter;
-import com.obstruct.clans.clans.listeners.ClanListener;
-import com.obstruct.clans.clans.listeners.ClanMovementListener;
+import com.obstruct.clans.clans.listeners.*;
 import com.obstruct.core.shared.client.Client;
 import com.obstruct.core.shared.mongodb.MongoManager;
 import com.obstruct.core.shared.utility.UtilJava;
@@ -33,14 +32,15 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
     //Use clanMap.get("ClanName"); to get any clan.
     //clanMap.containsKey("ClanName") to see if it exists.
     private final HashMap<String, Clan> clanMap;
+    private final HashMap<UUID, ChatType> chatTypeMap;
 
     public ClanManager(SpigotBasePlugin plugin) {
         super(plugin, "ClanManager");
         this.clanMap = new HashMap<>();
+        this.chatTypeMap = new HashMap<>();
 
         getManager(MongoManager.class).getMorphia().map(Clan.class);
         getManager(MongoManager.class).getMorphia().getMapper().getConverters().addConverter(new LocationConverter());
-        getManager(MongoManager.class).getDatastore().ensureIndexes();
 
         loadClans();
     }
@@ -48,7 +48,18 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
     @Override
     public void registerModules() {
         addModule(new ClanMovementListener(this));
+        addModule(new ClanBreakBlockListener(this));
+        addModule(new ClanDamageListener(this));
+        addModule(new ClanDisableLeafDecay(this));
+        addModule(new ClanDoorListener(this));
+        addModule(new ClanEnergyListener(this));
+        addModule(new ClanGamemodeListener(this));
+        addModule(new ClanInteractListener(this));
         addModule(new ClanListener(this));
+        addModule(new ChatListener(this));
+        addModule(new ClanPlaceBlockListener(this));
+        addModule(new ClanSafeZoneDamageListener(this));
+        addModule(new ClanSkillListener(this));
     }
 
     //This gets called on startup. Uses the main thread to load the clans,
@@ -205,9 +216,6 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
         if (clan.equals(other)) {
             return ClanRelation.SELF;
         }
-        if (clan.isTrusted(other)) {
-            return ClanRelation.ALLY_TRUSTED;
-        }
         if (clan.isAllied(other)) {
             return ClanRelation.ALLY;
         }
@@ -232,5 +240,53 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
             }
         }
         return null;
+    }
+
+    public ChatType getChatType(Player player) {
+        return getChatType(player.getUniqueId());
+    }
+
+    public ChatType getChatType(UUID uuid) {
+        return getChatTypeMap().getOrDefault(uuid, ChatType.NONE);
+    }
+
+    public boolean canHurt(Player player, Player target, boolean inform) {
+        ClanRelation clanRelation = getClanRelation(getClan(player), getClan(target));
+        if(clanRelation == ClanRelation.SELF || clanRelation == ClanRelation.ALLY) {
+            if (inform) {
+                UtilMessage.message(player, "Clans", "You cannot harm " + clanRelation.getSuffix() + target.getName() + ChatColor.GRAY + ".");
+            }
+            return false;
+        }
+        Clan playerClan = getClan(player.getLocation());
+        if(playerClan != null && playerClan.isSafe()) {
+            if (inform) {
+                ClanRelation relation = getClanRelation(getClan(player), playerClan);
+                UtilMessage.message(player, "Clans", "You cannot harm " + clanRelation.getSuffix() + target.getName() + ChatColor.GRAY + " in " + relation.getSuffix() + playerClan.getName() + ChatColor.GRAY + ".");
+            }
+            return false;
+        }
+        Clan clan = getClan(target.getLocation());
+        if (clan != null && clan.isSafe()) {
+            if (inform) {
+                ClanRelation relation = getClanRelation(getClan(player), clan);
+                UtilMessage.message(player, "Clans", "You cannot harm " + clanRelation.getSuffix() + target.getName() + ChatColor.GRAY + " in " + relation.getSuffix() + clan.getName() + ChatColor.GRAY + ".");
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public boolean hasAccess(Player player, Location location) {
+        Clan lClan = getClan(location);
+        if(lClan == null) {
+            return true;
+        }
+        ClanRelation clanRelation = getClanRelation(getClan(player), lClan);
+        if (clanRelation == ClanRelation.SELF) {
+            return true;
+        }
+
+        return false;
     }
 }

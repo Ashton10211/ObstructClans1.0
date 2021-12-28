@@ -64,10 +64,10 @@ public class ClanInviteCommand extends Command<Player> {
             UtilMessage.message(player, "Clans", "Your Clan has too many members/allies.");
             return false;
         }
-        if (getManager(SiegeManager.class).isGettingSieged(clan)) {
-            UtilMessage.message(player, "Clans", "You cannot invite a Player to your Clan while a Siege is active.");
-            return false;
-        }
+//        if (getManager(SiegeManager.class).isGettingSieged(clan)) {
+//            UtilMessage.message(player, "Clans", "You cannot invite a Player to your Clan while a Siege is active.");
+//            return false;
+//        }
         Bukkit.getPluginManager().callEvent(new ClanInviteEvent(player, target, clan));
         return true;
     }

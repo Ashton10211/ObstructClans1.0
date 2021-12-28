@@ -2,5 +2,5 @@ name: Obstruct-Clans
 main: com.obstruct.clans.Clans
 version: 1.0
 author: Obstruct-Team
-depend: [Obstruct-Core]
+depend: [Obstruct-Core,Obstruct-Champions]
 load: POSTWORLD

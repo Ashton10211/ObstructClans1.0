@@ -115,8 +115,15 @@ public class ClanListener extends SpigotModule<ClanManager> implements Listener 
             return;
         }
         Clan clan = event.getClan();
-        Player player = event.getPlayer();
         ClanManager manager = getManager(ClanManager.class);
+        if (event.getDisbandReason() == ClanDisbandEvent.DisbandReason.ENERGY) {
+            Bukkit.getOnlinePlayers().forEach(online -> {
+                ClanRelation clanRelation = getManager().getClanRelation(clan, getManager().getClan(online.getUniqueId()));
+                UtilMessage.message(online, "Clans", clanRelation.getSuffix() + "Clan " + clan.getName() + ChatColor.GRAY + " has been disbanded for running out of energy!");
+            });
+            return;
+        }
+        Player player = event.getPlayer();
         for (Player online : Bukkit.getOnlinePlayers()) {
             ClanRelation clanRelation = manager.getClanRelation(clan, manager.getClan(online));
             UtilMessage.message(online, "Clans", clanRelation.getSuffix() + player.getName() + ChatColor.GRAY + " has disbanded " + clanRelation.getSuffix() + "Clan " + clan.getName() + ChatColor.GRAY + ".");

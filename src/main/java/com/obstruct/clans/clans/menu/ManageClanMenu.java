@@ -60,7 +60,7 @@ public class ManageClanMenu extends Menu<ClanManager> {
         List<String> inviteLore = new ArrayList<>();
 
         inviteLore.add("");
-        inviteLore.add(ChatColor.GRAY + "Clans can have a max size of " + ChatColor.YELLOW + "20" + ChatColor.GRAY + " members");
+        inviteLore.add(ChatColor.GRAY + "Clans can have a max size of " + ChatColor.YELLOW + "8" + ChatColor.GRAY + " members");
         inviteLore.add(ChatColor.GRAY + "You currently have " + ChatColor.YELLOW + members.size() + ChatColor.GRAY + " members");
         inviteLore.add(ChatColor.GRAY + "More members in your clan will allow you to");
         inviteLore.add(ChatColor.GRAY + "claim more land, but will also increase your Energy drain per minute.");

@@ -37,10 +37,10 @@ public class ClanLeaveCommand extends Command<Player> {
             UtilMessage.message(player, "Clans", "You are not in a Clan.");
             return true;
         }
-        if (getManager(SiegeManager.class).isGettingSieged(clan)) {
-            UtilMessage.message(player, "Clans", "You cannot leave your Clan while a Siege is active.");
-            return true;
-        }
+//        if (getManager(SiegeManager.class).isGettingSieged(clan)) {
+//            UtilMessage.message(player, "Clans", "You cannot leave your Clan while a Siege is active.");
+//            return true;
+//        }
         if (clan.getClanMember(player.getUniqueId()).getMemberRole() == MemberRole.LEADER && clan.getMembers().size() > 1) {
             UtilMessage.message(player, "Clans", "You must pass on Leadership before leaving.");
             return true;

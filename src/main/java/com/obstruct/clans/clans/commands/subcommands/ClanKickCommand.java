@@ -56,10 +56,10 @@ public class ClanKickCommand extends Command<Player> {
                     return;
                 }
             }
-            if (getManager(SiegeManager.class).isGettingSieged(clan)) {
-                UtilMessage.message(player, "Clans", "You cannot kick a player while a Siege is active.");
-                return;
-            }
+//            if (getManager(SiegeManager.class).isGettingSieged(clan)) {
+//                UtilMessage.message(player, "Clans", "You cannot kick a player while a Siege is active.");
+//                return;
+//            }
             Bukkit.getPluginManager().callEvent(new ClanKickEvent(player, target, clan));
         });
         return true;

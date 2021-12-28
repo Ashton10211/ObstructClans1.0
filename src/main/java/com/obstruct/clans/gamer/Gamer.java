@@ -26,13 +26,14 @@ public class Gamer {
     private long lastOnline;
 
     public Gamer() {
-    }
-
-    public Gamer(UUID uuid) {
-        this.uuid = uuid;
         this.gold = 5000;
         this.timePlayed = 0L;
         this.lastLogin = System.currentTimeMillis();
         this.lastOnline = 0L;
+    }
+
+    public Gamer(UUID uuid) {
+        this();
+        this.uuid = uuid;
     }
 }

@@ -35,7 +35,7 @@ public class SiegeDeathListener extends SpigotModule<SiegeManager> implements Li
             return;
         }
         ClanRelation clanRelation = getManager(ClanManager.class).getClanRelation(clan, killerClan);
-        if(UtilTime.elapsed(clan.getSiegeCooldown(), 1800000L)) {
+        if(!UtilTime.elapsed(clan.getSiegeCooldown(), 1800000L)) {
             killerClan.inform(true, "Clans", "Your Clan did not gain a War Point because " + clanRelation.getSuffix() + "Clan " + clan.getName() + ChatColor.GRAY + " has been Sieged recently.");
             return;
         }

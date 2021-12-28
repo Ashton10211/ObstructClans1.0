@@ -45,10 +45,10 @@ public class ClanAllyCommand extends Command<Player> {
                 UtilMessage.message(player, "Clans", "You cannot request an alliance with Admin Clans.");
                 return;
             }
-            if (getManager(SiegeManager.class).isSieging(clan, target) || getManager(SiegeManager.class).isSieged(clan, target)) {
-                UtilMessage.message(player, "Clans", "You cannot ally " + ChatColor.LIGHT_PURPLE + "Clan " + target.getName() + ChatColor.GRAY + " while a Siege is active.");
-                return;
-            }
+//            if (getManager(SiegeManager.class).isSieging(clan, target) || getManager(SiegeManager.class).isSieged(clan, target)) {
+//                UtilMessage.message(player, "Clans", "You cannot ally " + ChatColor.LIGHT_PURPLE + "Clan " + target.getName() + ChatColor.GRAY + " while a Siege is active.");
+//                return;
+//            }
             if (clan.isAllied(target)) {
                 UtilMessage.message(player, "Clans", "Your Clan already has an alliance with " + getManager(ClanManager.class).getClanRelation(clan, target).getSuffix() + "Clan " + target.getName() + ChatColor.GRAY + ".");
                 return;
@@ -57,11 +57,11 @@ public class ClanAllyCommand extends Command<Player> {
 //                UtilMessage.message(player, "Clans", "You must be neutral with " + getManager(ClanManager.class).getClanRelation(clan, target).getSuffix() + "Clan " + target.getName() + ChatColor.GRAY + " before requesting an alliance.");
 //                return;
 //            }
-            if (clan.getMaxAllies() >= clan.getAlliance().size()) {
+            if(clan.getAlliance().size() >= clan.getMaxAllies()) {
                 UtilMessage.message(player, "Clans", "Your Clan has too many members/allies.");
                 return;
             }
-            if (target.getMaxAllies() >= target.getAlliance().size()) {
+            if (target.getAlliance().size() >= target.getMaxAllies()) {
                 UtilMessage.message(player, "Clans", ChatColor.YELLOW + "Clan " + target.getName() + ChatColor.GRAY + " has too many members/allies.");
                 return;
             }

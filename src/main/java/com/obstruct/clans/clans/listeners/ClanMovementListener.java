@@ -64,9 +64,9 @@ public class ClanMovementListener extends SpigotModule<ClanManager> implements L
                     append = ChatColor.WHITE + "(" + ChatColor.AQUA + "Safe" + ChatColor.WHITE + ")";
                 }
             }
-            if (relation == ClanRelation.ALLY_TRUSTED) {
-                append = ChatColor.WHITE + "(" + ChatColor.YELLOW + "Trusted" + ChatColor.WHITE + ")";
-            }
+//            if (relation == ClanRelation.ALLY_TRUSTED) {
+//                append = ChatColor.WHITE + "(" + ChatColor.YELLOW + "Trusted" + ChatColor.WHITE + ")";
+//            }
             if (relation == ClanRelation.ENEMY && clan != null) {
                 append = clan.getWarPointsString(target);
             }

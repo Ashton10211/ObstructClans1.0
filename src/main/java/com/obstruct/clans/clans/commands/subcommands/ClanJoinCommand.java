@@ -45,10 +45,10 @@ public class ClanJoinCommand extends Command<Player> {
                     UtilMessage.message(player, "Clans", ChatColor.YELLOW + "Clan " + target.getName() + ChatColor.GRAY + " has too many members/allies.");
                     return;
                 }
-                if (getManager(SiegeManager.class).isGettingSieged(target)) {
-                    UtilMessage.message(player, "Clans", "You cannot join a Clan while they have a Siege active.");
-                    return;
-                }
+//                if (getManager(SiegeManager.class).isGettingSieged(target)) {
+//                    UtilMessage.message(player, "Clans", "You cannot join a Clan while they have a Siege active.");
+//                    return;
+//                }
             }
             if (client.isAdministrating() || (target.getInviteeMap().containsKey(player.getUniqueId()) && !UtilTime.elapsed(target.getInviteeMap().get(player.getUniqueId()), 300000L))) {
                 Bukkit.getPluginManager().callEvent(new ClanJoinEvent(player, target));
