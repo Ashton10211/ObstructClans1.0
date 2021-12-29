@@ -21,11 +21,13 @@ public class InvitePlayersMenu extends Menu<ClanManager> {
 
     public InvitePlayersMenu(ClanManager manager, Player player) {
         super(manager, player, 54, "Invite Players", new Button[0]);
+        buildPage();
+        construct();
     }
 
     @Override
-    protected void buildPage() {
-        addButton(new Button(4, new ItemStack(Material.BED), ChatColor.GRAY + "Go Back", new String[0]) {
+    public void buildPage() {
+        addButton(new Button(this, 4, new ItemStack(Material.BED), ChatColor.GRAY + "Go Back", new String[0]) {
             @Override
             public void onButtonClick(Player player, ClickType clickType) {
                 getPlayer().openInventory(new ManageClanMenu(getManager(), player).getInventory());
@@ -41,7 +43,7 @@ public class InvitePlayersMenu extends Menu<ClanManager> {
             SkullMeta meta = (SkullMeta) item.getItemMeta();
             meta.setOwner(online.getName());
             item.setItemMeta(meta);
-            addButton(new Button(9 + slot, item, ChatColor.GREEN + ChatColor.BOLD.toString() + online.getName(), new String[]{"", ChatColor.YELLOW + "Left-Click: " + ChatColor.WHITE + "Invite Player"}) {
+            addButton(new Button(this, 9 + slot, item, ChatColor.GREEN + ChatColor.BOLD.toString() + online.getName(), new String[]{"", ChatColor.YELLOW + "Left-Click: " + ChatColor.WHITE + "Invite Player"}) {
                 @Override
                 public void onButtonClick(Player player, ClickType clickType) {
                     getManager().getManager(ClansCommandManager.class).getModule(ClanInviteCommand.class).execute(player, new String[] { "invite", online.getName() });

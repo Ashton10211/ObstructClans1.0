@@ -30,10 +30,10 @@ public class ManageClanMenu extends Menu<ClanManager> {
     }
 
     @Override
-    protected void buildPage() {
+    public void buildPage() {
         Clan clan = getManager().getClan(getPlayer());
         if (clan == null) {
-            addButton(new Button(21, new ItemStack(Material.BOOK_AND_QUILL),
+            addButton(new Button(this, 21, new ItemStack(Material.BOOK_AND_QUILL),
                     ChatColor.GREEN + ChatColor.BOLD.toString() + "Create Clan", new String[]{
                     ChatColor.GRAY + "To create a clan type",
                     ChatColor.RED + "/c create <ClanName>"
@@ -45,7 +45,7 @@ public class ManageClanMenu extends Menu<ClanManager> {
                 }
             });
 
-            addButton(new Button(23, new ItemStack(Material.PRISMARINE), ChatColor.GREEN + ChatColor.BOLD.toString() + "Join Clan", new String[0]) {
+            addButton(new Button(this, 23, new ItemStack(Material.PRISMARINE), ChatColor.GREEN + ChatColor.BOLD.toString() + "Join Clan", new String[0]) {
                 @Override
                 public void onButtonClick(Player player, ClickType clickType) {
                     player.openInventory(new JoinClanMenu(getManager(), player).getInventory());
@@ -53,7 +53,6 @@ public class ManageClanMenu extends Menu<ClanManager> {
             });
             return;
         }
-        //    public Button(int slot, ItemStack item, int amount, byte itemID, String name, String[] lore, boolean addGlow) {
         final List<ClanMember> members = new ArrayList<>(clan.getMembers());
         Collections.sort(members, (o1, o2) -> o2.getMemberRole().compareTo(o1.getMemberRole()));
 
@@ -69,7 +68,7 @@ public class ManageClanMenu extends Menu<ClanManager> {
             inviteLore.add(ChatColor.YELLOW + "Left-Click: " + ChatColor.WHITE + "Invite Player");
         }
 
-        addButton(new Button(0, new ItemStack(Material.PRISMARINE), 1, (byte) 1, ChatColor.GREEN + ChatColor.BOLD.toString() + "Invites", inviteLore) {
+        addButton(new Button(this, 0, new ItemStack(Material.PRISMARINE), 1, (byte) 1, ChatColor.GREEN + ChatColor.BOLD.toString() + "Invites", inviteLore) {
             @Override
             public void onButtonClick(Player player, ClickType clickType) {
                 if (clickType != ClickType.LEFT) {
@@ -98,7 +97,7 @@ public class ManageClanMenu extends Menu<ClanManager> {
             claimLore.add(ChatColor.YELLOW + "Shift-Right-Click: " + ChatColor.WHITE + "Unclaim All Land");
         }
 
-        addButton(new Button(2, new ItemStack(Material.PRISMARINE), ChatColor.GREEN + ChatColor.BOLD.toString() + "Territory", claimLore) {
+        addButton(new Button(this, 2, new ItemStack(Material.PRISMARINE), ChatColor.GREEN + ChatColor.BOLD.toString() + "Territory", claimLore) {
             @Override
             public void onButtonClick(Player player, ClickType clickType) {
                 if (!clan.hasMemberRole(player.getUniqueId(), MemberRole.ADMIN)) {
@@ -114,7 +113,7 @@ public class ManageClanMenu extends Menu<ClanManager> {
             }
         });
 
-        addButton(new Button(4, new ItemStack(Material.SEA_LANTERN), ChatColor.GREEN + ChatColor.BOLD.toString() + "Energy", new String[]{
+        addButton(new Button(this, 4, new ItemStack(Material.SEA_LANTERN), ChatColor.GREEN + ChatColor.BOLD.toString() + "Energy", new String[]{
                         "",
                         ChatColor.GRAY + "Energy is the currency used to upkeep",
                         ChatColor.GRAY + "your clan. Energy drains over time and",
@@ -132,7 +131,7 @@ public class ManageClanMenu extends Menu<ClanManager> {
         if(clan.hasMemberRole(getPlayer().getUniqueId(), MemberRole.LEADER)) {
             disbandLore.add(ChatColor.YELLOW + "Shift-Right-Click: " + ChatColor.WHITE + "Disband Clan");
         }
-        addButton(new Button(6, new ItemStack(Material.PRISMARINE), 1, (byte) 2, ChatColor.GREEN + ChatColor.BOLD.toString() + "Leave", disbandLore) {
+        addButton(new Button(this, 6, new ItemStack(Material.PRISMARINE), 1, (byte) 2, ChatColor.GREEN + ChatColor.BOLD.toString() + "Leave", disbandLore) {
             @Override
             public void onButtonClick(Player player, ClickType clickType) {
                 if (clickType == ClickType.SHIFT_LEFT) {
@@ -144,7 +143,7 @@ public class ManageClanMenu extends Menu<ClanManager> {
             }
         });
 
-        addButton(new Button(8, new ItemStack(Material.LAVA_BUCKET), ChatColor.GREEN + ChatColor.BOLD.toString() + "Commands", new String[]
+        addButton(new Button(this, 8, new ItemStack(Material.LAVA_BUCKET), ChatColor.GREEN + ChatColor.BOLD.toString() + "Commands", new String[]
 
                 {
                         "",
@@ -182,7 +181,7 @@ public class ManageClanMenu extends Menu<ClanManager> {
                     }
                 }
             }
-            addButton(new Button(18 + slot, item, 1, (byte) 3, name, lore) {
+            addButton(new Button(this, 18 + slot, item, 1, (byte) 3, name, lore) {
                 @Override
                 public void onButtonClick(Player player, ClickType clickType) {
                     if (clickType == ClickType.LEFT) {

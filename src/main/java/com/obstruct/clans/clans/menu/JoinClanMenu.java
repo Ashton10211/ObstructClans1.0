@@ -28,24 +28,24 @@ public class JoinClanMenu extends Menu<ClanManager> {
     }
 
     @Override
-    protected void buildPage() {
+    public void buildPage() {
         List<Clan> clans = new ArrayList<>();
         for (Clan clan : getManager().getClanMap().values()) {
             if(clan.getInviteeMap().containsKey(getPlayer().getUniqueId()) && !UtilTime.elapsed(clan.getInviteeMap().get(getPlayer().getUniqueId()), 300000L)) {
                 clans.add(clan);
             }
         }
-        addButton(new Button(4, new ItemStack(Material.BED), ChatColor.GRAY + "Go Back", new String[0]) {
+        addButton(new Button(this, 4, new ItemStack(Material.BED), ChatColor.GRAY + "Go Back", new String[0]) {
             @Override
             public void onButtonClick(Player player, ClickType clickType) {
                 getPlayer().openInventory(new ManageClanMenu(getManager(), player).getInventory());
             }
         });
         if(clans.isEmpty()) {
-            addButton(new Button(22, new ItemStack(Material.BOOK), ChatColor.RED + ChatColor.BOLD.toString() + "You have no Clan Invitations!", new String[0]));
+            addButton(new Button(this, 22, new ItemStack(Material.BOOK), ChatColor.RED + ChatColor.BOLD.toString() + "You have no Clan Invitations!", new String[0]));
         } else {
             for (Clan clan : clans) {
-                addButton(new Button(9 + clans.indexOf(clan), new ItemStack(Material.BOOK), ChatColor.GREEN + ChatColor.BOLD.toString() + clan.getName(), new String[0]){
+                addButton(new Button(this, 9 + clans.indexOf(clan), new ItemStack(Material.BOOK), ChatColor.GREEN + ChatColor.BOLD.toString() + clan.getName(), new String[0]){
                     @Override
                     public void onButtonClick(Player player, ClickType clickType) {
                         getManager().getManager(ClansCommandManager.class).getModule(ClanJoinCommand.class).execute(player, new String[] { "join", clan.getName() });

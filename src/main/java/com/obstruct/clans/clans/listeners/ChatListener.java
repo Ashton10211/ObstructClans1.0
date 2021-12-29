@@ -55,7 +55,7 @@ public class ChatListener extends SpigotModule<ClanManager> implements Listener 
                 rank = client.getRank().getTag(true) + " ";
             }
             if (clan == null) {
-                online.sendMessage(rank + ChatColor.YELLOW + player.getName() + ChatColor.RESET + ": " + message);
+                online.sendMessage(rank + ChatColor.YELLOW + player.getName() + ChatColor.RESET + " " + message);
                 continue;
             }
             ClanRelation clanRelation = getManager().getClanRelation(clan, target);
