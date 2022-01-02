@@ -177,7 +177,7 @@ public class MapManager extends SpigotManager<SpigotModule<?>> {
                 try {
                     final File file = new File(getPlugin().getDataFolder().getPath(), "map.json");
                     if (!file.exists()) {
-                        file.getParentFile().mkdir();
+                        file.getParentFile().mkdirs();
                         file.createNewFile();
                     }
                     ObjectMapper mapper = new ObjectMapper();

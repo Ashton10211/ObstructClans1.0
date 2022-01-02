@@ -2,9 +2,9 @@ package com.obstruct.clans.clans.commands.subcommands;
 
 import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
+import com.obstruct.clans.clans.ClanMember;
 import com.obstruct.clans.clans.MemberRole;
 import com.obstruct.clans.clans.events.ClanKickEvent;
-import com.obstruct.clans.pillage.SiegeManager;
 import com.obstruct.core.shared.client.Client;
 import com.obstruct.core.shared.client.ClientDataRepository;
 import com.obstruct.core.shared.redis.RedisManager;
@@ -31,37 +31,35 @@ public class ClanKickCommand extends Command<Player> {
             UtilMessage.message(player, "Clans", "You are not in a Clan.");
             return false;
         }
-        getExecutorService().execute(() -> {
-            Client target = getManager(ClanManager.class).searchMember(player, args[1], true);
-            if (target == null) {
-                return;
-            }
-            if (target.getUuid().equals(player.getUniqueId())) {
-                UtilMessage.message(player, "Clans", "You cannot kick yourself.");
-                return;
-            }
-            if (!clan.equals(getManager(ClanManager.class).getClan(target.getUuid()))) {
-                UtilMessage.message(player, "Clans", ChatColor.YELLOW + target.getName() + ChatColor.GRAY + " is not apart of your Clan.");
-                return;
-            }
-            Client client = getManager(RedisManager.class).getModule(ClientDataRepository.class).getClient(player.getUniqueId());
+        ClanMember target = getManager(ClanManager.class).searchMember(player, args[1], true);
+        if (target == null) {
+            return false;
+        }
+        if (target.getUuid().equals(player.getUniqueId())) {
+            UtilMessage.message(player, "Clans", "You cannot kick yourself.");
+            return false;
+        }
+        if (!clan.equals(getManager(ClanManager.class).getClan(target.getUuid()))) {
+            UtilMessage.message(player, "Clans", ChatColor.YELLOW + target.getPlayerName() + ChatColor.GRAY + " is not apart of your Clan.");
+            return false;
+        }
+        Client client = getManager(RedisManager.class).getModule(ClientDataRepository.class).getClient(player.getUniqueId());
 
-            if (!client.isAdministrating()) {
-                if (!clan.hasMemberRole(player.getUniqueId(), MemberRole.ADMIN)) {
-                    UtilMessage.message(player, "Clans", "Only the Clan Leader and Admins can kick members.");
-                    return;
-                }
-                if (!clan.hasMemberRole(player.getUniqueId(), clan.getClanMember(target.getUuid()).getMemberRole())) {
-                    UtilMessage.message(player, "Clans", "You do not outrank " + ChatColor.YELLOW + target.getName() + ChatColor.GRAY + ".");
-                    return;
-                }
+        if (!client.isAdministrating()) {
+            if (!clan.hasMemberRole(player.getUniqueId(), MemberRole.ADMIN)) {
+                UtilMessage.message(player, "Clans", "Only the Clan Leader and Admins can kick members.");
+                return false;
             }
+            if (!clan.hasMemberRole(player.getUniqueId(), clan.getClanMember(target.getUuid()).getMemberRole())) {
+                UtilMessage.message(player, "Clans", "You do not outrank " + ChatColor.YELLOW + target.getPlayerName() + ChatColor.GRAY + ".");
+                return false;
+            }
+        }
 //            if (getManager(SiegeManager.class).isGettingSieged(clan)) {
 //                UtilMessage.message(player, "Clans", "You cannot kick a player while a Siege is active.");
 //                return;
 //            }
-            Bukkit.getPluginManager().callEvent(new ClanKickEvent(player, target, clan));
-        });
+        Bukkit.getPluginManager().callEvent(new ClanKickEvent(player, target, clan));
         return true;
     }
 

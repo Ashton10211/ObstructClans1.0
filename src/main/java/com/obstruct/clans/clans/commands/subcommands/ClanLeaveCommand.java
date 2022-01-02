@@ -41,18 +41,20 @@ public class ClanLeaveCommand extends Command<Player> {
 //            UtilMessage.message(player, "Clans", "You cannot leave your Clan while a Siege is active.");
 //            return true;
 //        }
-        if (clan.getClanMember(player.getUniqueId()).getMemberRole() == MemberRole.LEADER && clan.getMembers().size() > 1) {
-            UtilMessage.message(player, "Clans", "You must pass on Leadership before leaving.");
-            return true;
-        }
-        if(!confirmSet.contains(player.getUniqueId())) {
-            new FancyMessage(ChatColor.BLUE + "Clans> " + ChatColor.RED + ChatColor.BOLD + "Click here to leave your Clan.").tooltip(ChatColor.GOLD + "Clicking this text will make you leave your Clan.").command("/c leave").send(player);
-            confirmSet.add(player.getUniqueId());
-            return false;
-        }
-        if (clan.getClanMember(player.getUniqueId()).getMemberRole() == MemberRole.LEADER && clan.getMembers().size() == 1) {
-            Bukkit.getServer().getPluginManager().callEvent(new ClanDisbandEvent(player, clan, ClanDisbandEvent.DisbandReason.PLAYER));
-            return true;
+        if(!clan.isAdmin()) {
+            if (clan.getClanMember(player.getUniqueId()).getMemberRole() == MemberRole.LEADER && clan.getMembers().size() > 1) {
+                UtilMessage.message(player, "Clans", "You must pass on Leadership before leaving.");
+                return true;
+            }
+            if (!confirmSet.contains(player.getUniqueId())) {
+                new FancyMessage(ChatColor.BLUE + "Clans> " + ChatColor.RED + ChatColor.BOLD + "Click here to leave your Clan.").tooltip(ChatColor.GOLD + "Clicking this text will make you leave your Clan.").command("/c leave").send(player);
+                confirmSet.add(player.getUniqueId());
+                return false;
+            }
+            if (clan.getClanMember(player.getUniqueId()).getMemberRole() == MemberRole.LEADER && clan.getMembers().size() == 1) {
+                Bukkit.getServer().getPluginManager().callEvent(new ClanDisbandEvent(player, clan, ClanDisbandEvent.DisbandReason.PLAYER));
+                return true;
+            }
         }
         Bukkit.getServer().getPluginManager().callEvent(new ClanLeaveEvent(player, clan));
         return true;

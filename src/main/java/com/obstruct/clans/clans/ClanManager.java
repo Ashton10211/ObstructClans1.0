@@ -47,16 +47,18 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
 
     @Override
     public void registerModules() {
-        addModule(new ClanMovementListener(this));
+        addModule(new ChatListener(this));
         addModule(new ClanBreakBlockListener(this));
         addModule(new ClanDamageListener(this));
         addModule(new ClanDisableLeafDecay(this));
         addModule(new ClanDoorListener(this));
         addModule(new ClanEnergyListener(this));
         addModule(new ClanGamemodeListener(this));
+        addModule(new ClanIgnite(this));
         addModule(new ClanInteractListener(this));
         addModule(new ClanListener(this));
-        addModule(new ChatListener(this));
+        addModule(new ClanMovementListener(this));
+        addModule(new ClanPiston(this));
         addModule(new ClanPlaceBlockListener(this));
         addModule(new ClanSafeZoneDamageListener(this));
         addModule(new ClanSkillListener(this));
@@ -170,7 +172,7 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
         if (client != null) {
             Clan c = getClan(client.getUuid());
             if (c != null) {
-                if(!clans.contains(c)) {
+                if (!clans.contains(c)) {
                     clans.add(c);
                 }
             }
@@ -187,18 +189,18 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
         return null;
     }
 
-    public final Client searchMember(Player player, String name, boolean inform) {
+    public final ClanMember searchMember(Player player, String name, boolean inform) {
         Clan clan = getClan(player.getUniqueId());
-        List<Client> members = clan.getMembers().stream().map(clanMember -> getManager(MongoManager.class).getDatastore().createQuery(Client.class).field("uuid").equal(clanMember.getUuid()).first()).collect(Collectors.toList());
-        if (members.stream().anyMatch(client -> client.getName().equalsIgnoreCase(name))) {
-            return members.stream().filter(client -> client.getName().equalsIgnoreCase(name)).findFirst().get();
+        List<ClanMember> members = new ArrayList<>(clan.getMembers());
+        if(members.stream().anyMatch(clanMember -> clanMember.getPlayerName().equalsIgnoreCase(name))) {
+            return members.stream().filter(clanMember -> clanMember.getPlayerName().equalsIgnoreCase(name)).findFirst().get();
         }
-        members.removeIf(client -> !client.getName().toLowerCase().contains(name.toLowerCase()));
+        members.removeIf(clanMember -> !clanMember.getPlayerName().toLowerCase().contains(name.toLowerCase()));
         if (members.size() == 1)
             return members.get(0);
         if (members.size() > 1) {
             if (inform) {
-                UtilMessage.message(player, "Member Search", ChatColor.YELLOW.toString() + members.size() + ChatColor.GRAY + " matches found [" + members.stream().map(client -> ChatColor.YELLOW + client.getName()).collect(Collectors.joining(ChatColor.GRAY + ", ")) + ChatColor.GRAY + "]");
+                UtilMessage.message(player, "Member Search", ChatColor.YELLOW.toString() + members.size() + ChatColor.GRAY + " matches found [" + members.stream().map(clanMember -> ChatColor.YELLOW + clanMember.getPlayerName()).collect(Collectors.joining(ChatColor.GRAY + ", ")) + ChatColor.GRAY + "]");
             }
         } else {
             UtilMessage.message(player, "Member Search", ChatColor.YELLOW.toString() + members.size() + ChatColor.GRAY + " matches found [" + ChatColor.YELLOW + name + ChatColor.GRAY + "]");
@@ -219,10 +221,10 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
         if (clan.isAllied(other)) {
             return ClanRelation.ALLY;
         }
-        if(clan.getWarPoints(other) >= 20 || other.getWarPoints(clan) >= 20) {
+        if (clan.getWarPoints(other) >= 20 || other.getWarPoints(clan) >= 20) {
             return ClanRelation.SIEGE;
         }
-        if(clan.getWarPoints(other) >= 10 || other.getWarPoints(clan) >= 10) {
+        if (clan.getWarPoints(other) >= 10 || other.getWarPoints(clan) >= 10) {
             return ClanRelation.ENEMY;
         }
 //        if (clan.isEnemy(other)) {
@@ -252,14 +254,14 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
 
     public boolean canHurt(Player player, Player target, boolean inform) {
         ClanRelation clanRelation = getClanRelation(getClan(player), getClan(target));
-        if(clanRelation == ClanRelation.SELF || clanRelation == ClanRelation.ALLY) {
+        if (clanRelation == ClanRelation.SELF || clanRelation == ClanRelation.ALLY) {
             if (inform) {
                 UtilMessage.message(player, "Clans", "You cannot harm " + clanRelation.getSuffix() + target.getName() + ChatColor.GRAY + ".");
             }
             return false;
         }
         Clan playerClan = getClan(player.getLocation());
-        if(playerClan != null && playerClan.isSafe()) {
+        if (playerClan != null && playerClan.isSafe()) {
             if (inform) {
                 ClanRelation relation = getClanRelation(getClan(player), playerClan);
                 UtilMessage.message(player, "Clans", "You cannot harm " + clanRelation.getSuffix() + target.getName() + ChatColor.GRAY + " in " + relation.getSuffix() + playerClan.getName() + ChatColor.GRAY + ".");
@@ -279,7 +281,7 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
 
     public boolean hasAccess(Player player, Location location) {
         Clan lClan = getClan(location);
-        if(lClan == null) {
+        if (lClan == null) {
             return true;
         }
         ClanRelation clanRelation = getClanRelation(getClan(player), lClan);

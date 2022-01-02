@@ -3,6 +3,7 @@ package com.obstruct.clans.clans.commands;
 import com.obstruct.clans.clans.ChatType;
 import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
+import com.obstruct.core.shared.redis.RedisManager;
 import com.obstruct.core.spigot.framework.SpigotBasePlugin;
 import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;

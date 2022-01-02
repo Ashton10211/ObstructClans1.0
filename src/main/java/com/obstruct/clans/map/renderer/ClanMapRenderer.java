@@ -81,23 +81,16 @@ public class ClanMapRenderer extends MapRenderer {
                             mapCanvas.setPixel(pX + cz, pZ + cz, chunkData.getColor());
                         }
                         if (s.ordinal() < MapView.Scale.NORMAL.ordinal() || admin) {
-                            if (cx == 0 &&
-                                    !chunkData.getBlockFaceSet().contains(BlockFace.WEST)) {
+                            if (cx == 0 && !chunkData.getBlockFaceSet().contains(BlockFace.WEST)) {
                                 mapCanvas.setPixel(pX + cx, pZ + cz, chunkData.getColor());
                             }
-
-                            if (cx == 16 / scale - 1 &&
-                                    !chunkData.getBlockFaceSet().contains(BlockFace.EAST)) {
+                            if (cx == 16 / scale - 1 && !chunkData.getBlockFaceSet().contains(BlockFace.EAST)) {
                                 mapCanvas.setPixel(pX + cx, pZ + cz, chunkData.getColor());
                             }
-
-                            if (cz == 0 &&
-                                    !chunkData.getBlockFaceSet().contains(BlockFace.NORTH)) {
+                            if (cz == 0 && !chunkData.getBlockFaceSet().contains(BlockFace.NORTH)) {
                                 mapCanvas.setPixel(pX + cx, pZ + cz, chunkData.getColor());
                             }
-
-                            if (cz == 16 / scale - 1 &&
-                                    !chunkData.getBlockFaceSet().contains(BlockFace.SOUTH)) {
+                            if (cz == 16 / scale - 1 && !chunkData.getBlockFaceSet().contains(BlockFace.SOUTH)) {
                                 mapCanvas.setPixel(pX + cx, pZ + cz, chunkData.getColor());
                             }
                         } else {

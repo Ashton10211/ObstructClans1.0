@@ -2,6 +2,7 @@ package com.obstruct.clans.clans.commands.subcommands;
 
 import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
+import com.obstruct.clans.clans.ClanMember;
 import com.obstruct.clans.clans.MemberRole;
 import com.obstruct.clans.clans.events.ClanDemoteEvent;
 import com.obstruct.core.shared.client.Client;
@@ -33,7 +34,7 @@ public class ClanDemoteCommand extends Command<Player> {
             return false;
         }
         getExecutorService().execute(() -> {
-            Client target = getManager(ClanManager.class).searchMember(player, args[1], true);
+            ClanMember target = getManager(ClanManager.class).searchMember(player, args[1], true);
             if (target == null) {
                 return;
             }
@@ -48,15 +49,15 @@ public class ClanDemoteCommand extends Command<Player> {
                     return;
                 }
                 if (!clan.equals(getManager(ClanManager.class).getClan(target.getUuid()))) {
-                    UtilMessage.message(player, "Clans", ChatColor.YELLOW + target.getName() + ChatColor.GRAY + " is not apart of your Clan.");
+                    UtilMessage.message(player, "Clans", ChatColor.YELLOW + target.getPlayerName() + ChatColor.GRAY + " is not apart of your Clan.");
                     return;
                 }
                 if (clan.getClanMember(player.getUniqueId()).getMemberRole().ordinal() <= clan.getClanMember(target.getUuid()).getMemberRole().ordinal()) {
-                    UtilMessage.message(player, "Clans", "You do not outrank " + ChatColor.YELLOW + target.getName() + ChatColor.GRAY + ".");
+                    UtilMessage.message(player, "Clans", "You do not outrank " + ChatColor.YELLOW + target.getPlayerName() + ChatColor.GRAY + ".");
                     return;
                 }
                 if (clan.getClanMember(target.getUuid()).getMemberRole().ordinal() == 0) {
-                    UtilMessage.message(player, "Clans", "You cannot demote " + ChatColor.YELLOW + target.getName() + ChatColor.GRAY + " any further.");
+                    UtilMessage.message(player, "Clans", "You cannot demote " + ChatColor.YELLOW + target.getPlayerName() + ChatColor.GRAY + " any further.");
                     return;
                 }
             }

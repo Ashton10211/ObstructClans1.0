@@ -1,6 +1,7 @@
 package com.obstruct.clans.clans.events;
 
 import com.obstruct.clans.clans.Clan;
+import com.obstruct.clans.clans.ClanMember;
 import com.obstruct.core.shared.client.Client;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -11,17 +12,17 @@ public class ClanKickEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
     private boolean isCancelled;
-    private final Client target;
+    private final ClanMember target;
     private final Clan clan;
 
-    public ClanKickEvent(Player player, Client target, Clan clan) {
+    public ClanKickEvent(Player player, ClanMember target, Clan clan) {
         super(player);
         this.target = target;
         this.clan = clan;
     }
 
 
-    public Client getTarget() {
+    public ClanMember getTarget() {
         return this.target;
     }
 

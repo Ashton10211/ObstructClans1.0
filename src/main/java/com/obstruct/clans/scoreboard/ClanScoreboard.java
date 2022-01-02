@@ -265,6 +265,7 @@ public class ClanScoreboard extends PlayerScoreboard implements Listener {
             territory.setScore(5);
         } else {
             gGold.setScore(12);
+            gold.setScore(11);
 
             blank2.setScore(10);
             tTerritory.setScore(9);

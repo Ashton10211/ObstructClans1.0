@@ -2,13 +2,11 @@ package com.obstruct.clans.clans.commands.subcommands;
 
 import com.obstruct.clans.clans.Clan;
 import com.obstruct.clans.clans.ClanManager;
+import com.obstruct.clans.clans.ClanMember;
 import com.obstruct.clans.clans.MemberRole;
 import com.obstruct.clans.clans.events.ClanPromoteEvent;
-import com.obstruct.core.shared.client.Client;
-import com.obstruct.core.shared.utility.UtilDebug;
 import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;
-import com.obstruct.core.spigot.utility.UtilFormat;
 import com.obstruct.core.spigot.utility.UtilMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -30,33 +28,31 @@ public class ClanPromoteCommand extends Command<Player> {
             UtilMessage.message(player, "Clans", "You are not in a Clan.");
             return false;
         }
-        getExecutorService().execute(() -> {
-            Client target = getManager(ClanManager.class).searchMember(player, args[1], true);
-            if (target == null) {
-                return;
-            }
-            if (!clan.hasMemberRole(player.getUniqueId(), MemberRole.ADMIN)) {
-                UtilMessage.message(player, "Clans", "You must be an Admin or higher to promote a Player.");
-                return;
-            }
-            if (player.getUniqueId().equals(target.getUuid())) {
-                UtilMessage.message(player, "Clans", "You cannot promote yourself.");
-                return;
-            }
-            if (!clan.equals(getManager(ClanManager.class).getClan(target.getUuid()))) {
-                UtilMessage.message(player, "Clans", ChatColor.YELLOW + target.getName() + ChatColor.GRAY + " is not apart of your Clan.");
-                return;
-            }
-            if (clan.getClanMember(player.getUniqueId()).getMemberRole().ordinal() <= clan.getClanMember(target.getUuid()).getMemberRole().ordinal()) {
-                UtilMessage.message(player, "Clans", "You do not outrank " + ChatColor.YELLOW + target.getName() + ChatColor.GRAY + ".");
-                return;
-            }
-            if (clan.getClanMember(target.getUuid()).getMemberRole() == MemberRole.LEADER) {
-                UtilMessage.message(player, "Clans", "You cannot promote " + ChatColor.YELLOW + target.getName() + ChatColor.GRAY + " any further.");
-                return;
-            }
-            Bukkit.getPluginManager().callEvent(new ClanPromoteEvent(player, target, clan));
-        });
+        ClanMember target = getManager(ClanManager.class).searchMember(player, args[1], true);
+        if (target == null) {
+            return false;
+        }
+        if (!clan.hasMemberRole(player.getUniqueId(), MemberRole.ADMIN)) {
+            UtilMessage.message(player, "Clans", "You must be an Admin or higher to promote a Player.");
+            return false;
+        }
+        if (player.getUniqueId().equals(target.getUuid())) {
+            UtilMessage.message(player, "Clans", "You cannot promote yourself.");
+            return false;
+        }
+        if (!clan.equals(getManager(ClanManager.class).getClan(target.getUuid()))) {
+            UtilMessage.message(player, "Clans", ChatColor.YELLOW + target.getPlayerName() + ChatColor.GRAY + " is not apart of your Clan.");
+            return false;
+        }
+        if (clan.getClanMember(player.getUniqueId()).getMemberRole().ordinal() <= clan.getClanMember(target.getUuid()).getMemberRole().ordinal()) {
+            UtilMessage.message(player, "Clans", "You do not outrank " + ChatColor.YELLOW + target.getPlayerName() + ChatColor.GRAY + ".");
+            return false;
+        }
+        if (clan.getClanMember(target.getUuid()).getMemberRole() == MemberRole.LEADER) {
+            UtilMessage.message(player, "Clans", "You cannot promote " + ChatColor.YELLOW + target.getPlayerName() + ChatColor.GRAY + " any further.");
+            return false;
+        }
+        Bukkit.getPluginManager().callEvent(new ClanPromoteEvent(player, target, clan));
         return true;
     }
 

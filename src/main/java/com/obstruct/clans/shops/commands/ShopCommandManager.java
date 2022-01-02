@@ -6,9 +6,9 @@ import com.obstruct.core.spigot.framework.command.Command;
 import com.obstruct.core.spigot.framework.command.CommandManager;
 import org.bukkit.entity.Player;
 
-public class ShopCommand extends CommandManager {
+public class ShopCommandManager extends CommandManager {
 
-    public ShopCommand(SpigotBasePlugin plugin) {
+    public ShopCommandManager(SpigotBasePlugin plugin) {
         super(plugin, "ShopCommand");
     }
 

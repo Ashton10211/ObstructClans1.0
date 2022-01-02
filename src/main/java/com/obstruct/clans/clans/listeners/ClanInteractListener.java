@@ -24,7 +24,7 @@ import java.util.Arrays;
 
 public class ClanInteractListener extends SpigotModule<ClanManager> implements Listener {
 
-    private final Material[] disallow = {Material.CHEST, Material.TRAPPED_CHEST, Material.LEVER, Material.WOOD_BUTTON, Material.STONE_BUTTON, Material.FURNACE, Material.FENCE_GATE, Material.WORKBENCH, Material.DISPENSER, Material.BED, Material.WORKBENCH, Material.BURNING_FURNACE, Material.WOODEN_DOOR, Material.WOOD_DOOR, Material.REDSTONE_COMPARATOR, Material.REDSTONE_COMPARATOR_OFF, Material.REDSTONE_COMPARATOR_ON, Material.TRAP_DOOR, Material.BREWING_STAND, Material.BREWING_STAND_ITEM};
+    private final Material[] disallow = {Material.CHEST, Material.TRAPPED_CHEST, Material.LEVER, Material.WOOD_BUTTON, Material.STONE_BUTTON, Material.FURNACE, Material.FENCE_GATE, Material.WORKBENCH, Material.DISPENSER, Material.BURNING_FURNACE, Material.WOODEN_DOOR, Material.WOOD_DOOR, Material.REDSTONE_COMPARATOR, Material.REDSTONE_COMPARATOR_OFF, Material.REDSTONE_COMPARATOR_ON, Material.TRAP_DOOR, Material.BREWING_STAND, Material.BREWING_STAND_ITEM};
 
     public ClanInteractListener(ClanManager manager) {
         super(manager, "ClanInteractListener");

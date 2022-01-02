@@ -99,12 +99,12 @@ public class ClanListener extends SpigotModule<ClanManager> implements Listener 
             return;
         }
         Player player = event.getPlayer();
-        Client target = event.getTarget();
+        ClanMember target = event.getTarget();
         Clan clan = event.getClan();
 
         clan.getClanMember(target.getUuid()).demote();
-        UtilMessage.message(player, "Clans", "You demoted " + ChatColor.AQUA + target.getName() + ChatColor.GRAY + " to " + ChatColor.GREEN + UtilFormat.cleanString(clan.getClanMember(target.getUuid()).getMemberRole().name()) + ChatColor.GRAY + ".");
-        clan.inform(true, "Clans", ChatColor.AQUA + player.getName() + ChatColor.GRAY + " demoted " + ChatColor.AQUA + target.getName() + ChatColor.GRAY + " to " + ChatColor.GREEN + UtilFormat.cleanString(clan.getClanMember(target.getUuid()).getMemberRole().name()) + ChatColor.GRAY + ".", player.getUniqueId());
+        UtilMessage.message(player, "Clans", "You demoted " + ChatColor.AQUA + target.getPlayerName() + ChatColor.GRAY + " to " + ChatColor.GREEN + UtilFormat.cleanString(clan.getClanMember(target.getUuid()).getMemberRole().name()) + ChatColor.GRAY + ".");
+        clan.inform(true, "Clans", ChatColor.AQUA + player.getName() + ChatColor.GRAY + " demoted " + ChatColor.AQUA + target.getPlayerName() + ChatColor.GRAY + " to " + ChatColor.GREEN + UtilFormat.cleanString(clan.getClanMember(target.getUuid()).getMemberRole().name()) + ChatColor.GRAY + ".", player.getUniqueId());
 
         getExecutorService().execute(() -> getManager(ClanManager.class).saveClan(clan));
     }
@@ -121,12 +121,12 @@ public class ClanListener extends SpigotModule<ClanManager> implements Listener 
                 ClanRelation clanRelation = getManager().getClanRelation(clan, getManager().getClan(online.getUniqueId()));
                 UtilMessage.message(online, "Clans", clanRelation.getSuffix() + "Clan " + clan.getName() + ChatColor.GRAY + " has been disbanded for running out of energy!");
             });
-            return;
-        }
-        Player player = event.getPlayer();
-        for (Player online : Bukkit.getOnlinePlayers()) {
-            ClanRelation clanRelation = manager.getClanRelation(clan, manager.getClan(online));
-            UtilMessage.message(online, "Clans", clanRelation.getSuffix() + player.getName() + ChatColor.GRAY + " has disbanded " + clanRelation.getSuffix() + "Clan " + clan.getName() + ChatColor.GRAY + ".");
+        } else if (event.getDisbandReason() == ClanDisbandEvent.DisbandReason.PLAYER) {
+            Player player = event.getPlayer();
+            for (Player online : Bukkit.getOnlinePlayers()) {
+                ClanRelation clanRelation = manager.getClanRelation(clan, manager.getClan(online));
+                UtilMessage.message(online, "Clans", clanRelation.getSuffix() + player.getName() + ChatColor.GRAY + " has disbanded " + clanRelation.getSuffix() + "Clan " + clan.getName() + ChatColor.GRAY + ".");
+            }
         }
         manager.removeClan(clan);
         getExecutorService().execute(() -> manager.deleteClan(clan));
@@ -210,14 +210,14 @@ public class ClanListener extends SpigotModule<ClanManager> implements Listener 
         }
         Clan clan = event.getClan();
         Player player = event.getPlayer();
-        Client target = event.getTarget();
+        ClanMember target = event.getTarget();
 
         clan.getMembers().remove(clan.getClanMember(target.getUuid()));
-        UtilMessage.message(player, "Clans", "You kicked " + ChatColor.YELLOW + target.getName() + ChatColor.GRAY + " from the Clan.");
+        UtilMessage.message(player, "Clans", "You kicked " + ChatColor.YELLOW + target.getPlayerName() + ChatColor.GRAY + " from the Clan.");
         if (Bukkit.getPlayer(target.getUuid()) != null) {
             UtilMessage.message(Bukkit.getPlayer(target.getUuid()), "Clans", ChatColor.YELLOW + player.getName() + ChatColor.GRAY + " kicked you from " + ChatColor.YELLOW + "Clan " + clan.getName() + ChatColor.GRAY + ".");
         }
-        clan.inform(true, "Clans", ChatColor.AQUA + player.getName() + ChatColor.GRAY + " kicked " + ChatColor.YELLOW + target.getName() + ChatColor.GRAY + " from the Clan.", player.getUniqueId());
+        clan.inform(true, "Clans", ChatColor.AQUA + player.getName() + ChatColor.GRAY + " kicked " + ChatColor.YELLOW + target.getPlayerName() + ChatColor.GRAY + " from the Clan.", player.getUniqueId());
         getExecutorService().execute(() -> getManager(ClanManager.class).saveClan(clan));
     }
 
@@ -272,7 +272,7 @@ public class ClanListener extends SpigotModule<ClanManager> implements Listener 
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onClanPromote(ClanPromoteEvent event) {
-        Client target = event.getTarget();
+        ClanMember target = event.getTarget();
         Clan clan = event.getClan();
         Player player = event.getPlayer();
 
@@ -280,8 +280,8 @@ public class ClanListener extends SpigotModule<ClanManager> implements Listener 
             clan.getClanMember(player.getUniqueId()).setMemberRole(MemberRole.ADMIN);
         }
         clan.getClanMember(target.getUuid()).promote();
-        UtilMessage.message(player, "Clans", "You promoted " + ChatColor.AQUA + target.getName() + ChatColor.GRAY + " to " + ChatColor.GREEN + UtilFormat.cleanString(clan.getClanMember(target.getUuid()).getMemberRole().name()) + ChatColor.GRAY + ".");
-        clan.inform(true, "Clans", ChatColor.AQUA + player.getName() + ChatColor.GRAY + " promoted " + ChatColor.YELLOW + target.getName() + ChatColor.GRAY + " to " + ChatColor.GREEN + UtilFormat.cleanString(clan.getClanMember(target.getUuid()).getMemberRole().name()) + ChatColor.GRAY + ".", player.getUniqueId());
+        UtilMessage.message(player, "Clans", "You promoted " + ChatColor.AQUA + target.getPlayerName() + ChatColor.GRAY + " to " + ChatColor.GREEN + UtilFormat.cleanString(clan.getClanMember(target.getUuid()).getMemberRole().name()) + ChatColor.GRAY + ".");
+        clan.inform(true, "Clans", ChatColor.AQUA + player.getName() + ChatColor.GRAY + " promoted " + ChatColor.YELLOW + target.getPlayerName() + ChatColor.GRAY + " to " + ChatColor.GREEN + UtilFormat.cleanString(clan.getClanMember(target.getUuid()).getMemberRole().name()) + ChatColor.GRAY + ".", player.getUniqueId());
         getExecutorService().execute(() -> getManager(ClanManager.class).saveClan(clan));
     }
 

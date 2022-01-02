@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 import java.util.Iterator;
+import java.util.Map;
 
 public class ClanEnergyListener extends SpigotModule<ClanManager> implements Updater {
 
@@ -30,10 +31,10 @@ public class ClanEnergyListener extends SpigotModule<ClanManager> implements Upd
 
     @Update(ticks = 1200)
     public void onUpdate() {
-        for (Iterator<Clan> it = getManager().getClanMap().values().iterator(); it.hasNext(); ) {
-            Clan clan = it.next();
+        for (Map.Entry<String, Clan> stringClanEntry : getManager().getClanMap().entrySet()) {
+            Clan clan = stringClanEntry.getValue();
 
-            double energyFromHours = clan.getEnergyFromHours(1);
+            double energyFromHours = clan.getEnergyFromHours(1) / 60.0D;
             clan.setEnergy(clan.getEnergy() - (int) energyFromHours);
             if (clan.getEnergy() <= 0) {
                 Bukkit.getPluginManager().callEvent(new ClanDisbandEvent(null, clan, ClanDisbandEvent.DisbandReason.ENERGY));
