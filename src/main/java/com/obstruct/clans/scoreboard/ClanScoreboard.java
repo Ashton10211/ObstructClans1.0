@@ -220,7 +220,7 @@ public class ClanScoreboard extends PlayerScoreboard implements Listener {
         if (killerClan == null) {
             return;
         }
-        updateDominancePoints(clan, killerClan);
+        updateDominancePoints(killerClan, clan);
     }
 
     public void updateSideBar(Player player) {
@@ -276,25 +276,25 @@ public class ClanScoreboard extends PlayerScoreboard implements Listener {
     private void addPlayer(Player player) {
         ClanManager clanManager = getManager(ClanManager.class);
         Clan clan = clanManager.getClan(player);
-        for (Player online : Bukkit.getOnlinePlayers()) {
-            Scoreboard scoreboard = online.getScoreboard();
-            if (clan == null) {
-                if (scoreboard.getTeam(noneTeam) == null) {
-                    scoreboard.registerNewTeam(noneTeam);
-                }
-                scoreboard.getTeam(noneTeam).setPrefix(ChatColor.YELLOW + "");
-                if (!scoreboard.getTeam(noneTeam).hasEntry(player.getName())) {
-                    scoreboard.getTeam(noneTeam).addEntry(player.getName());
-                }
-                continue;
-            }
-            addClan(scoreboard, clan, clanManager.getClan(online));
-            if (!scoreboard.getTeam(clan.getName()).hasEntry(player.getName())) {
-                scoreboard.getTeam(clan.getName()).addEntry(player.getName());
-            }
-        }
+//        for (Player online : Bukkit.getOnlinePlayers()) {
+//            Scoreboard scoreboard = online.getScoreboard();
+//            if (clan == null) {
+//                if (scoreboard.getTeam(noneTeam) == null) {
+//                    scoreboard.registerNewTeam(noneTeam);
+//                }
+//                scoreboard.getTeam(noneTeam).setPrefix(ChatColor.YELLOW + "");
+//                if (!scoreboard.getTeam(noneTeam).hasEntry(player.getName())) {
+//                    scoreboard.getTeam(noneTeam).addEntry(player.getName());
+//                }
+//                continue;
+//            }
+//            addClan(scoreboard, clan, clanManager.getClan(online));
+//            if (!scoreboard.getTeam(clan.getName()).hasEntry(player.getName())) {
+//                scoreboard.getTeam(clan.getName()).addEntry(player.getName());
+//            }
+//        }
         Scoreboard scoreboard = player.getScoreboard();
-        scoreboard.getTeams().forEach(Team::unregister);
+        //scoreboard.getTeams().forEach(Team::unregister);
         for (Clan c : clanManager.getClanMap().values()) {
             if (c.isOnline()) {
                 addClan(scoreboard, c, clanManager.getClan(player.getUniqueId()));
@@ -364,6 +364,7 @@ public class ClanScoreboard extends PlayerScoreboard implements Listener {
         }
         ClanRelation clanRelation = getManager(ClanManager.class).getClanRelation(clan, other);
         scoreboard.getTeam(clan.getName()).setPrefix(clanRelation.getPrefix() + clan.getTrimmedName() + clanRelation.getSuffix() + " ");
+        updateDominancePoints(clan, other);
     }
 
     public void updateRelation(Clan clan) {
@@ -382,10 +383,6 @@ public class ClanScoreboard extends PlayerScoreboard implements Listener {
                 if (other != null) {
                     ClanRelation clanRelation = manager.getClanRelation(clan, other);
                     team.setPrefix(clanRelation.getPrefix() + other.getTrimmedName() + clanRelation.getSuffix() + " ");
-                    team.setSuffix("");
-                    if (clanRelation == ClanRelation.ENEMY) {
-                        updateDominancePoints(clan, other);
-                    }
                 }
             }
         }
@@ -444,29 +441,35 @@ public class ClanScoreboard extends PlayerScoreboard implements Listener {
     private void updateDominancePoints(Clan clan, Clan other) {
         for (Player online : clan.getOnlinePlayers()) {
             for (Team team : online.getScoreboard().getTeams()) {
-                if (team.getName().equals(noneTeam) || team.getName().contains("@")) {
+                if (team.getName().contains("@")) {
                     continue;
                 }
-                //team.setSuffix(" " + getEnemyString(clan, other));
+                if (!team.getName().equals(other.getName())) {
+                    continue;
+                }
+                team.setSuffix(" " + getEnemyString(clan, other));
             }
         }
         for (Player online : other.getOnlinePlayers()) {
             for (Team team : online.getScoreboard().getTeams()) {
-                if (team.getName().equals(noneTeam) || team.getName().contains("@")) {
+                if (team.getName().contains("@")) {
                     continue;
                 }
-                //team.setSuffix(" " + getEnemyString(clan, other));
+                if (!team.getName().equals(clan.getName())) {
+                    continue;
+                }
+                team.setSuffix(" " + getEnemyString(other, clan));
             }
         }
     }
 
-    private String getEnemyString(Clan dead, Clan killer) {
-        if (dead.getWarPoints().get(killer.getName()) <= killer.getWarPoints().get(dead.getName())) {
-            return ChatColor.RED + "-" + killer.getWarPoints().get(dead.getName());
-        } else if (dead.getWarPoints().get(killer.getName()) > killer.getWarPoints().get(dead.getName())) {
-            return ChatColor.GREEN + "+" + dead.getWarPoints().get(killer.getName());
+    private String getEnemyString(Clan killer, Clan dead) {
+        if(dead.getWarPoints(killer) < killer.getWarPoints(dead)) {
+            return ChatColor.GREEN + "+" + killer.getWarPoints().get(dead.getName());
+        } else if (dead.getWarPoints(killer) > killer.getWarPoints(dead)) {
+            return ChatColor.RED + "-" + dead.getWarPoints().get(killer.getName());
         }
-        return ChatColor.YELLOW + "" + dead.getWarPoints().get(killer.getName());
+        return ChatColor.WHITE + "";
     }
 
     @Override

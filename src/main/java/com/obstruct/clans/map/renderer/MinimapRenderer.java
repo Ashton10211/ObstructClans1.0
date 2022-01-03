@@ -213,7 +213,7 @@ public class MinimapRenderer extends MapRenderer implements Listener {
 
                 if (event != null) {
                     Bukkit.getPluginManager().callEvent(event);
-                    e.getCursors().add(new ExtraCursor(x, z, (player == p || event.isCursorShown()), event.getType(), direction, p.getWorld().getName(), false));
+                    e.getCursors().add(new ExtraCursor(x, z, (player == p || event.isCursorShown()), event.getType(), direction, p.getWorld().getName(), true));
                 }
             }
         }
@@ -236,7 +236,7 @@ public class MinimapRenderer extends MapRenderer implements Listener {
 
             if (Math.abs(x) > 127) {
                 if (c.isShownOutside()) {
-                    x = (c.getX() > player.getLocation().getBlockX()) ? 127 : -128;
+                    x = (x < 0) ? -128 : 127;
                 } else {
                     continue;
                 }
@@ -244,7 +244,7 @@ public class MinimapRenderer extends MapRenderer implements Listener {
 
             if (Math.abs(z) > 127) {
                 if (c.isShownOutside()) {
-                    z = (c.getZ() > player.getLocation().getBlockZ()) ? 127 : -128;
+                    z = (z < 0) ? -128 : 127;
                 } else {
                     continue;
                 }

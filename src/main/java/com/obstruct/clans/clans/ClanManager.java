@@ -42,6 +42,8 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
         getManager(MongoManager.class).getMorphia().map(Clan.class);
         getManager(MongoManager.class).getMorphia().getMapper().getConverters().addConverter(new LocationConverter());
 
+        addClan(new BorderLands());
+
         loadClans();
     }
 
@@ -138,6 +140,9 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
 
     //Method to get a Clan based on their location's chunk.
     public Clan getClan(Location location) {
+        if(Math.abs(location.getChunk().getX()) > 40 || Math.abs(location.getChunk().getZ()) > 40) {
+            return getClan("Borderlands");
+        }
         return getClan(location.getChunk());
     }
 
@@ -145,6 +150,9 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
     //Loops through their territory and finds if it equals the given chunk.
     public Clan getClan(Chunk chunk) {
         for (Clan clan : getClanMap().values()) {
+            if(Math.abs(chunk.getX()) > 40 || Math.abs(chunk.getZ()) > 40) {
+                return getClan("Borderlands");
+            }
             if (clan.getClaims().contains(UtilFormat.chunkToString(chunk))) {
                 return clan;
             }
@@ -235,6 +243,9 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
 
     public Clan getClan(String world, int x, int z) {
         for (Clan clan : getClanMap().values()) {
+            if(Math.abs(x) > 40 || Math.abs(z) > 40) {
+                return getClan("Borderlands");
+            }
             for (String claim : clan.getClaims()) {
                 if (claim.contains(world + ":" + x + ":" + z)) {
                     return clan;
@@ -288,7 +299,6 @@ public class ClanManager extends SpigotManager<SpigotModule<?>> {
         if (clanRelation == ClanRelation.SELF) {
             return true;
         }
-
         return false;
     }
 }
